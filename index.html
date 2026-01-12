@@ -271,6 +271,27 @@
             flex-wrap: wrap;
         }
 
+        .analysis-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--secondary);
+            color: white;
+        }
+
         /* ESTADOS */
         .badge {
             display: inline-block;
@@ -411,6 +432,7 @@
                         <li><a href="#" class="active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
                         <li><a href="#" data-page="registro"><i class="fas fa-plus-circle"></i> Nuevo Reporte</a></li>
                         <li><a href="#" data-page="historial"><i class="fas fa-history"></i> Historial</a></li>
+                        <li><a href="#" data-page="analisis"><i class="fas fa-chart-bar"></i> Análisis</a></li>
                         <li><a href="#" data-page="config"><i class="fas fa-cog"></i> Configuración</a></li>
                     </ul>
                 </nav>
@@ -480,6 +502,7 @@
                                         <th>ID</th>
                                         <th>Descripción</th>
                                         <th>Ubicación</th>
+                                        <th>Reportado por</th>
                                         <th>Fecha</th>
                                         <th>Estado</th>
                                     </tr>
@@ -530,13 +553,13 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="priority">Prioridad *</label>
+                                <label for="priority">Nivel de Riesgo *</label>
                                 <select class="form-control" id="priority" required>
-                                    <option value="">Seleccione la prioridad</option>
-                                    <option value="baja">Baja</option>
-                                    <option value="media">Media</option>
-                                    <option value="alta">Alta</option>
-                                    <option value="critica">Crítica</option>
+                                    <option value="">Seleccione el nivel de riesgo</option>
+                                    <option value="bajo">Bajo</option>
+                                    <option value="medio">Medio</option>
+                                    <option value="alto">Alto</option>
+                                    <option value="critico">Crítico</option>
                                 </select>
                             </div>
                             
@@ -579,7 +602,7 @@
                                         <th>Categoría</th>
                                         <th>Fecha</th>
                                         <th>Reportado por</th>
-                                        <th>Prioridad</th>
+                                        <th>Nivel Riesgo</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -588,6 +611,28 @@
                                     <!-- Datos se cargarán aquí -->
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Análisis -->
+                <div id="analisis-page" class="page" style="display: none;">
+                    <div class="card">
+                        <h2><i class="fas fa-chart-bar"></i> Análisis de Datos</h2>
+                        
+                        <div class="analysis-tabs">
+                            <button class="tab-btn active" data-chart="categoria">Por Categoría</button>
+                            <button class="tab-btn" data-chart="riesgo">Por Nivel de Riesgo</button>
+                            <button class="tab-btn" data-chart="estado">Por Estado</button>
+                            <button class="tab-btn" data-chart="ubicacion">Por Ubicación</button>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="analysis-chart"></canvas>
+                        </div>
+                        
+                        <div id="analysis-stats" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <!-- Estadísticas se mostrarán aquí -->
                         </div>
                     </div>
                 </div>
@@ -640,7 +685,9 @@
         let supabaseClient = null;
         let reportes = [];
         let lineChart = null;
+        let analysisChart = null;
         let currentFilter = 'all';
+        let currentAnalysisTab = 'categoria';
 
         // ==============================================
         // FUNCIONES DE UTILIDAD
@@ -761,7 +808,8 @@
             actualizarTablaReciente();
             actualizarTablaHistorial();
             actualizarSelectUbicaciones();
-            actualizarGrafico();
+            actualizarGraficoLinea();
+            actualizarAnalisis();
             
             // Actualizar sidebar
             document.getElementById('total-count-sidebar').textContent = reportes.length;
@@ -799,6 +847,7 @@
                         <td>${reporte.id}</td>
                         <td>${descCorta}</td>
                         <td>${reporte.ubicacion || 'N/A'}</td>
+                        <td>${reporte.reportado_por || 'N/A'}</td>
                         <td>${formatDate(reporte.fecha)}</td>
                         <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
                     </tr>
@@ -872,9 +921,9 @@
         }
 
         // ==============================================
-        // GRÁFICO DE LÍNEA
+        // GRÁFICO DE LÍNEA (DASHBOARD)
         // ==============================================
-        function actualizarGrafico() {
+        function actualizarGraficoLinea() {
             const ctx = document.getElementById('line-chart');
             const ubicacion = document.getElementById('location-select').value;
             const periodo = parseInt(document.getElementById('period-select').value);
@@ -973,6 +1022,243 @@
         }
 
         // ==============================================
+        // ANÁLISIS DE DATOS
+        // ==============================================
+        function actualizarAnalisis() {
+            if (!analysisChart) {
+                const ctx = document.getElementById('analysis-chart').getContext('2d');
+                analysisChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: '',
+                            data: [],
+                            backgroundColor: [
+                                'rgba(52, 152, 219, 0.7)',
+                                'rgba(46, 204, 113, 0.7)',
+                                'rgba(155, 89, 182, 0.7)',
+                                'rgba(241, 196, 15, 0.7)',
+                                'rgba(230, 126, 34, 0.7)',
+                                'rgba(231, 76, 60, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgb(52, 152, 219)',
+                                'rgb(46, 204, 113)',
+                                'rgb(155, 89, 182)',
+                                'rgb(241, 196, 15)',
+                                'rgb(230, 126, 34)',
+                                'rgb(231, 76, 60)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Cantidad'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Actualizar según la pestaña activa
+            actualizarGraficoAnalisis(currentAnalysisTab);
+            actualizarEstadisticasAnalisis(currentAnalysisTab);
+        }
+
+        function actualizarGraficoAnalisis(tipo) {
+            let labels = [];
+            let datos = [];
+            let titulo = '';
+
+            switch(tipo) {
+                case 'categoria':
+                    // Análisis por categoría
+                    const categorias = {};
+                    reportes.forEach(reporte => {
+                        const cat = reporte.categoria || 'Sin categoría';
+                        categorias[cat] = (categorias[cat] || 0) + 1;
+                    });
+                    
+                    labels = Object.keys(categorias);
+                    datos = Object.values(categorias);
+                    titulo = 'Reportes por Categoría';
+                    break;
+                    
+                case 'riesgo':
+                    // Análisis por nivel de riesgo
+                    const riesgos = {};
+                    reportes.forEach(reporte => {
+                        const riesgo = reporte.prioridad || 'Sin especificar';
+                        riesgos[riesgo] = (riesgos[riesgo] || 0) + 1;
+                    });
+                    
+                    labels = Object.keys(riesgos);
+                    datos = Object.values(riesgos);
+                    titulo = 'Reportes por Nivel de Riesgo';
+                    break;
+                    
+                case 'estado':
+                    // Análisis por estado
+                    const estados = {};
+                    reportes.forEach(reporte => {
+                        const estado = reporte.estado || 'pendiente';
+                        estados[estado] = (estados[estado] || 0) + 1;
+                    });
+                    
+                    labels = Object.keys(estados);
+                    datos = Object.values(estados);
+                    titulo = 'Reportes por Estado';
+                    break;
+                    
+                case 'ubicacion':
+                    // Análisis por ubicación (top 10)
+                    const ubicaciones = {};
+                    reportes.forEach(reporte => {
+                        const ubicacion = reporte.ubicacion || 'Sin ubicación';
+                        ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
+                    });
+                    
+                    // Ordenar y tomar top 10
+                    const sorted = Object.entries(ubicaciones)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 10);
+                    
+                    labels = sorted.map(item => item[0]);
+                    datos = sorted.map(item => item[1]);
+                    titulo = 'Top 10 Ubicaciones con más Reportes';
+                    break;
+            }
+
+            // Actualizar gráfico
+            analysisChart.data.labels = labels;
+            analysisChart.data.datasets[0].data = datos;
+            analysisChart.data.datasets[0].label = titulo;
+            analysisChart.update();
+        }
+
+        function actualizarEstadisticasAnalisis(tipo) {
+            const statsContainer = document.getElementById('analysis-stats');
+            let statsHTML = '';
+            
+            switch(tipo) {
+                case 'categoria':
+                    const categorias = {};
+                    reportes.forEach(reporte => {
+                        const cat = reporte.categoria || 'Sin categoría';
+                        categorias[cat] = (categorias[cat] || 0) + 1;
+                    });
+                    
+                    Object.entries(categorias).forEach(([categoria, cantidad]) => {
+                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
+                        statsHTML += `
+                            <div class="stat-card">
+                                <div class="stat-title">${categoria}</div>
+                                <div class="stat-value">${cantidad}</div>
+                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
+                            </div>
+                        `;
+                    });
+                    break;
+                    
+                case 'riesgo':
+                    const riesgos = {};
+                    reportes.forEach(reporte => {
+                        const riesgo = reporte.prioridad || 'Sin especificar';
+                        riesgos[riesgo] = (riesgos[riesgo] || 0) + 1;
+                    });
+                    
+                    Object.entries(riesgos).forEach(([riesgo, cantidad]) => {
+                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
+                        let color = '#666';
+                        if (riesgo === 'critico') color = '#e74c3c';
+                        if (riesgo === 'alto') color = '#e67e22';
+                        if (riesgo === 'medio') color = '#f39c12';
+                        if (riesgo === 'bajo') color = '#2ecc71';
+                        
+                        statsHTML += `
+                            <div class="stat-card">
+                                <div class="stat-title">Riesgo ${riesgo}</div>
+                                <div class="stat-value" style="color: ${color};">${cantidad}</div>
+                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
+                            </div>
+                        `;
+                    });
+                    break;
+                    
+                case 'estado':
+                    const estados = {
+                        'pendiente': 0,
+                        'en proceso': 0,
+                        'reparado': 0
+                    };
+                    
+                    reportes.forEach(reporte => {
+                        const estado = reporte.estado || 'pendiente';
+                        if (estados[estado] !== undefined) {
+                            estados[estado]++;
+                        }
+                    });
+                    
+                    Object.entries(estados).forEach(([estado, cantidad]) => {
+                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
+                        let color = '#666';
+                        if (estado === 'pendiente') color = '#f39c12';
+                        if (estado === 'en proceso') color = '#3498db';
+                        if (estado === 'reparado') color = '#2ecc71';
+                        
+                        statsHTML += `
+                            <div class="stat-card">
+                                <div class="stat-title">${estado}</div>
+                                <div class="stat-value" style="color: ${color};">${cantidad}</div>
+                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
+                            </div>
+                        `;
+                    });
+                    break;
+                    
+                case 'ubicacion':
+                    const ubicaciones = {};
+                    reportes.forEach(reporte => {
+                        const ubicacion = reporte.ubicacion || 'Sin ubicación';
+                        ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
+                    });
+                    
+                    // Tomar top 5
+                    const top5 = Object.entries(ubicaciones)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    top5.forEach(([ubicacion, cantidad]) => {
+                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
+                        statsHTML += `
+                            <div class="stat-card">
+                                <div class="stat-title">${ubicacion}</div>
+                                <div class="stat-value">${cantidad}</div>
+                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
+                            </div>
+                        `;
+                    });
+                    break;
+            }
+            
+            statsContainer.innerHTML = statsHTML;
+        }
+
+        // ==============================================
         // EVENT HANDLERS
         // ==============================================
         async function submitReporte(event) {
@@ -1024,13 +1310,20 @@
                     // Mostrar página correspondiente
                     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
                     document.getElementById(`${page}-page`).style.display = 'block';
+                    
+                    // Si es análisis, actualizar gráfico
+                    if (page === 'analisis') {
+                        setTimeout(() => {
+                            actualizarAnalisis();
+                        }, 100);
+                    }
                 });
             });
             
             // Configurar formulario
             document.getElementById('report-form').addEventListener('submit', submitReporte);
             
-            // Configurar filtros
+            // Configurar filtros de historial
             document.getElementById('filter-all').addEventListener('click', () => {
                 currentFilter = 'all';
                 actualizarTablaHistorial();
@@ -1059,9 +1352,20 @@
                 });
             });
             
-            // Configurar controles del gráfico
-            document.getElementById('location-select').addEventListener('change', actualizarGrafico);
-            document.getElementById('period-select').addEventListener('change', actualizarGrafico);
+            // Configurar controles del gráfico de línea
+            document.getElementById('location-select').addEventListener('change', actualizarGraficoLinea);
+            document.getElementById('period-select').addEventListener('change', actualizarGraficoLinea);
+            
+            // Configurar pestañas de análisis
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentAnalysisTab = this.getAttribute('data-chart');
+                    actualizarGraficoAnalisis(currentAnalysisTab);
+                    actualizarEstadisticasAnalisis(currentAnalysisTab);
+                });
+            });
             
             // Inicializar Supabase y cargar datos
             const conectado = await inicializarSupabase();
