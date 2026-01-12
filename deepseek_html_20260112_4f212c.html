@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Condiciones Inseguras - Supabase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        /* ===== ESTILOS BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --safe: #2ecc71;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --supabase: #3ecf8e;
+            --chart-line: #3498db;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--secondary);
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        /* ===== LAYOUT PRINCIPAL ===== */
+        .main-content {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-panel {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ===== COMPONENTES ===== */
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 i {
+            color: var(--secondary);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: var(--supabase);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #2db57d;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* ===== STATUS BADGES ===== */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pendiente {
+            background-color: rgba(243, 156, 18, 0.2);
+            color: #e67e22;
+        }
+
+        .status-reparado {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .status-en-proceso {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #2980b9;
+        }
+
+        /* ===== NAVEGACIÓN ===== */
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 10px;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border-radius: 5px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--secondary);
+        }
+
+        /* ===== ESTADÍSTICAS ===== */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== TABLAS ===== */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background-color: var(--light);
+            color: var(--primary);
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        /* ===== GRÁFICOS ===== */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .chart-select {
+            width: 250px;
+        }
+
+        /* ===== ACCIONES ===== */
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #eee;
+        }
+
+        /* ===== SUPABASE CONFIG ===== */
+        .supabase-config {
+            background: linear-gradient(135deg, #3ecf8e 0%, #2db57d 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .supabase-config h3 {
+            color: white;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ===== STATUS INDICATOR ===== */
+        .status-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .status-connected {
+            background: var(--supabase);
+            color: white;
+        }
+
+        .status-disconnected {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-error {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* ===== LOADING ===== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--supabase);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-indicator {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p id="loading-text">Conectando con la base de datos...</p>
+    </div>
+
+    <!-- Status Indicator -->
+    <div id="status-indicator" class="status-indicator status-disconnected">
+        <i class="fas fa-database"></i>
+        <span>Desconectado</span>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-hard-hat"></i>
+                    <h1>Sistema de Condiciones Inseguras</h1>
+                </div>
+                <div class="user-info">
+                    <i class="fas fa-database"></i>
+                    <span id="db-status">Supabase</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav>
+                    <ul class="nav-menu">
+                        <li><a href="#" class="active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="#" data-page="registro"><i class="fas fa-plus-circle"></i> Nuevo Reporte</a></li>
+                        <li><a href="#" data-page="historial"><i class="fas fa-history"></i> Historial</a></li>
+                        <li><a href="#" data-page="analisis"><i class="fas fa-chart-bar"></i> Análisis</a></li>
+                        <li><a href="#" data-page="config"><i class="fas fa-cog"></i> Configuración</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Supabase Config Panel -->
+                <div id="supabase-config-panel" class="supabase-config">
+                    <h3><i class="fas fa-database"></i> Configurar Supabase</h3>
+                    <p>Conecta tu aplicación con la base de datos en la nube</p>
+                    
+                    <div class="form-group">
+                        <label for="supabase-url">URL de Supabase:</label>
+                        <input type="text" id="supabase-url" class="form-control" 
+                               placeholder="https://abc123.supabase.co">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supabase-key">API Key (anon public):</label>
+                        <input type="text" id="supabase-key" class="form-control" 
+                               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="guardarConfigSupabase()">
+                        <i class="fas fa-plug"></i> Conectar con Supabase
+                    </button>
+                    
+                    <div style="margin-top: 15px; font-size: 12px; opacity: 0.9;">
+                        <p><strong>¿Dónde consigo estos datos?</strong></p>
+                        <ol style="margin: 10px 0 0 20px; padding: 0;">
+                            <li>Ve a <a href="https://supabase.com" target="_blank" style="color: white; text-decoration: underline;">supabase.com</a></li>
+                            <li>Crea proyecto gratis</li>
+                            <li>Ve a Settings → API</li>
+                            <li>Copia URL y anon public key</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 30px;">
+                    <h3><i class="fas fa-info-circle"></i> Información</h3>
+                    <p style="margin-top: 10px; font-size: 14px;">
+                        Sistema conectado a base de datos en la nube. Todos los datos se sincronizan automáticamente.
+                    </p>
+                </div>
+            </aside>
+
+            <!-- Main Panel -->
+            <main class="main-panel">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page active">
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-title">Total Reportes</div>
+                            <div class="stat-value" id="total-count">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Pendientes</div>
+                            <div class="stat-value" id="pending-count">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">En Proceso</div>
+                            <div class="stat-value" id="process-count">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Reparados</div>
+                            <div class="stat-value" id="repaired-count">0</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2><i class="fas fa-chart-line"></i> Evolución de Riesgos por Ubicación</h2>
+                        
+                        <div class="chart-controls">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="location-select">Ubicación:</label>
+                                <select class="form-control chart-select" id="location-select">
+                                    <option value="">Todas las ubicaciones</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="time-range">Periodo:</label>
+                                <select class="form-control" id="time-range" style="width: 150px;">
+                                    <option value="6">Últimos 6 meses</option>
+                                    <option value="12" selected>Último año</option>
+                                    <option value="24">Últimos 2 años</option>
+                                    <option value="custom">Personalizado</option>
+                                </select>
+                            </div>
+                            
+                            <div id="custom-range" style="display: none;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="start-date">Desde:</label>
+                                    <input type="month" id="start-date" class="form-control">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="end-date">Hasta:</label>
+                                    <input type="month" id="end-date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="line-chart"></canvas>
+                        </div>
+                        
+                        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 14px; color: #7f8c8d;">
+                                <i class="fas fa-info-circle"></i> Gráfico muestra la evolución de riesgos por mes
+                            </div>
+                            <button class="btn btn-primary" onclick="actualizarGraficoLinea()">
+                                <i class="fas fa-sync-alt"></i> Actualizar Gráfico
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2><i class="fas fa-history"></i> Reportes Recientes</h2>
+                        <div class="table-container">
+                            <table id="recent-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Descripción</th>
+                                        <th>Ubicación</th>
+                                        <th>Reportado por</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Datos se cargarán aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registro Page -->
+                <div id="registro-page" class="page" style="display: none;">
+                    <div class="card">
+                        <h2><i class="fas fa-plus-circle"></i> Nuevo Reporte</h2>
+                        <form id="report-form">
+                            <div class="form-group">
+                                <label for="reporter-name">Reportado por *</label>
+                                <input type="text" class="form-control" id="reporter-name" 
+                                       placeholder="Ingrese su nombre completo" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description">Descripción *</label>
+                                <textarea class="form-control" id="description" rows="3" 
+                                          placeholder="Describa detalladamente la condición insegura..." required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="location">Ubicación *</label>
+                                <input type="text" class="form-control" id="location" 
+                                       placeholder="Ej: Área de producción, Línea 3" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="category">Categoría *</label>
+                                <select class="form-control" id="category" required>
+                                    <option value="">Seleccione una categoría</option>
+                                    <option value="electricidad">Riesgo eléctrico</option>
+                                    <option value="mecanico">Riesgo mecánico</option>
+                                    <option value="alturas">Trabajo en alturas</option>
+                                    <option value="quimico">Riesgo químico</option>
+                                    <option value="incendio">Riesgo de incendio</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="risk-level">Nivel de Riesgo *</label>
+                                <select class="form-control" id="risk-level" required>
+                                    <option value="">Seleccione el nivel de riesgo</option>
+                                    <option value="bajo">Bajo</option>
+                                    <option value="medio">Medio</option>
+                                    <option value="alto">Alto</option>
+                                    <option value="critico">Crítico</option>
+                                </select>
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Guardar Reporte
+                                </button>
+                                <button type="reset" class="btn">
+                                    <i class="fas fa-undo"></i> Limpiar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Historial Page -->
+                <div id="historial-page" class="page" style="display: none;">
+                    <div class="card">
+                        <h2><i class="fas fa-history"></i> Historial de Reportes</h2>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <button class="btn" id="filter-all">Todos</button>
+                                <button class="btn btn-warning" id="filter-pending">Pendientes</button>
+                                <button class="btn btn-primary" id="filter-process">En Proceso</button>
+                                <button class="btn btn-success" id="filter-repaired">Reparados</button>
+                            </div>
+                            <div>
+                                <input type="text" class="form-control" id="search-input" placeholder="Buscar..." style="width: 200px;">
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table id="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Descripción</th>
+                                        <th>Ubicación</th>
+                                        <th>Categoría</th>
+                                        <th>Fecha</th>
+                                        <th>Reportado por</th>
+                                        <th>Reparado por</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Datos se cargarán aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Análisis Page -->
+                <div id="analisis-page" class="page" style="display: none;">
+                    <div class="card">
+                        <h2><i class="fas fa-chart-bar"></i> Análisis de Datos</h2>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <select class="form-control" id="analysis-type" style="width: 200px; display: inline-block;">
+                                <option value="category">Por Categoría</option>
+                                <option value="risk">Por Nivel de Riesgo</option>
+                                <option value="status">Por Estado</option>
+                                <option value="location">Por Ubicación</option>
+                            </select>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="data-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración Page -->
+                <div id="config-page" class="page" style="display: none;">
+                    <div class="card">
+                        <h2><i class="fas fa-cog"></i> Configuración del Sistema</h2>
+                        
+                        <div class="supabase-config">
+                            <h3><i class="fas fa-database"></i> Conexión Supabase</h3>
+                            
+                            <div class="form-group">
+                                <label>Estado de conexión:</label>
+                                <div id="connection-status" style="padding: 10px; background: rgba(255, 255, 255, 0.2); border-radius: 5px;">
+                                    Verificando...
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="current-url">URL Actual:</label>
+                                <input type="text" id="current-url" class="form-control" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="current-key">API Key Actual:</label>
+                                <input type="text" id="current-key" class="form-control" readonly>
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button class="btn btn-success" onclick="probarConexion()">
+                                    <i class="fas fa-sync-alt"></i> Probar Conexión
+                                </button>
+                                <button class="btn btn-warning" onclick="mostrarConfigPanel()">
+                                    <i class="fas fa-edit"></i> Cambiar Configuración
+                                </button>
+                                <button class="btn btn-danger" onclick="limpiarDatos()">
+                                    <i class="fas fa-trash"></i> Limpiar Datos Locales
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <h3><i class="fas fa-info-circle"></i> Información Técnica</h3>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                <p><strong>Total reportes en base de datos:</strong> <span id="total-db-count">0</span></p>
+                                <p><strong>Última sincronización:</strong> <span id="last-sync">Nunca</span></p>
+                                <p><strong>Modo actual:</strong> <span id="current-mode">Desconocido</span></p>
+                                <p><strong>Tabla en Supabase:</strong> condiciones_inseguras</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <footer class="footer">
+            <p>Sistema de Condiciones Inseguras &copy; 2023 - Conectado a Supabase</p>
+            <p style="font-size: 14px; margin-top: 5px;">Base de datos en la nube - Todos los datos se sincronizan automáticamente</p>
+        </footer>
+    </div>
+
+    <script>
+        // ==============================================
+        // CONFIGURACIÓN Y VARIABLES GLOBALES
+        // ==============================================
+        let supabaseClient = null;
+        let unsafeConditions = [];
+        let currentFilter = 'all';
+        let lineChart = null;
+        
+        // Configuración por defecto (se sobrescribe con localStorage)
+        let CONFIG = {
+            supabaseUrl: localStorage.getItem('supabase_url') || '',
+            supabaseKey: localStorage.getItem('supabase_key') || '',
+            lastSync: localStorage.getItem('last_sync') || 'Nunca',
+            offlineMode: localStorage.getItem('offline_mode') === 'true' || false
+        };
+        
+        // ==============================================
+        // FUNCIONES DE UTILIDAD
+        // ==============================================
+        
+        function showLoading(show, text = 'Cargando...') {
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loading-text');
+            
+            if (loading) {
+                loading.style.display = show ? 'flex' : 'none';
+            }
+            
+            if (loadingText && text) {
+                loadingText.textContent = text;
+            }
+        }
+        
+        function updateStatusIndicator(status, message) {
+            const indicator = document.getElementById('status-indicator');
+            if (!indicator) return;
+            
+            // Remover todas las clases de estado
+            indicator.classList.remove('status-connected', 'status-disconnected', 'status-error');
+            
+            // Aplicar nueva clase
+            indicator.classList.add(`status-${status}`);
+            
+            // Actualizar icono y texto
+            let icon = 'fa-database';
+            if (status === 'connected') icon = 'fa-check-circle';
+            if (status === 'error') icon = 'fa-exclamation-triangle';
+            if (status === 'disconnected') icon = 'fa-unlink';
+            
+            indicator.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+            
+            // Actualizar también en el header
+            const dbStatus = document.getElementById('db-status');
+            if (dbStatus) {
+                dbStatus.textContent = status === 'connected' ? 'Conectado' : 'Desconectado';
+            }
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        
+        function getMonthYearString(date) {
+            const d = new Date(date);
+            const month = d.getMonth() + 1;
+            const year = d.getFullYear();
+            return `${year}-${month.toString().padStart(2, '0')}`;
+        }
+        
+        function formatMonthYear(monthYear) {
+            const [year, month] = monthYear.split('-');
+            const date = new Date(year, month - 1, 1);
+            return date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
+        }
+        
+        // ==============================================
+        // FUNCIONES DE CONFIGURACIÓN SUPABASE
+        // ==============================================
+        
+        function mostrarConfigPanel() {
+            document.getElementById('supabase-config-panel').style.display = 'block';
+            document.getElementById('supabase-url').value = CONFIG.supabaseUrl;
+            document.getElementById('supabase-key').value = CONFIG.supabaseKey;
+        }
+        
+        function guardarConfigSupabase() {
+            const url = document.getElementById('supabase-url').value.trim();
+            const key = document.getElementById('supabase-key').value.trim();
+            
+            if (!url || !key) {
+                alert('❌ Por favor ingresa tanto la URL como la API Key');
+                return;
+            }
+            
+            // Validar formato de URL
+            if (!url.includes('.supabase.co')) {
+                alert('❌ La URL debe terminar en .supabase.co');
+                return;
+            }
+            
+            // Validar formato de API Key (debe comenzar con eyJ)
+            if (!key.startsWith('eyJ')) {
+                alert('⚠️ La API Key parece tener un formato incorrecto. Debe comenzar con "eyJ"');
+                // Pero continuamos porque podría ser válida
+            }
+            
+            CONFIG.supabaseUrl = url;
+            CONFIG.supabaseKey = key;
+            
+            localStorage.setItem('supabase_url', url);
+            localStorage.setItem('supabase_key', key);
+            
+            alert('✅ Configuración guardada. Reiniciando conexión...');
+            inicializarSupabase();
+        }
+        
+        function inicializarSupabase() {
+            if (!CONFIG.supabaseUrl || !CONFIG.supabaseKey) {
+                updateStatusIndicator('disconnected', 'Sin configuración');
+                mostrarConfigPanel();
+                return false;
+            }
+            
+            try {
+                // Crear cliente Supabase
+                supabaseClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+                
+                // Probar conexión
+                probarConexionSupabase();
+                
+                return true;
+            } catch (error) {
+                console.error('Error inicializando Supabase:', error);
+                updateStatusIndicator('error', 'Error de configuración');
+                mostrarConfigPanel();
+                return false;
+            }
+        }
+        
+        async function probarConexionSupabase() {
+            if (!supabaseClient) {
+                updateStatusIndicator('disconnected', 'Cliente no inicializado');
+                return false;
+            }
+            
+            showLoading(true, 'Probando conexión con Supabase...');
+            
+            try {
+                // Intentar una consulta simple
+                const { data, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                updateStatusIndicator('connected', 'Conectado a Supabase');
+                CONFIG.offlineMode = false;
+                localStorage.setItem('offline_mode', 'false');
+                
+                // Actualizar UI de configuración
+                if (document.getElementById('connection-status')) {
+                    document.getElementById('connection-status').innerHTML = 
+                        '<span style="color: white;"><i class="fas fa-check-circle"></i> Conectado</span>';
+                }
+                
+                showLoading(false);
+                return true;
+                
+            } catch (error) {
+                console.error('Error probando conexión:', error);
+                
+                // Verificar si es error de permisos
+                if (error.message.includes('permission') || error.message.includes('JWT')) {
+                    updateStatusIndicator('error', 'Error de permisos');
+                    alert('❌ Error de permisos. Verifica:\n1. La tabla existe\n2. Las políticas RLS están configuradas\n3. La API Key es correcta');
+                } else if (error.message.includes('network') || error.message.includes('fetch')) {
+                    updateStatusIndicator('disconnected', 'Sin conexión a internet');
+                    CONFIG.offlineMode = true;
+                    localStorage.setItem('offline_mode', 'true');
+                } else {
+                    updateStatusIndicator('error', 'Error de conexión');
+                }
+                
+                showLoading(false);
+                return false;
+            }
+        }
+        
+        // ==============================================
+        // FUNCIONES CRUD PARA SUPABASE
+        // ==============================================
+        
+        async function cargarCondicionesDesdeSupabase() {
+            if (!supabaseClient || CONFIG.offlineMode) {
+                console.log('Modo offline, cargando desde localStorage');
+                return cargarDesdeLocalStorage();
+            }
+            
+            showLoading(true, 'Cargando datos desde la nube...');
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('*')
+                    .order('fecha', { ascending: false });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                // Actualizar última sincronización
+                CONFIG.lastSync = new Date().toLocaleString();
+                localStorage.setItem('last_sync', CONFIG.lastSync);
+                
+                showLoading(false);
+                
+                // Convertir a formato compatible
+                return data.map(item => ({
+                    ID: item.id,
+                    Fecha: item.fecha,
+                    ReportadoPor: item.reportado_por,
+                    Descripcion: item.descripcion,
+                    Ubicacion: item.ubicacion,
+                    Categoria: item.categoria,
+                    Riesgo: item.riesgo,
+                    Estado: item.estado || 'pendiente',
+                    ReparadoPor: item.reparado_por,
+                    FechaReparacion: item.fecha_reparacion,
+                    CreadoEn: item.creado_en
+                }));
+                
+            } catch (error) {
+                console.error('Error cargando desde Supabase:', error);
+                showLoading(false);
+                return cargarDesdeLocalStorage();
+            }
+        }
+        
+        async function guardarCondicionEnSupabase(reporte) {
+            if (!supabaseClient || CONFIG.offlineMode) {
+                console.log('Modo offline, guardando localmente');
+                return guardarEnLocalStorage(reporte);
+            }
+            
+            showLoading(true, 'Guardando en la base de datos...');
+            
+            try {
+                const nuevaCondicion = {
+                    reportado_por: reporte.reportedBy,
+                    descripcion: reporte.description,
+                    ubicacion: reporte.location,
+                    categoria: reporte.category,
+                    riesgo: reporte.riskLevel,
+                    estado: 'pendiente',
+                    fecha: new Date().toISOString().split('T')[0]
+                };
+                
+                const { data, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .insert([nuevaCondicion])
+                    .select()
+                    .single();
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showLoading(false);
+                updateStatusIndicator('connected', 'Reporte guardado ✓');
+                
+                return {
+                    success: true,
+                    id: data.id,
+                    data: data
+                };
+                
+            } catch (error) {
+                console.error('Error guardando en Supabase:', error);
+                showLoading(false);
+                return guardarEnLocalStorage(reporte);
+            }
+        }
+        
+        async function actualizarEstadoEnSupabase(id, nuevosDatos) {
+            if (!supabaseClient || CONFIG.offlineMode) {
+                console.log('Modo offline, actualizando localmente');
+                return { success: false, offline: true };
+            }
+            
+            try {
+                const datosActualizar = {
+                    estado: nuevosDatos.status
+                };
+                
+                if (nuevosDatos.repairedBy) {
+                    datosActualizar.reparado_por = nuevosDatos.repairedBy;
+                    datosActualizar.fecha_reparacion = new Date().toISOString().split('T')[0];
+                }
+                
+                const { error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .update(datosActualizar)
+                    .eq('id', id);
+                
+                if (error) {
+                    throw error;
+                }
+                
+                return { success: true };
+                
+            } catch (error) {
+                console.error('Error actualizando en Supabase:', error);
+                return { success: false, offline: true };
+            }
+        }
+        
+        // ==============================================
+        // FUNCIONES PARA GRÁFICO DE LÍNEA
+        // ==============================================
+        
+        async function obtenerDatosGraficoLinea() {
+            if (!supabaseClient || CONFIG.offlineMode) {
+                // Modo offline: usar datos locales
+                return obtenerDatosGraficoDesdeLocal();
+            }
+            
+            try {
+                const ubicacionSeleccionada = document.getElementById('location-select').value;
+                const periodo = document.getElementById('time-range').value;
+                
+                // Calcular fechas
+                const fechaFin = new Date();
+                let fechaInicio = new Date();
+                
+                if (periodo === 'custom') {
+                    const startDateInput = document.getElementById('start-date').value;
+                    const endDateInput = document.getElementById('end-date').value;
+                    
+                    if (startDateInput && endDateInput) {
+                        fechaInicio = new Date(startDateInput + '-01');
+                        fechaFin.setTime(new Date(endDateInput + '-01').getTime());
+                    } else {
+                        fechaInicio.setMonth(fechaInicio.getMonth() - 11);
+                    }
+                } else {
+                    const meses = parseInt(periodo);
+                    fechaInicio.setMonth(fechaInicio.getMonth() - (meses - 1));
+                }
+                
+                fechaInicio.setDate(1);
+                
+                // Consultar datos de Supabase
+                let query = supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('ubicacion, fecha')
+                    .gte('fecha', fechaInicio.toISOString().split('T')[0])
+                    .lte('fecha', fechaFin.toISOString().split('T')[0]);
+                
+                if (ubicacionSeleccionada) {
+                    query = query.eq('ubicacion', ubicacionSeleccionada);
+                }
+                
+                const { data, error } = await query;
+                
+                if (error) throw error;
+                
+                // Procesar datos para el gráfico
+                return procesarDatosParaGrafico(data, fechaInicio, fechaFin);
+                
+            } catch (error) {
+                console.error('Error obteniendo datos para gráfico:', error);
+                return obtenerDatosGraficoDesdeLocal();
+            }
+        }
+        
+        function obtenerDatosGraficoDesdeLocal() {
+            const ubicacionSeleccionada = document.getElementById('location-select').value;
+            const periodo = document.getElementById('time-range').value;
+            
+            // Filtrar por ubicación si se seleccionó una
+            let datosFiltrados = [...unsafeConditions];
+            if (ubicacionSeleccionada) {
+                datosFiltrados = datosFiltrados.filter(item => item.Ubicacion === ubicacionSeleccionada);
+            }
+            
+            // Obtener el rango de fechas
+            const fechaFin = new Date();
+            let fechaInicio = new Date();
+            
+            if (periodo === 'custom') {
+                const startDateInput = document.getElementById('start-date').value;
+                const endDateInput = document.getElementById('end-date').value;
+                
+                if (startDateInput && endDateInput) {
+                    fechaInicio = new Date(startDateInput + '-01');
+                    fechaFin.setTime(new Date(endDateInput + '-01').getTime());
+                } else {
+                    fechaInicio.setMonth(fechaInicio.getMonth() - 11);
+                }
+            } else {
+                const meses = parseInt(periodo);
+                fechaInicio.setMonth(fechaInicio.getMonth() - (meses - 1));
+            }
+            
+            fechaInicio.setDate(1);
+            
+            return procesarDatosParaGrafico(datosFiltrados.map(item => ({
+                ubicacion: item.Ubicacion,
+                fecha: item.Fecha
+            })), fechaInicio, fechaFin);
+        }
+        
+        function procesarDatosParaGrafico(datos, fechaInicio, fechaFin) {
+            // Generar array de meses en el rango
+            const mesesArray = [];
+            const conteoPorMes = {};
+            
+            let fechaActual = new Date(fechaInicio);
+            while (fechaActual <= fechaFin) {
+                const mesYear = `${fechaActual.getFullYear()}-${(fechaActual.getMonth() + 1).toString().padStart(2, '0')}`;
+                const mesLabel = fechaActual.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
+                
+                mesesArray.push(mesLabel);
+                conteoPorMes[mesYear] = 0;
+                
+                fechaActual.setMonth(fechaActual.getMonth() + 1);
+            }
+            
+            // Contar riesgos por mes
+            datos.forEach(item => {
+                if (item.fecha) {
+                    const mesYear = getMonthYearString(item.fecha);
+                    if (conteoPorMes[mesYear] !== undefined) {
+                        conteoPorMes[mesYear]++;
+                    }
+                }
+            });
+            
+            // Crear array de valores
+            const valores = Object.keys(conteoPorMes).map(key => conteoPorMes[key]);
+            
+            const ubicacionSeleccionada = document.getElementById('location-select').value;
+            
+            return {
+                labels: mesesArray,
+                valores: valores,
+                total: valores.reduce((sum, val) => sum + val, 0),
+                ubicacion: ubicacionSeleccionada || 'Todas las ubicaciones'
+            };
+        }
+        
+        function actualizarSelectUbicaciones() {
+            const select = document.getElementById('location-select');
+            if (!select) return;
+            
+            // Obtener ubicaciones únicas
+            const ubicaciones = [...new Set(unsafeConditions.map(item => item.Ubicacion))];
+            
+            // Limpiar opciones actuales (excepto la primera)
+            select.innerHTML = '<option value="">Todas las ubicaciones</option>';
+            
+            // Añadir opciones
+            ubicaciones.forEach(ubicacion => {
+                if (ubicacion && ubicacion.trim() !== '') {
+                    const option = document.createElement('option');
+                    option.value = ubicacion;
+                    option.textContent = ubicacion;
+                    select.appendChild(option);
+                }
+            });
+        }
+        
+        function crearGraficoLinea() {
+            const ctx = document.getElementById('line-chart').getContext('2d');
+            
+            // Destruir gráfico anterior si existe
+            if (lineChart) {
+                lineChart.destroy();
+            }
+            
+            // Crear gráfico vacío inicialmente
+            lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Cargando...'],
+                    datasets: [{
+                        label: 'Cargando datos...',
+                        data: [0],
+                        borderColor: 'rgb(52, 152, 219)',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+            
+            // Cargar datos y actualizar gráfico
+            actualizarDatosGraficoLinea();
+        }
+        
+        async function actualizarDatosGraficoLinea() {
+            showLoading(true, 'Actualizando gráfico...');
+            
+            try {
+                const datos = await obtenerDatosGraficoLinea();
+                
+                if (lineChart) {
+                    lineChart.data.labels = datos.labels;
+                    lineChart.data.datasets[0].data = datos.valores;
+                    lineChart.data.datasets[0].label = `Reportes - ${datos.ubicacion}`;
+                    lineChart.update();
+                }
+                
+                showLoading(false);
+            } catch (error) {
+                console.error('Error actualizando gráfico:', error);
+                showLoading(false);
+            }
+        }
+        
+        function actualizarGraficoLinea() {
+            actualizarDatosGraficoLinea();
+        }
+        
+        // ==============================================
+        // FUNCIONES LOCALSTORAGE (RESPALDO OFFLINE)
+        // ==============================================
+        
+        function cargarDesdeLocalStorage() {
+            const datos = localStorage.getItem('condiciones_pendientes');
+            if (datos) {
+                const parsed = JSON.parse(datos);
+                return Array.isArray(parsed) ? parsed : [];
+            }
+            return [];
+        }
+        
+        function guardarEnLocalStorage(reporte) {
+            const condiciones = cargarDesdeLocalStorage();
+            const ultimoId = condiciones.length > 0 
+                ? Math.max(...condiciones.map(c => parseInt(c.ID) || 0)) 
+                : 0;
+            const nuevoId = ultimoId + 1;
+            
+            const nuevoReporte = {
+                ID: nuevoId,
+                Fecha: new Date().toISOString().split('T')[0],
+                ReportadoPor: reporte.reportedBy,
+                Descripcion: reporte.description,
+                Ubicacion: reporte.location,
+                Categoria: reporte.category,
+                Riesgo: reporte.riskLevel,
+                Estado: "pendiente",
+                ReparadoPor: "",
+                local: true,
+                pendienteSincronizacion: true
+            };
+            
+            condiciones.unshift(nuevoReporte);
+            localStorage.setItem('condiciones_pendientes', JSON.stringify(condiciones));
+            
+            return {
+                success: true,
+                id: nuevoId,
+                offline: true
+            };
+        }
+        
+        function actualizarEnLocalStorage(id, nuevosDatos) {
+            const condiciones = cargarDesdeLocalStorage();
+            const index = condiciones.findIndex(c => parseInt(c.ID) === parseInt(id));
+            
+            if (index !== -1) {
+                if (nuevosDatos.status) condiciones[index].Estado = nuevosDatos.status;
+                if (nuevosDatos.repairedBy) condiciones[index].ReparadoPor = nuevosDatos.repairedBy;
+                
+                condiciones[index].pendienteSincronizacion = true;
+                localStorage.setItem('condiciones_pendientes', JSON.stringify(condiciones));
+                return true;
+            }
+            return false;
+        }
+        
+        async function sincronizarDatosPendientes() {
+            if (!supabaseClient || CONFIG.offlineMode) return;
+            
+            const condiciones = cargarDesdeLocalStorage();
+            const pendientes = condiciones.filter(c => c.pendienteSincronizacion && !c.syncError);
+            
+            for (const condicion of pendientes) {
+                try {
+                    // Si es nuevo, insertar
+                    if (condicion.local) {
+                        const { error } = await supabaseClient
+                            .from('condiciones_inseguras')
+                            .insert({
+                                reportado_por: condicion.ReportadoPor,
+                                descripcion: condicion.Descripcion,
+                                ubicacion: condicion.Ubicacion,
+                                categoria: condicion.Categoria,
+                                riesgo: condicion.Riesgo,
+                                estado: condicion.Estado,
+                                reparado_por: condicion.ReparadoPor || null,
+                                fecha: condicion.Fecha
+                            });
+                        
+                        if (!error) {
+                            condicion.pendienteSincronizacion = false;
+                            condicion.local = false;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error sincronizando:', error);
+                }
+            }
+            
+            // Guardar cambios
+            localStorage.setItem('condiciones_pendientes', JSON.stringify(condiciones));
+        }
+        
+        // ==============================================
+        // FUNCIONES DE INTERFAZ PRINCIPALES
+        // ==============================================
+        
+        async function inicializarSistema() {
+            showLoading(true, 'Inicializando sistema...');
+            
+            // Inicializar Supabase
+            inicializarSupabase();
+            
+            // Cargar datos
+            unsafeConditions = await cargarCondicionesDesdeSupabase();
+            
+            // Actualizar interfaz
+            actualizarEstadisticas();
+            actualizarTablaReciente();
+            actualizarTablaHistorial();
+            actualizarSelectUbicaciones();
+            
+            // Crear gráfico de línea
+            crearGraficoLinea();
+            
+            // Actualizar UI de configuración
+            actualizarUIConfiguracion();
+            
+            showLoading(false);
+            
+            // Sincronizar datos pendientes cada 30 segundos
+            setInterval(async () => {
+                await sincronizarDatosPendientes();
+                unsafeConditions = await cargarCondicionesDesdeSupabase();
+                actualizarEstadisticas();
+                actualizarTablaReciente();
+                actualizarSelectUbicaciones();
+                actualizarDatosGraficoLinea();
+            }, 30000);
+        }
+        
+        function actualizarEstadisticas() {
+            const total = unsafeConditions.length;
+            const pendientes = unsafeConditions.filter(c => c.Estado === 'pendiente').length;
+            const enProceso = unsafeConditions.filter(c => c.Estado === 'en proceso').length;
+            const reparados = unsafeConditions.filter(c => c.Estado === 'reparado').length;
+            
+            document.getElementById('total-count').textContent = total;
+            document.getElementById('pending-count').textContent = pendientes;
+            document.getElementById('process-count').textContent = enProceso;
+            document.getElementById('repaired-count').textContent = reparados;
+            
+            // Actualizar en página de configuración
+            if (document.getElementById('total-db-count')) {
+                document.getElementById('total-db-count').textContent = total;
+            }
+        }
+        
+        function actualizarTablaReciente() {
+            const tbody = document.querySelector('#recent-table tbody');
+            if (!tbody) return;
+            
+            // Tomar los 5 más recientes
+            const recientes = [...unsafeConditions]
+                .slice(0, 5);
+            
+            tbody.innerHTML = recientes.map(cond => {
+                let estadoBadge = '';
+                if (cond.Estado === 'pendiente') {
+                    estadoBadge = '<span class="status-badge status-pendiente">Pendiente</span>';
+                } else if (cond.Estado === 'en proceso') {
+                    estadoBadge = '<span class="status-badge status-en-proceso">En Proceso</span>';
+                } else {
+                    estadoBadge = '<span class="status-badge status-reparado">Reparado</span>';
+                }
+                
+                const descCorta = cond.Descripcion.length > 50 
+                    ? cond.Descripcion.substring(0, 50) + '...' 
+                    : cond.Descripcion;
+                
+                return `
+                    <tr>
+                        <td>${cond.ID}</td>
+                        <td>${descCorta}</td>
+                        <td>${cond.Ubicacion}</td>
+                        <td>${cond.ReportadoPor}</td>
+                        <td>${formatDate(cond.Fecha)}</td>
+                        <td>${estadoBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function actualizarTablaHistorial(filtro = 'all') {
+            const tbody = document.querySelector('#history-table tbody');
+            if (!tbody) return;
+            
+            let condicionesFiltradas = [...unsafeConditions];
+            
+            if (filtro !== 'all') {
+                condicionesFiltradas = unsafeConditions.filter(c => c.Estado === filtro);
+            }
+            
+            tbody.innerHTML = condicionesFiltradas.map(cond => {
+                let estadoBadge = '';
+                if (cond.Estado === 'pendiente') {
+                    estadoBadge = '<span class="status-badge status-pendiente">Pendiente</span>';
+                } else if (cond.Estado === 'en proceso') {
+                    estadoBadge = '<span class="status-badge status-en-proceso">En Proceso</span>';
+                } else {
+                    estadoBadge = '<span class="status-badge status-reparado">Reparado</span>';
+                }
+                
+                let acciones = '';
+                if (cond.Estado === 'pendiente') {
+                    acciones = `
+                        <button class="action-btn btn-primary" onclick="cambiarEstado(${cond.ID}, 'en proceso')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="action-btn btn-success" onclick="cambiarEstado(${cond.ID}, 'reparado')">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    `;
+                } else if (cond.Estado === 'en proceso') {
+                    acciones = `
+                        <button class="action-btn btn-success" onclick="cambiarEstado(${cond.ID}, 'reparado')">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="action-btn btn-warning" onclick="cambiarEstado(${cond.ID}, 'pendiente')">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    `;
+                } else {
+                    acciones = `
+                        <button class="action-btn btn-warning" onclick="cambiarEstado(${cond.ID}, 'pendiente')">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    `;
+                }
+                
+                return `
+                    <tr>
+                        <td>${cond.ID}</td>
+                        <td>${cond.Descripcion}</td>
+                        <td>${cond.Ubicacion}</td>
+                        <td>${cond.Categoria}</td>
+                        <td>${formatDate(cond.Fecha)}</td>
+                        <td>${cond.ReportadoPor}</td>
+                        <td>${cond.ReparadoPor || 'Pendiente'}</td>
+                        <td>${estadoBadge}</td>
+                        <td class="actions">${acciones}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        async function guardarNuevoReporte(event) {
+            event.preventDefault();
+            
+            // Obtener datos del formulario
+            const reporte = {
+                reportedBy: document.getElementById('reporter-name').value.trim(),
+                description: document.getElementById('description').value.trim(),
+                location: document.getElementById('location').value.trim(),
+                category: document.getElementById('category').value,
+                riskLevel: document.getElementById('risk-level').value
+            };
+            
+            // Validar
+            if (!reporte.reportedBy || !reporte.description || !reporte.location || 
+                !reporte.category || !reporte.riskLevel) {
+                alert('❌ Por favor complete todos los campos obligatorios (*)');
+                return;
+            }
+            
+            // Guardar en Supabase
+            const resultado = await guardarCondicionEnSupabase(reporte);
+            
+            if (resultado.success) {
+                // Recargar datos
+                unsafeConditions = await cargarCondicionesDesdeSupabase();
+                
+                // Mostrar mensaje
+                if (resultado.offline) {
+                    alert('⚠️ Modo offline\nReporte guardado localmente\nSe sincronizará cuando haya conexión');
+                } else {
+                    alert(`✅ Reporte guardado exitosamente\nID: ${resultado.id}`);
+                }
+                
+                // Limpiar formulario
+                document.getElementById('report-form').reset();
+                
+                // Actualizar interfaz
+                actualizarEstadisticas();
+                actualizarTablaReciente();
+                actualizarTablaHistorial(currentFilter);
+                actualizarSelectUbicaciones();
+                actualizarDatosGraficoLinea();
+                
+                // Ir al dashboard
+                document.querySelector('.nav-menu a[data-page="dashboard"]').click();
+            } else {
+                alert('❌ Error guardando el reporte');
+            }
+        }
+        
+        async function cambiarEstado(id, nuevoEstado) {
+            const condicion = unsafeConditions.find(c => parseInt(c.ID) === parseInt(id));
+            if (!condicion) {
+                alert('Reporte no encontrado');
+                return;
+            }
+            
+            const nuevosDatos = { status: nuevoEstado };
+            
+            if (nuevoEstado === 'reparado') {
+                const reparador = prompt('Ingrese su nombre (quién realiza la reparación):');
+                if (reparador && reparador.trim() !== '') {
+                    nuevosDatos.repairedBy = reparador.trim();
+                } else {
+                    nuevosDatos.repairedBy = 'Técnico no identificado';
+                }
+            }
+            
+            // Actualizar en Supabase
+            const resultado = await actualizarEstadoEnSupabase(id, nuevosDatos);
+            
+            // Actualizar localmente
+            condicion.Estado = nuevoEstado;
+            if (nuevosDatos.repairedBy) {
+                condicion.ReparadoPor = nuevosDatos.repairedBy;
+            }
+            
+            // Actualizar localStorage si está offline
+            if (resultado.offline) {
+                actualizarEnLocalStorage(id, nuevosDatos);
+            }
+            
+            // Actualizar interfaz
+            actualizarEstadisticas();
+            actualizarTablaHistorial(currentFilter);
+            actualizarDatosGraficoLinea();
+            
+            if (resultado.offline) {
+                alert('Estado actualizado (modo offline)');
+            } else {
+                alert('Estado actualizado correctamente');
+            }
+        }
+        
+        function actualizarUIConfiguracion() {
+            // Actualizar campos en página de configuración
+            if (document.getElementById('current-url')) {
+                document.getElementById('current-url').value = CONFIG.supabaseUrl || 'No configurado';
+            }
+            if (document.getElementById('current-key')) {
+                const key = CONFIG.supabaseKey || '';
+                document.getElementById('current-key').value = key ? 
+                    key.substring(0, 20) + '...' : 'No configurado';
+            }
+            if (document.getElementById('last-sync')) {
+                document.getElementById('last-sync').textContent = CONFIG.lastSync;
+            }
+            if (document.getElementById('current-mode')) {
+                document.getElementById('current-mode').textContent = 
+                    CONFIG.offlineMode ? 'Modo Offline' : 'Modo Online';
+            }
+        }
+        
+        // ==============================================
+        // FUNCIONES DE CONFIGURACIÓN PAGE
+        // ==============================================
+        
+        function probarConexion() {
+            probarConexionSupabase().then(success => {
+                if (success) {
+                    alert('✅ Conexión exitosa con Supabase');
+                } else {
+                    alert('❌ Error de conexión. Verifica la configuración.');
+                }
+                actualizarUIConfiguracion();
+            });
+        }
+        
+        function limpiarDatos() {
+            if (confirm('¿Estás seguro de que quieres limpiar todos los datos locales?\n\nEsto solo borra los datos en tu navegador, no en la base de datos.')) {
+                localStorage.removeItem('condiciones_pendientes');
+                alert('✅ Datos locales eliminados. Recargando...');
+                location.reload();
+            }
+        }
+        
+        // ==============================================
+        // INICIALIZACIÓN Y EVENT LISTENERS
+        // ==============================================
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Inicializar sistema
+            await inicializarSistema();
+            
+            // Configurar formulario
+            const form = document.getElementById('report-form');
+            if (form) {
+                form.addEventListener('submit', guardarNuevoReporte);
+            }
+            
+            // Configurar navegación
+            const navLinks = document.querySelectorAll('.nav-menu a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    
+                    // Actualizar navegación activa
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Ocultar todas las páginas
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.style.display = 'none';
+                    });
+                    
+                    // Mostrar página seleccionada
+                    document.getElementById(`${pageId}-page`).style.display = 'block';
+                    
+                    // Ocultar panel de configuración si no es necesario
+                    if (pageId !== 'config') {
+                        document.getElementById('supabase-config-panel').style.display = 'none';
+                    }
+                    
+                    // Actualizar gráfico si vamos al dashboard
+                    if (pageId === 'dashboard' && lineChart) {
+                        setTimeout(() => {
+                            lineChart.resize();
+                        }, 100);
+                    }
+                });
+            });
+            
+            // Configurar filtros
+            document.getElementById('filter-all').addEventListener('click', () => {
+                currentFilter = 'all';
+                actualizarTablaHistorial('all');
+            });
+            document.getElementById('filter-pending').addEventListener('click', () => {
+                currentFilter = 'pendiente';
+                actualizarTablaHistorial('pendiente');
+            });
+            document.getElementById('filter-process').addEventListener('click', () => {
+                currentFilter = 'en proceso';
+                actualizarTablaHistorial('en proceso');
+            });
+            document.getElementById('filter-repaired').addEventListener('click', () => {
+                currentFilter = 'reparado';
+                actualizarTablaHistorial('reparado');
+            });
+            
+            // Configurar búsqueda
+            document.getElementById('search-input').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const tbody = document.querySelector('#history-table tbody');
+                
+                if (!tbody) return;
+                
+                const rows = tbody.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+            
+            // Configurar evento del selector de ubicación
+            document.getElementById('location-select').addEventListener('change', actualizarGraficoLinea);
+            
+            // Configurar evento del selector de período
+            document.getElementById('time-range').addEventListener('change', function() {
+                const customRangeDiv = document.getElementById('custom-range');
+                if (this.value === 'custom') {
+                    customRangeDiv.style.display = 'flex';
+                    customRangeDiv.style.gap = '10px';
+                    customRangeDiv.style.alignItems = 'flex-end';
+                    
+                    // Establecer valores por defecto
+                    const endDate = new Date();
+                    const startDate = new Date();
+                    startDate.setMonth(startDate.getMonth() - 11);
+                    
+                    document.getElementById('end-date').value = endDate.toISOString().slice(0, 7);
+                    document.getElementById('start-date').value = startDate.toISOString().slice(0, 7);
+                    
+                    // Configurar eventos de los controles de fecha
+                    document.getElementById('start-date').addEventListener('change', actualizarGraficoLinea);
+                    document.getElementById('end-date').addEventListener('change', actualizarGraficoLinea);
+                } else {
+                    customRangeDiv.style.display = 'none';
+                    actualizarGraficoLinea();
+                }
+            });
+        });
+        
+        // ==============================================
+        // FUNCIONES GLOBALES
+        // ==============================================
+        window.cambiarEstado = cambiarEstado;
+        window.mostrarConfigPanel = mostrarConfigPanel;
+        window.probarConexion = probarConexion;
+        window.limpiarDatos = limpiarDatos;
+        window.guardarConfigSupabase = guardarConfigSupabase;
+        window.actualizarGraficoLinea = actualizarGraficoLinea;
+        
+    </script>
+</body>
+</html>
