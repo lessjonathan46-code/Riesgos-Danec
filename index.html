@@ -32,6 +32,7 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
 
         .container {
@@ -139,6 +140,7 @@
             border-radius: 5px;
             font-size: 16px;
             transition: border 0.3s;
+            -webkit-appearance: none; /* Remove default iOS styling */
         }
 
         .form-control:focus {
@@ -159,6 +161,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            touch-action: manipulation; /* Better touch on mobile */
         }
 
         .btn-primary {
@@ -231,6 +234,7 @@
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
 
         table {
@@ -387,6 +391,7 @@
             background-color: #f9f9f9;
             transition: all 0.3s;
             margin-bottom: 15px;
+            cursor: pointer;
         }
 
         .image-upload-container:hover {
@@ -400,6 +405,7 @@
             align-items: center;
             cursor: pointer;
             gap: 10px;
+            width: 100%;
         }
 
         .image-upload-label i {
@@ -468,6 +474,7 @@
             z-index: 2000;
             justify-content: center;
             align-items: center;
+            touch-action: none;
         }
 
         .image-modal-content {
@@ -532,6 +539,8 @@
             z-index: 1001;
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .modal-content {
@@ -539,12 +548,65 @@
             padding: 30px;
             border-radius: 10px;
             max-width: 500px;
-            width: 90%;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* RESPONSIVE */
+        /* MOBILE SPECIFIC STYLES */
+        .mobile-image-buttons {
+            display: none;
+            gap: 10px;
+            margin-top: 15px;
+            flex-direction: column;
+        }
+
+        .mobile-image-buttons .btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .camera-preview {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 3000;
+        }
+
+        .camera-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .camera-controls .btn {
+            padding: 15px 30px;
+            font-size: 18px;
+        }
+
+        /* TOUCH FRIENDLY STYLES */
+        .touch-friendly {
+            min-height: 44px; /* Minimum touch target size */
+            min-width: 44px;
+        }
+
+        /* Mejoras para móvil */
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -569,6 +631,67 @@
                 width: 60px;
                 height: 60px;
             }
+
+            .image-upload-container {
+                padding: 15px;
+            }
+            
+            .image-upload-label i {
+                font-size: 30px;
+            }
+            
+            .image-upload-label span {
+                font-size: 14px;
+                text-align: center;
+            }
+            
+            /* Botones más grandes en móvil */
+            .btn {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            /* Asegurar que inputs sean fáciles de tocar */
+            .form-control {
+                padding: 12px;
+                font-size: 16px; /* Previene zoom automático en iOS */
+            }
+            
+            textarea.form-control {
+                min-height: 100px;
+            }
+
+            .mobile-image-buttons {
+                display: flex;
+            }
+
+            .image-upload-label {
+                pointer-events: none; /* Let buttons handle clicks on mobile */
+            }
+
+            /* Mejorar el modal para móvil */
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .image-modal-content {
+                max-width: 95%;
+                max-height: 80vh;
+            }
+            
+            .image-modal-close {
+                top: 10px;
+                right: 15px;
+                font-size: 30px;
+            }
+
+            /* Adjust table for mobile */
+            table th, table td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -584,6 +707,55 @@
             .photo-thumbnail {
                 width: 50px;
                 height: 50px;
+            }
+
+            .image-upload-label span {
+                font-size: 12px;
+            }
+
+            .mobile-image-buttons {
+                flex-direction: column;
+            }
+
+            .mobile-image-buttons .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            /* Make sure everything fits on small screens */
+            .card {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+        }
+
+        /* For very small screens (iPhone SE, etc) */
+        @media (max-width: 320px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 10px;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* Orientation specific */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .modal-content {
+                max-height: 80vh;
+            }
+            
+            .completion-modal {
+                padding: 10px;
             }
         }
     </style>
@@ -612,7 +784,15 @@
                 <div class="image-upload-container">
                     <label class="image-upload-label" id="completionImageLabel">
                         <i class="fas fa-camera"></i>
-                        <span>Haga clic para subir foto de la reparación</span>
+                        <span id="completionText">Haga clic para subir foto de la reparación</span>
+                        <div class="mobile-image-buttons" id="completionMobileButtons" style="display: none;">
+                            <button type="button" class="btn btn-primary" onclick="takeCompletionPhoto()">
+                                <i class="fas fa-camera"></i> Tomar Foto
+                            </button>
+                            <button type="button" class="btn" onclick="selectCompletionFromGallery()">
+                                <i class="fas fa-images"></i> Seleccionar de Galería
+                            </button>
+                        </div>
                         <input type="file" id="completionImage" accept="image/*" style="display: none;">
                     </label>
                 </div>
@@ -633,6 +813,19 @@
                     <i class="fas fa-times"></i> Cancelar
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Camera Preview (hidden by default) -->
+    <div id="cameraPreview" class="camera-preview">
+        <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+        <div class="camera-controls">
+            <button class="btn btn-success" onclick="capturePhoto()">
+                <i class="fas fa-camera"></i> Capturar
+            </button>
+            <button class="btn btn-danger" onclick="closeCamera()">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
         </div>
     </div>
 
@@ -791,13 +984,24 @@
                                 </select>
                             </div>
                             
-                            <!-- Sección para subir evidencia fotográfica -->
+                            <!-- Sección para subir evidencia fotográfica MEJORADA PARA MÓVIL -->
                             <div class="form-group">
                                 <label>Evidencia fotográfica (Opcional pero recomendada)</label>
                                 <div class="image-upload-container">
                                     <label class="image-upload-label" id="imageUploadLabel">
                                         <i class="fas fa-camera"></i>
-                                        <span>Haga clic para subir foto de la condición insegura</span>
+                                        <span id="uploadText">📱 Toca para tomar foto o seleccionar de galería</span>
+                                        <small style="display: block; margin-top: 5px; color: #666; font-size: 12px;">
+                                            Compatible con: Cámara 📸 o Galería 🖼️
+                                        </small>
+                                        <div class="mobile-image-buttons" id="mobileImageButtons">
+                                            <button type="button" class="btn btn-primary" onclick="takePhoto()">
+                                                <i class="fas fa-camera"></i> Tomar Foto
+                                            </button>
+                                            <button type="button" class="btn" onclick="selectFromGallery()">
+                                                <i class="fas fa-images"></i> Seleccionar de Galería
+                                            </button>
+                                        </div>
                                         <input type="file" id="evidenceImage" accept="image/*" style="display: none;">
                                     </label>
                                 </div>
@@ -933,6 +1137,32 @@
         let currentCompletionReportId = null;
         let evidenceImage = null;
         let completionImage = null;
+        let currentCameraStream = null;
+        let isForCompletion = false;
+
+        // ==============================================
+        // DETECCIÓN DE DISPOSITIVO MÓVIL
+        // ==============================================
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   (window.innerWidth <= 768);
+        }
+
+        function checkMobileCompatibility() {
+            if (isMobileDevice()) {
+                console.log('Dispositivo móvil detectado');
+                // Mostrar botones específicos para móvil
+                document.getElementById('mobileImageButtons').style.display = 'flex';
+                document.getElementById('uploadText').textContent = '📱 Elige cómo subir la imagen:';
+                
+                // Para el modal de completar
+                const completionButtons = document.getElementById('completionMobileButtons');
+                if (completionButtons) {
+                    completionButtons.style.display = 'flex';
+                    document.getElementById('completionText').textContent = '📱 Elige cómo subir la imagen:';
+                }
+            }
+        }
 
         // ==============================================
         // FUNCIONES DE UTILIDAD
@@ -958,6 +1188,157 @@
         }
 
         // ==============================================
+        // FUNCIONES ESPECÍFICAS PARA MÓVIL
+        // ==============================================
+        function takePhoto() {
+            isForCompletion = false;
+            openCamera();
+        }
+
+        function takeCompletionPhoto() {
+            isForCompletion = true;
+            openCamera();
+        }
+
+        function selectFromGallery() {
+            isForCompletion = false;
+            const input = document.getElementById('evidenceImage');
+            input.removeAttribute('capture');
+            input.click();
+        }
+
+        function selectCompletionFromGallery() {
+            isForCompletion = true;
+            const input = document.getElementById('completionImage');
+            input.removeAttribute('capture');
+            input.click();
+        }
+
+        function openCamera() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Tu navegador no soporta acceso a cámara. Por favor usa la opción de galería.');
+                return;
+            }
+
+            const cameraPreview = document.getElementById('cameraPreview');
+            const video = document.getElementById('cameraVideo');
+
+            // Solicitar permiso de cámara
+            navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment', // Cámara trasera
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
+                audio: false 
+            }).then(stream => {
+                currentCameraStream = stream;
+                video.srcObject = stream;
+                cameraPreview.style.display = 'block';
+                
+                // Bloquear scroll cuando la cámara está abierta
+                document.body.style.overflow = 'hidden';
+            }).catch(err => {
+                console.error('Error accediendo a la cámara:', err);
+                alert('No se pudo acceder a la cámara: ' + err.message + '\n\nPor favor usa la opción de galería.');
+            });
+        }
+
+        function closeCamera() {
+            const cameraPreview = document.getElementById('cameraPreview');
+            const video = document.getElementById('cameraVideo');
+            
+            if (currentCameraStream) {
+                currentCameraStream.getTracks().forEach(track => track.stop());
+                currentCameraStream = null;
+            }
+            
+            video.srcObject = null;
+            cameraPreview.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convertir a blob y optimizar
+            canvas.toBlob(async (blob) => {
+                const optimizedBlob = await optimizeImageForMobile(new File([blob], 'foto.jpg', { type: 'image/jpeg' }));
+                
+                if (isForCompletion) {
+                    completionImage = optimizedBlob;
+                    previewImage(optimizedBlob, document.getElementById('completionPreview'), 'Evidencia de reparación');
+                } else {
+                    evidenceImage = optimizedBlob;
+                    previewImage(optimizedBlob, document.getElementById('imagePreview'), 'Evidencia del reporte');
+                }
+                
+                closeCamera();
+            }, 'image/jpeg', 0.8);
+        }
+
+        async function optimizeImageForMobile(file) {
+            return new Promise((resolve, reject) => {
+                if (!file.type.startsWith('image/')) {
+                    reject(new Error('No es una imagen válida'));
+                    return;
+                }
+
+                // Solo optimizar si es muy grande o siempre en móvil
+                if (file.size > 1024 * 1024 || isMobileDevice()) { // Mayor a 1MB
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            
+                            // Calcular nuevas dimensiones (máximo 1200px)
+                            let width = img.width;
+                            let height = img.height;
+                            const maxSize = 1200;
+                            
+                            if (width > height && width > maxSize) {
+                                height = (height * maxSize) / width;
+                                width = maxSize;
+                            } else if (height > maxSize) {
+                                width = (width * maxSize) / height;
+                                height = maxSize;
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            // Convertir a JPEG con calidad 80%
+                            canvas.toBlob(function(blob) {
+                                const optimizedFile = new File([blob], file.name, {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                });
+                                resolve(optimizedFile);
+                            }, 'image/jpeg', 0.8);
+                        };
+                        img.onerror = () => resolve(file); // Fallback al archivo original
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = () => resolve(file); // Fallback al archivo original
+                    reader.readAsDataURL(file);
+                } else {
+                    // No necesita optimización
+                    resolve(file);
+                }
+            });
+        }
+
+        // ==============================================
         // MANEJO DE IMÁGENES
         // ==============================================
         function setupImageUpload() {
@@ -966,23 +1347,15 @@
             const evidenceLabel = document.getElementById('imageUploadLabel');
             const evidencePreview = document.getElementById('imagePreview');
             
-            evidenceLabel.addEventListener('click', () => evidenceInput.click());
+            // Solo configurar clic directo en desktop
+            if (!isMobileDevice()) {
+                evidenceLabel.addEventListener('click', () => evidenceInput.click());
+            }
             
-            evidenceInput.addEventListener('change', function(e) {
+            evidenceInput.addEventListener('change', async function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    if (!file.type.startsWith('image/')) {
-                        alert('Por favor seleccione un archivo de imagen válido');
-                        return;
-                    }
-                    
-                    if (file.size > 5 * 1024 * 1024) { // 5MB
-                        alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
-                        return;
-                    }
-                    
-                    evidenceImage = file;
-                    previewImage(file, evidencePreview, 'Evidencia del reporte');
+                    await handleImageUpload(file, evidencePreview, 'evidenceImage');
                 }
             });
             
@@ -991,25 +1364,58 @@
             const completionLabel = document.getElementById('completionImageLabel');
             const completionPreview = document.getElementById('completionPreview');
             
-            completionLabel.addEventListener('click', () => completionInput.click());
+            if (!isMobileDevice()) {
+                completionLabel.addEventListener('click', () => completionInput.click());
+            }
             
-            completionInput.addEventListener('change', function(e) {
+            completionInput.addEventListener('change', async function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    if (!file.type.startsWith('image/')) {
-                        alert('Por favor seleccione un archivo de imagen válido');
-                        return;
-                    }
-                    
-                    if (file.size > 5 * 1024 * 1024) { // 5MB
-                        alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
-                        return;
-                    }
-                    
-                    completionImage = file;
-                    previewImage(file, completionPreview, 'Evidencia de reparación');
+                    await handleImageUpload(file, completionPreview, 'completionImage');
                 }
             });
+        }
+
+        async function handleImageUpload(file, previewContainer, type) {
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor seleccione un archivo de imagen válido');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                // Optimizar imagen
+                const optimizedFile = await optimizeImageForMobile(file);
+                
+                if (optimizedFile.size > 5 * 1024 * 1024) {
+                    alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
+                    showLoading(false);
+                    return;
+                }
+                
+                // Asignar a la variable correspondiente
+                if (type === 'evidenceImage') {
+                    evidenceImage = optimizedFile;
+                    previewImage(optimizedFile, previewContainer, 'Evidencia del reporte');
+                } else if (type === 'completionImage') {
+                    completionImage = optimizedFile;
+                    previewImage(optimizedFile, previewContainer, 'Evidencia de reparación');
+                }
+                
+            } catch (error) {
+                console.error('Error procesando imagen:', error);
+                // Fallback al archivo original
+                if (type === 'evidenceImage') {
+                    evidenceImage = file;
+                    previewImage(file, previewContainer, 'Evidencia del reporte');
+                } else if (type === 'completionImage') {
+                    completionImage = file;
+                    previewImage(file, previewContainer, 'Evidencia de reparación');
+                }
+            }
+            
+            showLoading(false);
         }
 
         function previewImage(file, container, label) {
@@ -1017,7 +1423,7 @@
             reader.onload = function(e) {
                 container.innerHTML = `
                     <div class="image-preview">
-                        <img src="${e.target.result}" alt="${label}">
+                        <img src="${e.target.result}" alt="${label}" loading="lazy">
                         <button type="button" class="remove-btn" onclick="removeImage('${container.id}')">
                             <i class="fas fa-times"></i>
                         </button>
@@ -1043,7 +1449,7 @@
 
         async function uploadImageToSupabase(file, bucket = 'evidencias', folder = 'reportes') {
             try {
-                const fileName = `${folder}/${generateImageName('reporte', Date.now())}.${file.name.split('.').pop()}`;
+                const fileName = `${folder}/${generateImageName('reporte', Date.now())}.jpg`;
                 
                 const { data, error } = await supabaseClient
                     .storage
@@ -1077,24 +1483,30 @@
             
             modalImage.src = imageUrl;
             modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Bloquear scroll
         }
 
         function closeImageModal() {
             document.getElementById('imageModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restaurar scroll
         }
 
         function openCompletionModal(reportId) {
             currentCompletionReportId = reportId;
             document.getElementById('completionModal').style.display = 'flex';
-        }
-
-        function closeCompletionModal() {
-            document.getElementById('completionModal').style.display = 'none';
-            currentCompletionReportId = null;
+            document.body.style.overflow = 'hidden'; // Bloquear scroll
+            
+            // Resetear el formulario de completar
             completionImage = null;
             document.getElementById('completionPreview').innerHTML = '';
             document.getElementById('completionImage').value = '';
             document.getElementById('completionNotes').value = '';
+        }
+
+        function closeCompletionModal() {
+            document.getElementById('completionModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restaurar scroll
+            currentCompletionReportId = null;
         }
 
         // ==============================================
@@ -1126,7 +1538,7 @@
         }
 
         // ==============================================
-        // FUNCIONES CRUD
+        // FUNCIONES CRUD (MANTENER IGUAL)
         // ==============================================
         async function cargarReportes() {
             showLoading(true);
@@ -1226,7 +1638,7 @@
         }
 
         // ==============================================
-        // FUNCIONES DE INTERFAZ
+        // FUNCIONES DE INTERFAZ (MANTENER IGUAL)
         // ==============================================
         function actualizarUI() {
             actualizarEstadisticas();
@@ -1272,7 +1684,7 @@
                 if (reporte.foto_antes) {
                     fotosHTML += `
                         <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
-                            <img src="${reporte.foto_antes}" alt="Antes">
+                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
                             <div class="photo-status">Reporte</div>
                         </div>
                     `;
@@ -1280,7 +1692,7 @@
                 if (reporte.foto_despues) {
                     fotosHTML += `
                         <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
-                            <img src="${reporte.foto_despues}" alt="Después">
+                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
                             <div class="photo-status">Reparado</div>
                         </div>
                     `;
@@ -1327,7 +1739,7 @@
                 if (reporte.foto_antes) {
                     fotosHTML += `
                         <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
-                            <img src="${reporte.foto_antes}" alt="Antes">
+                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
                             <div class="photo-status">Reporte</div>
                         </div>
                     `;
@@ -1335,7 +1747,7 @@
                 if (reporte.foto_despues) {
                     fotosHTML += `
                         <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
-                            <img src="${reporte.foto_despues}" alt="Después">
+                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
                             <div class="photo-status">Reparado</div>
                         </div>
                     `;
@@ -1758,6 +2170,7 @@
             document.getElementById('report-form').reset();
             evidenceImage = null;
             document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('evidenceImage').value = '';
             document.querySelector('.nav-menu a[data-page="dashboard"]').click();
         }
 
@@ -1806,6 +2219,9 @@
             document.getElementById('imageModal').addEventListener('click', function(e) {
                 if (e.target === this) closeImageModal();
             });
+            
+            // Configurar para móvil
+            checkMobileCompatibility();
             
             // Configurar subida de imágenes
             setupImageUpload();
@@ -1894,6 +2310,23 @@
                     await cargarReportes();
                 }
             }, 30000);
+
+            // Manejar cambios de orientación en móvil
+            window.addEventListener('orientationchange', function() {
+                // Redibujar gráficos cuando cambia la orientación
+                setTimeout(() => {
+                    if (lineChart) lineChart.resize();
+                    if (analysisChart) analysisChart.resize();
+                }, 300);
+            });
+        });
+
+        // Manejar cuando la página se vuelve visible (por ejemplo, al volver de la cámara)
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                // La página volvió a ser visible
+                console.log('Página visible de nuevo');
+            }
         });
 
         // Exportar funciones globales
@@ -1904,6 +2337,12 @@
         window.openCompletionModal = openCompletionModal;
         window.closeCompletionModal = closeCompletionModal;
         window.removeImage = removeImage;
+        window.takePhoto = takePhoto;
+        window.selectFromGallery = selectFromGallery;
+        window.takeCompletionPhoto = takeCompletionPhoto;
+        window.selectCompletionFromGallery = selectCompletionFromGallery;
+        window.capturePhoto = capturePhoto;
+        window.closeCamera = closeCamera;
     </script>
 </body>
 </html>
