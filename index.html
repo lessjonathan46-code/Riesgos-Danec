@@ -378,6 +378,172 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* IMAGENES */
+        .image-upload-container {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .image-upload-container:hover {
+            border-color: var(--secondary);
+            background-color: #f0f7ff;
+        }
+
+        .image-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            gap: 10px;
+        }
+
+        .image-upload-label i {
+            font-size: 40px;
+            color: var(--secondary);
+        }
+
+        .image-preview-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .image-preview {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-badge {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 11px;
+            padding: 3px;
+            text-align: center;
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        /* VISUALIZACION DE FOTOS EN HISTORIAL */
+        .photos-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .photo-thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .photo-thumbnail:hover {
+            border-color: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .photo-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-status {
+            font-size: 10px;
+            text-align: center;
+            margin-top: 2px;
+            color: #666;
+        }
+
+        /* MODAL PARA COMPLETAR REPORTE */
+        .completion-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .main-content {
@@ -393,11 +559,31 @@
                 gap: 15px;
                 text-align: center;
             }
+
+            .image-preview {
+                width: 120px;
+                height: 120px;
+            }
+
+            .photo-thumbnail {
+                width: 60px;
+                height: 60px;
+            }
         }
 
         @media (max-width: 480px) {
             .stats-container {
                 grid-template-columns: 1fr;
+            }
+
+            .image-preview {
+                width: 100px;
+                height: 100px;
+            }
+
+            .photo-thumbnail {
+                width: 50px;
+                height: 50px;
             }
         }
     </style>
@@ -407,6 +593,47 @@
     <div id="loading" class="loading">
         <div class="spinner"></div>
         <p>Cargando datos...</p>
+    </div>
+
+    <!-- Modal para ver imagen -->
+    <div id="imageModal" class="image-modal">
+        <span class="image-modal-close">&times;</span>
+        <img id="modalImage" class="image-modal-content">
+    </div>
+
+    <!-- Modal para completar reporte -->
+    <div id="completionModal" class="completion-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-check-circle"></i> Completar Reporte</h2>
+            <p>Para completar este reporte, por favor suba una foto de la condición ya reparada:</p>
+            
+            <div class="form-group">
+                <label>Evidencia de la reparación *</label>
+                <div class="image-upload-container">
+                    <label class="image-upload-label" id="completionImageLabel">
+                        <i class="fas fa-camera"></i>
+                        <span>Haga clic para subir foto de la reparación</span>
+                        <input type="file" id="completionImage" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+                <div class="image-preview-container" id="completionPreview"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="completionNotes">Notas adicionales</label>
+                <textarea class="form-control" id="completionNotes" rows="3" 
+                          placeholder="Agregue notas sobre la reparación realizada..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button class="btn btn-success" onclick="submitCompletion()">
+                    <i class="fas fa-check"></i> Confirmar Reparación
+                </button>
+                <button class="btn" onclick="closeCompletionModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
     </div>
 
     <header>
@@ -505,6 +732,7 @@
                                         <th>Reportado por</th>
                                         <th>Fecha</th>
                                         <th>Estado</th>
+                                        <th>Evidencia</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -563,6 +791,19 @@
                                 </select>
                             </div>
                             
+                            <!-- Sección para subir evidencia fotográfica -->
+                            <div class="form-group">
+                                <label>Evidencia fotográfica (Opcional pero recomendada)</label>
+                                <div class="image-upload-container">
+                                    <label class="image-upload-label" id="imageUploadLabel">
+                                        <i class="fas fa-camera"></i>
+                                        <span>Haga clic para subir foto de la condición insegura</span>
+                                        <input type="file" id="evidenceImage" accept="image/*" style="display: none;">
+                                    </label>
+                                </div>
+                                <div class="image-preview-container" id="imagePreview"></div>
+                            </div>
+                            
                             <div style="display: flex; gap: 10px; margin-top: 30px;">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save"></i> Guardar Reporte
@@ -604,6 +845,7 @@
                                         <th>Reportado por</th>
                                         <th>Nivel Riesgo</th>
                                         <th>Estado</th>
+                                        <th>Fotos</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -688,6 +930,9 @@
         let analysisChart = null;
         let currentFilter = 'all';
         let currentAnalysisTab = 'categoria';
+        let currentCompletionReportId = null;
+        let evidenceImage = null;
+        let completionImage = null;
 
         // ==============================================
         // FUNCIONES DE UTILIDAD
@@ -704,6 +949,152 @@
                 month: 'short',
                 day: 'numeric'
             });
+        }
+
+        function generateImageName(type, id) {
+            const timestamp = new Date().getTime();
+            const random = Math.random().toString(36).substring(2, 8);
+            return `${type}_${id}_${timestamp}_${random}`;
+        }
+
+        // ==============================================
+        // MANEJO DE IMÁGENES
+        // ==============================================
+        function setupImageUpload() {
+            // Configurar subida de imagen de evidencia
+            const evidenceInput = document.getElementById('evidenceImage');
+            const evidenceLabel = document.getElementById('imageUploadLabel');
+            const evidencePreview = document.getElementById('imagePreview');
+            
+            evidenceLabel.addEventListener('click', () => evidenceInput.click());
+            
+            evidenceInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (!file.type.startsWith('image/')) {
+                        alert('Por favor seleccione un archivo de imagen válido');
+                        return;
+                    }
+                    
+                    if (file.size > 5 * 1024 * 1024) { // 5MB
+                        alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
+                        return;
+                    }
+                    
+                    evidenceImage = file;
+                    previewImage(file, evidencePreview, 'Evidencia del reporte');
+                }
+            });
+            
+            // Configurar subida de imagen de completado
+            const completionInput = document.getElementById('completionImage');
+            const completionLabel = document.getElementById('completionImageLabel');
+            const completionPreview = document.getElementById('completionPreview');
+            
+            completionLabel.addEventListener('click', () => completionInput.click());
+            
+            completionInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (!file.type.startsWith('image/')) {
+                        alert('Por favor seleccione un archivo de imagen válido');
+                        return;
+                    }
+                    
+                    if (file.size > 5 * 1024 * 1024) { // 5MB
+                        alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
+                        return;
+                    }
+                    
+                    completionImage = file;
+                    previewImage(file, completionPreview, 'Evidencia de reparación');
+                }
+            });
+        }
+
+        function previewImage(file, container, label) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                container.innerHTML = `
+                    <div class="image-preview">
+                        <img src="${e.target.result}" alt="${label}">
+                        <button type="button" class="remove-btn" onclick="removeImage('${container.id}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="image-badge">${label}</div>
+                    </div>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (containerId === 'imagePreview') {
+                evidenceImage = null;
+                document.getElementById('evidenceImage').value = '';
+            } else if (containerId === 'completionPreview') {
+                completionImage = null;
+                document.getElementById('completionImage').value = '';
+            }
+        }
+
+        async function uploadImageToSupabase(file, bucket = 'evidencias', folder = 'reportes') {
+            try {
+                const fileName = `${folder}/${generateImageName('reporte', Date.now())}.${file.name.split('.').pop()}`;
+                
+                const { data, error } = await supabaseClient
+                    .storage
+                    .from(bucket)
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+                
+                if (error) throw error;
+                
+                // Obtener URL pública
+                const { data: { publicUrl } } = supabaseClient
+                    .storage
+                    .from(bucket)
+                    .getPublicUrl(fileName);
+                
+                return publicUrl;
+            } catch (error) {
+                console.error('Error subiendo imagen:', error);
+                return null;
+            }
+        }
+
+        // ==============================================
+        // MODALES PARA IMÁGENES
+        // ==============================================
+        function openImageModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            modalImage.src = imageUrl;
+            modal.style.display = 'flex';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        function openCompletionModal(reportId) {
+            currentCompletionReportId = reportId;
+            document.getElementById('completionModal').style.display = 'flex';
+        }
+
+        function closeCompletionModal() {
+            document.getElementById('completionModal').style.display = 'none';
+            currentCompletionReportId = null;
+            completionImage = null;
+            document.getElementById('completionPreview').innerHTML = '';
+            document.getElementById('completionImage').value = '';
+            document.getElementById('completionNotes').value = '';
         }
 
         // ==============================================
@@ -761,6 +1152,14 @@
         async function guardarReporte(reporte) {
             showLoading(true);
             try {
+                // Subir imagen si existe
+                if (evidenceImage) {
+                    const imageUrl = await uploadImageToSupabase(evidenceImage);
+                    if (imageUrl) {
+                        reporte.foto_antes = imageUrl;
+                    }
+                }
+                
                 const { data, error } = await supabaseClient
                     .from('condiciones_inseguras')
                     .insert([reporte])
@@ -779,6 +1178,32 @@
                 showLoading(false);
                 alert('❌ Error al guardar el reporte');
                 return null;
+            }
+        }
+
+        async function completarReporte(id, imageUrl, notas) {
+            try {
+                const updateData = {
+                    estado: 'reparado',
+                    fecha_reparacion: new Date().toISOString().split('T')[0],
+                    notas_reparacion: notas,
+                    foto_despues: imageUrl
+                };
+                
+                const { error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .update(updateData)
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                await cargarReportes();
+                closeCompletionModal();
+                alert('✅ Reporte completado exitosamente');
+                
+            } catch (error) {
+                console.error('Error completando reporte:', error);
+                alert('❌ Error al completar el reporte');
             }
         }
 
@@ -842,6 +1267,29 @@
                     ? reporte.descripcion.substring(0, 60) + '...' 
                     : reporte.descripcion;
                 
+                // Generar miniaturas de fotos
+                let fotosHTML = '<div class="photos-container">';
+                if (reporte.foto_antes) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
+                            <img src="${reporte.foto_antes}" alt="Antes">
+                            <div class="photo-status">Reporte</div>
+                        </div>
+                    `;
+                }
+                if (reporte.foto_despues) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
+                            <img src="${reporte.foto_despues}" alt="Después">
+                            <div class="photo-status">Reparado</div>
+                        </div>
+                    `;
+                }
+                if (!reporte.foto_antes && !reporte.foto_despues) {
+                    fotosHTML += '<span style="color: #999; font-size: 12px;">Sin fotos</span>';
+                }
+                fotosHTML += '</div>';
+                
                 return `
                     <tr>
                         <td>${reporte.id}</td>
@@ -850,6 +1298,7 @@
                         <td>${reporte.reportado_por || 'N/A'}</td>
                         <td>${formatDate(reporte.fecha)}</td>
                         <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>${fotosHTML}</td>
                     </tr>
                 `;
             }).join('');
@@ -873,6 +1322,29 @@
                 if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
                 if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
                 
+                // Generar miniaturas de fotos
+                let fotosHTML = '<div class="photos-container">';
+                if (reporte.foto_antes) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
+                            <img src="${reporte.foto_antes}" alt="Antes">
+                            <div class="photo-status">Reporte</div>
+                        </div>
+                    `;
+                }
+                if (reporte.foto_despues) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
+                            <img src="${reporte.foto_despues}" alt="Después">
+                            <div class="photo-status">Reparado</div>
+                        </div>
+                    `;
+                }
+                if (!reporte.foto_antes && !reporte.foto_despues) {
+                    fotosHTML += '<span style="color: #999; font-size: 12px;">Sin fotos</span>';
+                }
+                fotosHTML += '</div>';
+                
                 let acciones = '';
                 if (reporte.estado === 'pendiente') {
                     acciones = `
@@ -882,7 +1354,7 @@
                     `;
                 } else if (reporte.estado === 'en proceso') {
                     acciones = `
-                        <button class="btn btn-success" onclick="cambiarEstado(${reporte.id}, 'reparado')" style="padding: 5px 10px; font-size: 12px;">
+                        <button class="btn btn-success" onclick="openCompletionModal(${reporte.id})" style="padding: 5px 10px; font-size: 12px;">
                             <i class="fas fa-check"></i> Completar
                         </button>
                     `;
@@ -904,6 +1376,7 @@
                         <td>${reporte.reportado_por || 'N/A'}</td>
                         <td>${reporte.prioridad || 'N/A'}</td>
                         <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>${fotosHTML}</td>
                         <td>${acciones}</td>
                     </tr>
                 `;
@@ -1271,7 +1744,8 @@
                 categoria: document.getElementById('category').value,
                 prioridad: document.getElementById('priority').value,
                 estado: 'pendiente',
-                fecha: new Date().toISOString().split('T')[0]
+                fecha: new Date().toISOString().split('T')[0],
+                foto_antes: null
             };
             
             if (!reporte.reportado_por || !reporte.descripcion || !reporte.ubicacion || 
@@ -1282,11 +1756,41 @@
             
             await guardarReporte(reporte);
             document.getElementById('report-form').reset();
+            evidenceImage = null;
+            document.getElementById('imagePreview').innerHTML = '';
             document.querySelector('.nav-menu a[data-page="dashboard"]').click();
+        }
+
+        async function submitCompletion() {
+            if (!completionImage) {
+                alert('❌ Por favor suba una foto de la reparación realizada');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const imageUrl = await uploadImageToSupabase(completionImage, 'evidencias', 'reparaciones');
+                if (!imageUrl) {
+                    throw new Error('Error subiendo imagen');
+                }
+                
+                const notas = document.getElementById('completionNotes').value;
+                await completarReporte(currentCompletionReportId, imageUrl, notas);
+                
+            } catch (error) {
+                console.error('Error completando reporte:', error);
+                alert('❌ Error al completar el reporte');
+            } finally {
+                showLoading(false);
+            }
         }
 
         function resetForm() {
             document.getElementById('report-form').reset();
+            evidenceImage = null;
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('evidenceImage').value = '';
         }
 
         function cambiarEstado(id, nuevoEstado) {
@@ -1297,6 +1801,15 @@
         // INICIALIZACIÓN DE LA APLICACIÓN
         // ==============================================
         document.addEventListener('DOMContentLoaded', async function() {
+            // Configurar cierre de modales
+            document.querySelector('.image-modal-close').addEventListener('click', closeImageModal);
+            document.getElementById('imageModal').addEventListener('click', function(e) {
+                if (e.target === this) closeImageModal();
+            });
+            
+            // Configurar subida de imágenes
+            setupImageUpload();
+            
             // Inicializar navegación
             document.querySelectorAll('.nav-menu a').forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -1386,6 +1899,11 @@
         // Exportar funciones globales
         window.cambiarEstado = cambiarEstado;
         window.resetForm = resetForm;
+        window.openImageModal = openImageModal;
+        window.closeImageModal = closeImageModal;
+        window.openCompletionModal = openCompletionModal;
+        window.closeCompletionModal = closeCompletionModal;
+        window.removeImage = removeImage;
     </script>
 </body>
 </html>
