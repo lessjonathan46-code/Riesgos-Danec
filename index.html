@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Condiciones Inseguras Industrias Danec - Conectado</title>
+    <title>Sistema de Condiciones Inseguras - Conectado</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Supabase CDN -->
@@ -321,6 +321,43 @@
             color: #27ae60;
         }
 
+        /* TIEMPO TRANSCURRIDO */
+        .time-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            color: #666;
+            border: 1px solid #e9ecef;
+            margin-top: 4px;
+        }
+
+        .time-badge.critico {
+            background-color: #fee;
+            color: #e74c3c;
+            border-color: #f5c6cb;
+        }
+
+        .time-badge.alto {
+            background-color: #fff3cd;
+            color: #e67e22;
+            border-color: #ffeaa7;
+        }
+
+        .time-badge.medio {
+            background-color: #d1ecf1;
+            color: #17a2b8;
+            border-color: #bee5eb;
+        }
+
+        .time-badge.bajo {
+            background-color: #d4edda;
+            color: #28a745;
+            border-color: #c3e6cb;
+        }
+
         /* NAVEGACIÓN */
         .nav-menu {
             list-style: none;
@@ -554,59 +591,7 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* MOBILE SPECIFIC STYLES */
-        .mobile-image-buttons {
-            display: none;
-            gap: 10px;
-            margin-top: 15px;
-            flex-direction: column;
-        }
-
-        .mobile-image-buttons .btn {
-            flex: 1;
-            padding: 15px;
-            font-size: 16px;
-        }
-
-        .camera-preview {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 3000;
-        }
-
-        .camera-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .camera-controls {
-            position: absolute;
-            bottom: 40px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .camera-controls .btn {
-            padding: 15px 30px;
-            font-size: 18px;
-        }
-
-        /* TOUCH FRIENDLY STYLES */
-        .touch-friendly {
-            min-height: 44px; /* Minimum touch target size */
-            min-width: 44px;
-        }
-
-        /* Mejoras para móvil */
+        /* RESPONSIVE */
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -632,65 +617,18 @@
                 height: 60px;
             }
 
-            .image-upload-container {
-                padding: 15px;
-            }
-            
-            .image-upload-label i {
-                font-size: 30px;
-            }
-            
-            .image-upload-label span {
-                font-size: 14px;
-                text-align: center;
-            }
-            
-            /* Botones más grandes en móvil */
-            .btn {
-                padding: 12px 15px;
+            /* Ajustes para tabla en móvil */
+            .table-container {
                 font-size: 14px;
             }
             
-            /* Asegurar que inputs sean fáciles de tocar */
-            .form-control {
-                padding: 12px;
-                font-size: 16px; /* Previene zoom automático en iOS */
-            }
-            
-            textarea.form-control {
-                min-height: 100px;
-            }
-
-            .mobile-image-buttons {
-                display: flex;
-            }
-
-            .image-upload-label {
-                pointer-events: none; /* Let buttons handle clicks on mobile */
-            }
-
-            /* Mejorar el modal para móvil */
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-                margin: 10px;
-            }
-            
-            .image-modal-content {
-                max-width: 95%;
-                max-height: 80vh;
-            }
-            
-            .image-modal-close {
-                top: 10px;
-                right: 15px;
-                font-size: 30px;
-            }
-
-            /* Adjust table for mobile */
             table th, table td {
                 padding: 8px 10px;
-                font-size: 14px;
+            }
+            
+            .time-badge {
+                font-size: 10px;
+                padding: 2px 6px;
             }
         }
 
@@ -708,54 +646,11 @@
                 width: 50px;
                 height: 50px;
             }
-
-            .image-upload-label span {
-                font-size: 12px;
-            }
-
-            .mobile-image-buttons {
-                flex-direction: column;
-            }
-
-            .mobile-image-buttons .btn {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-
-            /* Make sure everything fits on small screens */
-            .card {
-                padding: 15px;
-            }
-
-            h2 {
-                font-size: 18px;
-            }
-        }
-
-        /* For very small screens (iPhone SE, etc) */
-        @media (max-width: 320px) {
-            .container {
-                padding: 10px;
-            }
             
-            .card {
-                padding: 10px;
-            }
-            
-            .btn {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-        }
-
-        /* Orientation specific */
-        @media (max-height: 600px) and (orientation: landscape) {
-            .modal-content {
-                max-height: 80vh;
-            }
-            
-            .completion-modal {
-                padding: 10px;
+            /* Ocultar columnas menos importantes en móvil */
+            .recent-table-mobile th:nth-child(1),
+            .recent-table-mobile td:nth-child(1) {
+                display: none;
             }
         }
     </style>
@@ -785,14 +680,6 @@
                     <label class="image-upload-label" id="completionImageLabel">
                         <i class="fas fa-camera"></i>
                         <span id="completionText">Haga clic para subir foto de la reparación</span>
-                        <div class="mobile-image-buttons" id="completionMobileButtons" style="display: none;">
-                            <button type="button" class="btn btn-primary" onclick="takeCompletionPhoto()">
-                                <i class="fas fa-camera"></i> Tomar Foto
-                            </button>
-                            <button type="button" class="btn" onclick="selectCompletionFromGallery()">
-                                <i class="fas fa-images"></i> Seleccionar de Galería
-                            </button>
-                        </div>
                         <input type="file" id="completionImage" accept="image/*" style="display: none;">
                     </label>
                 </div>
@@ -813,19 +700,6 @@
                     <i class="fas fa-times"></i> Cancelar
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Camera Preview (hidden by default) -->
-    <div id="cameraPreview" class="camera-preview">
-        <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
-        <div class="camera-controls">
-            <button class="btn btn-success" onclick="capturePhoto()">
-                <i class="fas fa-camera"></i> Capturar
-            </button>
-            <button class="btn btn-danger" onclick="closeCamera()">
-                <i class="fas fa-times"></i> Cancelar
-            </button>
         </div>
     </div>
 
@@ -922,9 +796,8 @@
                                         <th>ID</th>
                                         <th>Descripción</th>
                                         <th>Ubicación</th>
-                                        <th>Reportado por</th>
-                                        <th>Fecha</th>
                                         <th>Estado</th>
+                                        <th>Tiempo Transcurrido</th>
                                         <th>Evidencia</th>
                                     </tr>
                                 </thead>
@@ -984,24 +857,13 @@
                                 </select>
                             </div>
                             
-                            <!-- Sección para subir evidencia fotográfica MEJORADA PARA MÓVIL -->
+                            <!-- Sección para subir evidencia fotográfica -->
                             <div class="form-group">
                                 <label>Evidencia fotográfica (Opcional pero recomendada)</label>
                                 <div class="image-upload-container">
                                     <label class="image-upload-label" id="imageUploadLabel">
                                         <i class="fas fa-camera"></i>
-                                        <span id="uploadText">📱 Toca para tomar foto o seleccionar de galería</span>
-                                        <small style="display: block; margin-top: 5px; color: #666; font-size: 12px;">
-                                            Compatible con: Cámara 📸 o Galería 🖼️
-                                        </small>
-                                        <div class="mobile-image-buttons" id="mobileImageButtons">
-                                            <button type="button" class="btn btn-primary" onclick="takePhoto()">
-                                                <i class="fas fa-camera"></i> Tomar Foto
-                                            </button>
-                                            <button type="button" class="btn" onclick="selectFromGallery()">
-                                                <i class="fas fa-images"></i> Seleccionar de Galería
-                                            </button>
-                                        </div>
+                                        <span>Haga clic para subir foto de la condición insegura</span>
                                         <input type="file" id="evidenceImage" accept="image/*" style="display: none;">
                                     </label>
                                 </div>
@@ -1046,9 +908,8 @@
                                         <th>Ubicación</th>
                                         <th>Categoría</th>
                                         <th>Fecha</th>
-                                        <th>Reportado por</th>
-                                        <th>Nivel Riesgo</th>
                                         <th>Estado</th>
+                                        <th>Tiempo</th>
                                         <th>Fotos</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -1137,31 +998,90 @@
         let currentCompletionReportId = null;
         let evidenceImage = null;
         let completionImage = null;
-        let currentCameraStream = null;
-        let isForCompletion = false;
 
         // ==============================================
-        // DETECCIÓN DE DISPOSITIVO MÓVIL
+        // FUNCIONES PARA CALCULAR TIEMPO TRANSCURRIDO
         // ==============================================
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                   (window.innerWidth <= 768);
-        }
-
-        function checkMobileCompatibility() {
-            if (isMobileDevice()) {
-                console.log('Dispositivo móvil detectado');
-                // Mostrar botones específicos para móvil
-                document.getElementById('mobileImageButtons').style.display = 'flex';
-                document.getElementById('uploadText').textContent = '📱 Elige cómo subir la imagen:';
+        function calcularTiempoTranscurrido(reporte) {
+            const fechaReporte = new Date(reporte.fecha);
+            const ahora = new Date();
+            let fechaFin = ahora;
+            let estado = 'activo';
+            
+            // Si el reporte está reparado, usar fecha de reparación
+            if (reporte.estado === 'reparado' && reporte.fecha_reparacion) {
+                fechaFin = new Date(reporte.fecha_reparacion);
+                estado = 'completado';
+            }
+            
+            // Calcular diferencia en milisegundos
+            const diffMs = fechaFin - fechaReporte;
+            const diffSegundos = Math.floor(diffMs / 1000);
+            const diffMinutos = Math.floor(diffSegundos / 60);
+            const diffHoras = Math.floor(diffMinutos / 60);
+            const diffDias = Math.floor(diffHoras / 24);
+            
+            // Formatear el tiempo
+            let tiempoFormateado = '';
+            let colorClase = '';
+            
+            if (diffDias > 0) {
+                tiempoFormateado = `${diffDias} día${diffDias > 1 ? 's' : ''}`;
+                if (diffDias > 30) tiempoFormateado = `${Math.floor(diffDias/30)} mes${Math.floor(diffDias/30) > 1 ? 'es' : ''}`;
+                if (diffDias > 365) tiempoFormateado = `${Math.floor(diffDias/365)} año${Math.floor(diffDias/365) > 1 ? 's' : ''}`;
+            } else if (diffHoras > 0) {
+                tiempoFormateado = `${diffHoras} hora${diffHoras > 1 ? 's' : ''}`;
+            } else if (diffMinutos > 0) {
+                tiempoFormateado = `${diffMinutos} minuto${diffMinutos > 1 ? 's' : ''}`;
+            } else {
+                tiempoFormateado = `${diffSegundos} segundo${diffSegundos > 1 ? 's' : ''}`;
+            }
+            
+            // Determinar color según tiempo y prioridad
+            if (estado === 'completado') {
+                colorClase = 'bajo'; // Verde para completados
+            } else {
+                // Reportes activos: color según tiempo y prioridad
+                const prioridad = reporte.prioridad || 'medio';
                 
-                // Para el modal de completar
-                const completionButtons = document.getElementById('completionMobileButtons');
-                if (completionButtons) {
-                    completionButtons.style.display = 'flex';
-                    document.getElementById('completionText').textContent = '📱 Elige cómo subir la imagen:';
+                if (diffDias >= 30) {
+                    colorClase = 'critico'; // Rojo para más de 30 días
+                } else if (diffDias >= 14) {
+                    colorClase = 'alto'; // Naranja para 14-29 días
+                } else if (diffDias >= 7) {
+                    colorClase = 'medio'; // Azul para 7-13 días
+                } else if (prioridad === 'critico' && diffDias >= 2) {
+                    colorClase = 'alto'; // Naranja para críticos con más de 2 días
+                } else if (prioridad === 'alto' && diffDias >= 3) {
+                    colorClase = 'medio'; // Azul para altos con más de 3 días
+                } else {
+                    colorClase = 'bajo'; // Verde para menos tiempo
                 }
             }
+            
+            return {
+                texto: estado === 'completado' ? `Completado en ${tiempoFormateado}` : `Activo ${tiempoFormateado}`,
+                color: colorClase,
+                dias: diffDias,
+                estado: estado
+            };
+        }
+
+        function calcularTiempoPromedioResolucion() {
+            const reportesCompletados = reportes.filter(r => r.estado === 'reparado' && r.fecha && r.fecha_reparacion);
+            
+            if (reportesCompletados.length === 0) return '0 días';
+            
+            let totalDias = 0;
+            reportesCompletados.forEach(reporte => {
+                const fechaInicio = new Date(reporte.fecha);
+                const fechaFin = new Date(reporte.fecha_reparacion);
+                const diffDias = Math.floor((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
+                totalDias += diffDias;
+            });
+            
+            const promedio = Math.round(totalDias / reportesCompletados.length);
+            return `${promedio} día${promedio !== 1 ? 's' : ''}`;
         }
 
         // ==============================================
@@ -1188,157 +1108,6 @@
         }
 
         // ==============================================
-        // FUNCIONES ESPECÍFICAS PARA MÓVIL
-        // ==============================================
-        function takePhoto() {
-            isForCompletion = false;
-            openCamera();
-        }
-
-        function takeCompletionPhoto() {
-            isForCompletion = true;
-            openCamera();
-        }
-
-        function selectFromGallery() {
-            isForCompletion = false;
-            const input = document.getElementById('evidenceImage');
-            input.removeAttribute('capture');
-            input.click();
-        }
-
-        function selectCompletionFromGallery() {
-            isForCompletion = true;
-            const input = document.getElementById('completionImage');
-            input.removeAttribute('capture');
-            input.click();
-        }
-
-        function openCamera() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert('Tu navegador no soporta acceso a cámara. Por favor usa la opción de galería.');
-                return;
-            }
-
-            const cameraPreview = document.getElementById('cameraPreview');
-            const video = document.getElementById('cameraVideo');
-
-            // Solicitar permiso de cámara
-            navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    facingMode: 'environment', // Cámara trasera
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                },
-                audio: false 
-            }).then(stream => {
-                currentCameraStream = stream;
-                video.srcObject = stream;
-                cameraPreview.style.display = 'block';
-                
-                // Bloquear scroll cuando la cámara está abierta
-                document.body.style.overflow = 'hidden';
-            }).catch(err => {
-                console.error('Error accediendo a la cámara:', err);
-                alert('No se pudo acceder a la cámara: ' + err.message + '\n\nPor favor usa la opción de galería.');
-            });
-        }
-
-        function closeCamera() {
-            const cameraPreview = document.getElementById('cameraPreview');
-            const video = document.getElementById('cameraVideo');
-            
-            if (currentCameraStream) {
-                currentCameraStream.getTracks().forEach(track => track.stop());
-                currentCameraStream = null;
-            }
-            
-            video.srcObject = null;
-            cameraPreview.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        function capturePhoto() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Convertir a blob y optimizar
-            canvas.toBlob(async (blob) => {
-                const optimizedBlob = await optimizeImageForMobile(new File([blob], 'foto.jpg', { type: 'image/jpeg' }));
-                
-                if (isForCompletion) {
-                    completionImage = optimizedBlob;
-                    previewImage(optimizedBlob, document.getElementById('completionPreview'), 'Evidencia de reparación');
-                } else {
-                    evidenceImage = optimizedBlob;
-                    previewImage(optimizedBlob, document.getElementById('imagePreview'), 'Evidencia del reporte');
-                }
-                
-                closeCamera();
-            }, 'image/jpeg', 0.8);
-        }
-
-        async function optimizeImageForMobile(file) {
-            return new Promise((resolve, reject) => {
-                if (!file.type.startsWith('image/')) {
-                    reject(new Error('No es una imagen válida'));
-                    return;
-                }
-
-                // Solo optimizar si es muy grande o siempre en móvil
-                if (file.size > 1024 * 1024 || isMobileDevice()) { // Mayor a 1MB
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = new Image();
-                        img.onload = function() {
-                            const canvas = document.createElement('canvas');
-                            
-                            // Calcular nuevas dimensiones (máximo 1200px)
-                            let width = img.width;
-                            let height = img.height;
-                            const maxSize = 1200;
-                            
-                            if (width > height && width > maxSize) {
-                                height = (height * maxSize) / width;
-                                width = maxSize;
-                            } else if (height > maxSize) {
-                                width = (width * maxSize) / height;
-                                height = maxSize;
-                            }
-                            
-                            canvas.width = width;
-                            canvas.height = height;
-                            
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-                            
-                            // Convertir a JPEG con calidad 80%
-                            canvas.toBlob(function(blob) {
-                                const optimizedFile = new File([blob], file.name, {
-                                    type: 'image/jpeg',
-                                    lastModified: Date.now()
-                                });
-                                resolve(optimizedFile);
-                            }, 'image/jpeg', 0.8);
-                        };
-                        img.onerror = () => resolve(file); // Fallback al archivo original
-                        img.src = e.target.result;
-                    };
-                    reader.onerror = () => resolve(file); // Fallback al archivo original
-                    reader.readAsDataURL(file);
-                } else {
-                    // No necesita optimización
-                    resolve(file);
-                }
-            });
-        }
-
-        // ==============================================
         // MANEJO DE IMÁGENES
         // ==============================================
         function setupImageUpload() {
@@ -1347,15 +1116,23 @@
             const evidenceLabel = document.getElementById('imageUploadLabel');
             const evidencePreview = document.getElementById('imagePreview');
             
-            // Solo configurar clic directo en desktop
-            if (!isMobileDevice()) {
-                evidenceLabel.addEventListener('click', () => evidenceInput.click());
-            }
+            evidenceLabel.addEventListener('click', () => evidenceInput.click());
             
-            evidenceInput.addEventListener('change', async function(e) {
+            evidenceInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    await handleImageUpload(file, evidencePreview, 'evidenceImage');
+                    if (!file.type.startsWith('image/')) {
+                        alert('Por favor seleccione un archivo de imagen válido');
+                        return;
+                    }
+                    
+                    if (file.size > 5 * 1024 * 1024) { // 5MB
+                        alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
+                        return;
+                    }
+                    
+                    evidenceImage = file;
+                    previewImage(file, evidencePreview, 'Evidencia del reporte');
                 }
             });
             
@@ -1364,58 +1141,25 @@
             const completionLabel = document.getElementById('completionImageLabel');
             const completionPreview = document.getElementById('completionPreview');
             
-            if (!isMobileDevice()) {
-                completionLabel.addEventListener('click', () => completionInput.click());
-            }
+            completionLabel.addEventListener('click', () => completionInput.click());
             
-            completionInput.addEventListener('change', async function(e) {
+            completionInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    await handleImageUpload(file, completionPreview, 'completionImage');
+                    if (!file.type.startsWith('image/')) {
+                        alert('Por favor seleccione un archivo de imagen válido');
+                        return;
+                    }
+                    
+                    if (file.size > 5 * 1024 * 1024) { // 5MB
+                        alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
+                        return;
+                    }
+                    
+                    completionImage = file;
+                    previewImage(file, completionPreview, 'Evidencia de reparación');
                 }
             });
-        }
-
-        async function handleImageUpload(file, previewContainer, type) {
-            if (!file.type.startsWith('image/')) {
-                alert('Por favor seleccione un archivo de imagen válido');
-                return;
-            }
-            
-            showLoading(true);
-            
-            try {
-                // Optimizar imagen
-                const optimizedFile = await optimizeImageForMobile(file);
-                
-                if (optimizedFile.size > 5 * 1024 * 1024) {
-                    alert('La imagen es demasiado grande. El tamaño máximo es 5MB');
-                    showLoading(false);
-                    return;
-                }
-                
-                // Asignar a la variable correspondiente
-                if (type === 'evidenceImage') {
-                    evidenceImage = optimizedFile;
-                    previewImage(optimizedFile, previewContainer, 'Evidencia del reporte');
-                } else if (type === 'completionImage') {
-                    completionImage = optimizedFile;
-                    previewImage(optimizedFile, previewContainer, 'Evidencia de reparación');
-                }
-                
-            } catch (error) {
-                console.error('Error procesando imagen:', error);
-                // Fallback al archivo original
-                if (type === 'evidenceImage') {
-                    evidenceImage = file;
-                    previewImage(file, previewContainer, 'Evidencia del reporte');
-                } else if (type === 'completionImage') {
-                    completionImage = file;
-                    previewImage(file, previewContainer, 'Evidencia de reparación');
-                }
-            }
-            
-            showLoading(false);
         }
 
         function previewImage(file, container, label) {
@@ -1423,7 +1167,7 @@
             reader.onload = function(e) {
                 container.innerHTML = `
                     <div class="image-preview">
-                        <img src="${e.target.result}" alt="${label}" loading="lazy">
+                        <img src="${e.target.result}" alt="${label}">
                         <button type="button" class="remove-btn" onclick="removeImage('${container.id}')">
                             <i class="fas fa-times"></i>
                         </button>
@@ -1449,7 +1193,7 @@
 
         async function uploadImageToSupabase(file, bucket = 'evidencias', folder = 'reportes') {
             try {
-                const fileName = `${folder}/${generateImageName('reporte', Date.now())}.jpg`;
+                const fileName = `${folder}/${generateImageName('reporte', Date.now())}.${file.name.split('.').pop()}`;
                 
                 const { data, error } = await supabaseClient
                     .storage
@@ -1483,30 +1227,24 @@
             
             modalImage.src = imageUrl;
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Bloquear scroll
         }
 
         function closeImageModal() {
             document.getElementById('imageModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restaurar scroll
         }
 
         function openCompletionModal(reportId) {
             currentCompletionReportId = reportId;
             document.getElementById('completionModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Bloquear scroll
-            
-            // Resetear el formulario de completar
-            completionImage = null;
-            document.getElementById('completionPreview').innerHTML = '';
-            document.getElementById('completionImage').value = '';
-            document.getElementById('completionNotes').value = '';
         }
 
         function closeCompletionModal() {
             document.getElementById('completionModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restaurar scroll
             currentCompletionReportId = null;
+            completionImage = null;
+            document.getElementById('completionPreview').innerHTML = '';
+            document.getElementById('completionImage').value = '';
+            document.getElementById('completionNotes').value = '';
         }
 
         // ==============================================
@@ -1538,7 +1276,7 @@
         }
 
         // ==============================================
-        // FUNCIONES CRUD (MANTENER IGUAL)
+        // FUNCIONES CRUD
         // ==============================================
         async function cargarReportes() {
             showLoading(true);
@@ -1638,7 +1376,7 @@
         }
 
         // ==============================================
-        // FUNCIONES DE INTERFAZ (MANTENER IGUAL)
+        // FUNCIONES DE INTERFAZ
         // ==============================================
         function actualizarUI() {
             actualizarEstadisticas();
@@ -1659,11 +1397,17 @@
             const pendientes = reportes.filter(r => r.estado === 'pendiente').length;
             const enProceso = reportes.filter(r => r.estado === 'en proceso').length;
             const reparados = reportes.filter(r => r.estado === 'reparado').length;
+            
+            // Calcular tiempo promedio de resolución
+            const tiempoPromedio = calcularTiempoPromedioResolucion();
 
             document.getElementById('total-count').textContent = total;
             document.getElementById('pending-count').textContent = pendientes;
             document.getElementById('process-count').textContent = enProceso;
             document.getElementById('repaired-count').textContent = reparados;
+            
+            // Opcional: Mostrar tiempo promedio en algún lugar
+            console.log(`Tiempo promedio de resolución: ${tiempoPromedio}`);
         }
 
         function actualizarTablaReciente() {
@@ -1679,12 +1423,15 @@
                     ? reporte.descripcion.substring(0, 60) + '...' 
                     : reporte.descripcion;
                 
+                // Calcular tiempo transcurrido
+                const tiempoInfo = calcularTiempoTranscurrido(reporte);
+                
                 // Generar miniaturas de fotos
                 let fotosHTML = '<div class="photos-container">';
                 if (reporte.foto_antes) {
                     fotosHTML += `
                         <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
-                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
+                            <img src="${reporte.foto_antes}" alt="Antes">
                             <div class="photo-status">Reporte</div>
                         </div>
                     `;
@@ -1692,7 +1439,7 @@
                 if (reporte.foto_despues) {
                     fotosHTML += `
                         <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
-                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
+                            <img src="${reporte.foto_despues}" alt="Después">
                             <div class="photo-status">Reparado</div>
                         </div>
                     `;
@@ -1707,9 +1454,21 @@
                         <td>${reporte.id}</td>
                         <td>${descCorta}</td>
                         <td>${reporte.ubicacion || 'N/A'}</td>
-                        <td>${reporte.reportado_por || 'N/A'}</td>
-                        <td>${formatDate(reporte.fecha)}</td>
-                        <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>
+                            <span class="badge ${badgeClass}">${reporte.estado}</span>
+                            <div class="time-badge ${tiempoInfo.color}">
+                                <i class="fas fa-clock"></i> ${tiempoInfo.texto}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px; color: #666;">
+                                <div><strong>Reportado:</strong> ${formatDate(reporte.fecha)}</div>
+                                ${reporte.fecha_reparacion ? 
+                                    `<div><strong>Completado:</strong> ${formatDate(reporte.fecha_reparacion)}</div>` : 
+                                    ''
+                                }
+                            </div>
+                        </td>
                         <td>${fotosHTML}</td>
                     </tr>
                 `;
@@ -1734,12 +1493,15 @@
                 if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
                 if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
                 
+                // Calcular tiempo transcurrido
+                const tiempoInfo = calcularTiempoTranscurrido(reporte);
+                
                 // Generar miniaturas de fotos
                 let fotosHTML = '<div class="photos-container">';
                 if (reporte.foto_antes) {
                     fotosHTML += `
                         <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
-                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
+                            <img src="${reporte.foto_antes}" alt="Antes">
                             <div class="photo-status">Reporte</div>
                         </div>
                     `;
@@ -1747,7 +1509,7 @@
                 if (reporte.foto_despues) {
                     fotosHTML += `
                         <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
-                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
+                            <img src="${reporte.foto_despues}" alt="Después">
                             <div class="photo-status">Reparado</div>
                         </div>
                     `;
@@ -1785,9 +1547,20 @@
                         <td>${reporte.ubicacion || 'N/A'}</td>
                         <td>${reporte.categoria || 'N/A'}</td>
                         <td>${formatDate(reporte.fecha)}</td>
-                        <td>${reporte.reportado_por || 'N/A'}</td>
-                        <td>${reporte.prioridad || 'N/A'}</td>
-                        <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>
+                            <span class="badge ${badgeClass}">${reporte.estado}</span>
+                            <div class="time-badge ${tiempoInfo.color}">
+                                <i class="fas fa-clock"></i> ${tiempoInfo.texto}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px; color: #666;">
+                                ${reporte.fecha_reparacion ? 
+                                    `<div><strong>Completado:</strong> ${formatDate(reporte.fecha_reparacion)}</div>` : 
+                                    `<div><strong>Reportado hace:</strong> ${tiempoInfo.dias} día${tiempoInfo.dias !== 1 ? 's' : ''}</div>`
+                                }
+                            </div>
+                        </td>
                         <td>${fotosHTML}</td>
                         <td>${acciones}</td>
                     </tr>
@@ -2170,7 +1943,6 @@
             document.getElementById('report-form').reset();
             evidenceImage = null;
             document.getElementById('imagePreview').innerHTML = '';
-            document.getElementById('evidenceImage').value = '';
             document.querySelector('.nav-menu a[data-page="dashboard"]').click();
         }
 
@@ -2219,9 +1991,6 @@
             document.getElementById('imageModal').addEventListener('click', function(e) {
                 if (e.target === this) closeImageModal();
             });
-            
-            // Configurar para móvil
-            checkMobileCompatibility();
             
             // Configurar subida de imágenes
             setupImageUpload();
@@ -2310,23 +2079,6 @@
                     await cargarReportes();
                 }
             }, 30000);
-
-            // Manejar cambios de orientación en móvil
-            window.addEventListener('orientationchange', function() {
-                // Redibujar gráficos cuando cambia la orientación
-                setTimeout(() => {
-                    if (lineChart) lineChart.resize();
-                    if (analysisChart) analysisChart.resize();
-                }, 300);
-            });
-        });
-
-        // Manejar cuando la página se vuelve visible (por ejemplo, al volver de la cámara)
-        document.addEventListener('visibilitychange', function() {
-            if (document.visibilityState === 'visible') {
-                // La página volvió a ser visible
-                console.log('Página visible de nuevo');
-            }
         });
 
         // Exportar funciones globales
@@ -2337,12 +2089,6 @@
         window.openCompletionModal = openCompletionModal;
         window.closeCompletionModal = closeCompletionModal;
         window.removeImage = removeImage;
-        window.takePhoto = takePhoto;
-        window.selectFromGallery = selectFromGallery;
-        window.takeCompletionPhoto = takeCompletionPhoto;
-        window.selectCompletionFromGallery = selectCompletionFromGallery;
-        window.capturePhoto = capturePhoto;
-        window.closeCamera = closeCamera;
     </script>
 </body>
 </html>
