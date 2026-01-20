@@ -834,7 +834,7 @@
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-hard-hat"></i>
-                    <h1>Sistema de Condiciones Inseguras Danec</h1>
+                    <h1>Sistema de Condiciones Inseguras</h1>
                 </div>
                 <div class="status-badge" id="connection-status">
                     <i class="fas fa-database"></i> Conectado a Supabase
@@ -957,13 +957,6 @@
                                 <label for="location">Ubicación exacta *</label>
                                 <input type="text" class="form-control" id="location" 
                                        placeholder="Ej: Área de producción, Línea 3, Sector B" required>
-                            </div>
-
-                            <!-- NUEVA SECCIÓN: ORDEN DE TRABAJO (OT) -->
-                            <div class="form-group">
-                                <label for="ot">Orden de Trabajo (OT)</label>
-                                <input type="text" class="form-control" id="ot" 
-                                       placeholder="Ingrese el número de orden de trabajo (opcional)">
                             </div>
                             
                             <div class="form-group">
@@ -1545,7 +1538,7 @@
         }
 
         // ==============================================
-        // FUNCIONES CRUD
+        // FUNCIONES CRUD (MANTENER IGUAL)
         // ==============================================
         async function cargarReportes() {
             showLoading(true);
@@ -1645,7 +1638,7 @@
         }
 
         // ==============================================
-        // FUNCIONES DE INTERFAZ
+        // FUNCIONES DE INTERFAZ (MANTENER IGUAL)
         // ==============================================
         function actualizarUI() {
             actualizarEstadisticas();
@@ -1675,66 +1668,52 @@
 
         function actualizarTablaReciente() {
             const tbody = document.querySelector('#recent-table tbody');
-    const recientes = reportes.slice(0, 8); // Mostrar 8 más recientes
-    
-    tbody.innerHTML = recientes.map(reporte => {
-        let badgeClass = 'badge-pendiente';
-        if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
-        if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
-        
-        const descCorta = reporte.descripcion.length > 60 
-            ? reporte.descripcion.substring(0, 60) + '...' 
-            : reporte.descripcion;
-        
-        // Generar miniaturas de fotos - CORREGIDO
-        let fotosHTML = '<div class="photos-container">';
-        
-        if (reporte.foto_antes) {
-            // Asegurar que la URL sea absoluta
-            const fotoUrl = reporte.foto_antes.startsWith('http') 
-                ? reporte.foto_antes 
-                : `${SUPABASE_URL}/storage/v1/object/public/evidencias/${reporte.foto_antes}`;
+            const recientes = reportes.slice(0, 8); // Mostrar 8 más recientes
             
-            fotosHTML += `
-                <div class="photo-thumbnail" onclick="openImageModal('${fotoUrl}')">
-                    <img src="${fotoUrl}" alt="Evidencia" onerror="this.style.display='none'">
-                    <div class="photo-status">Reporte</div>
-                </div>
-            `;
-        }
-        
-        if (reporte.foto_despues) {
-            // Asegurar que la URL sea absoluta
-            const fotoUrl = reporte.foto_despues.startsWith('http') 
-                ? reporte.foto_despues 
-                : `${SUPABASE_URL}/storage/v1/object/public/evidencias/${reporte.foto_despues}`;
-            
-            fotosHTML += `
-                <div class="photo-thumbnail" onclick="openImageModal('${fotoUrl}')">
-                    <img src="${fotoUrl}" alt="Reparado" onerror="this.style.display='none'">
-                    <div class="photo-status">Reparado</div>
-                </div>
-            `;
-        }
-        
-        if (!reporte.foto_antes && !reporte.foto_despues) {
-            fotosHTML += '<span style="color: #999; font-size: 12px; padding: 5px;">Sin fotos</span>';
-        }
-        
-        fotosHTML += '</div>';
-        
-        return `
-            <tr>
-                <td>${reporte.id}</td>
-                <td title="${reporte.descripcion}">${descCorta}</td>
-                <td>${reporte.ubicacion || 'N/A'}</td>
-                <td>${reporte.reportado_por || 'N/A'}</td>
-                <td>${formatDate(reporte.fecha)}</td>
-                <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
-                <td>${fotosHTML}</td>
-            </tr>
-        `;
-    }).join('');
+            tbody.innerHTML = recientes.map(reporte => {
+                let badgeClass = 'badge-pendiente';
+                if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
+                if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
+                
+                const descCorta = reporte.descripcion.length > 60 
+                    ? reporte.descripcion.substring(0, 60) + '...' 
+                    : reporte.descripcion;
+                
+                // Generar miniaturas de fotos
+                let fotosHTML = '<div class="photos-container">';
+                if (reporte.foto_antes) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
+                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
+                            <div class="photo-status">Reporte</div>
+                        </div>
+                    `;
+                }
+                if (reporte.foto_despues) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
+                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
+                            <div class="photo-status">Reparado</div>
+                        </div>
+                    `;
+                }
+                if (!reporte.foto_antes && !reporte.foto_despues) {
+                    fotosHTML += '<span style="color: #999; font-size: 12px;">Sin fotos</span>';
+                }
+                fotosHTML += '</div>';
+                
+                return `
+                    <tr>
+                        <td>${reporte.id}</td>
+                        <td>${descCorta}</td>
+                        <td>${reporte.ubicacion || 'N/A'}</td>
+                        <td>${reporte.reportado_por || 'N/A'}</td>
+                        <td>${formatDate(reporte.fecha)}</td>
+                        <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>${fotosHTML}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function actualizarTablaHistorial() {
@@ -2174,7 +2153,6 @@
                 reportado_por: document.getElementById('reporter-name').value,
                 descripcion: document.getElementById('description').value,
                 ubicacion: document.getElementById('location').value,
-                ot: document.getElementById('ot').value, // NUEVO CAMPO OT
                 categoria: document.getElementById('category').value,
                 prioridad: document.getElementById('priority').value,
                 estado: 'pendiente',
