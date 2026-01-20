@@ -922,6 +922,7 @@
                                         <th>ID</th>
                                         <th>Descripción</th>
                                         <th>Ubicación</th>
+                                        <th>OT</th>
                                         <th>Reportado por</th>
                                         <th>Fecha</th>
                                         <th>Estado</th>
@@ -957,6 +958,13 @@
                                 <label for="location">Ubicación exacta *</label>
                                 <input type="text" class="form-control" id="location" 
                                        placeholder="Ej: Área de producción, Línea 3, Sector B" required>
+                            </div>
+                            
+                            <!-- NUEVA SECCIÓN: ORDEN DE TRABAJO -->
+                            <div class="form-group">
+                                <label for="ot">Orden de Trabajo (OT)</label>
+                                <input type="text" class="form-control" id="ot" 
+                                       placeholder="Ingrese el número de orden de trabajo (opcional)">
                             </div>
                             
                             <div class="form-group">
@@ -1044,6 +1052,7 @@
                                         <th>ID</th>
                                         <th>Descripción</th>
                                         <th>Ubicación</th>
+                                        <th>OT</th>
                                         <th>Categoría</th>
                                         <th>Fecha</th>
                                         <th>Reportado por</th>
@@ -1707,6 +1716,7 @@
                         <td>${reporte.id}</td>
                         <td>${descCorta}</td>
                         <td>${reporte.ubicacion || 'N/A'}</td>
+                        <td>${reporte.ot || 'N/A'}</td>
                         <td>${reporte.reportado_por || 'N/A'}</td>
                         <td>${formatDate(reporte.fecha)}</td>
                         <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
@@ -1783,6 +1793,7 @@
                         <td>${reporte.id}</td>
                         <td>${reporte.descripcion}</td>
                         <td>${reporte.ubicacion || 'N/A'}</td>
+                        <td>${reporte.ot || 'N/A'}</td>
                         <td>${reporte.categoria || 'N/A'}</td>
                         <td>${formatDate(reporte.fecha)}</td>
                         <td>${reporte.reportado_por || 'N/A'}</td>
@@ -2153,6 +2164,7 @@
                 reportado_por: document.getElementById('reporter-name').value,
                 descripcion: document.getElementById('description').value,
                 ubicacion: document.getElementById('location').value,
+                ot: document.getElementById('ot').value, // NUEVO CAMPO OT
                 categoria: document.getElementById('category').value,
                 prioridad: document.getElementById('priority').value,
                 estado: 'pendiente',
