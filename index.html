@@ -958,6 +958,13 @@
                                 <input type="text" class="form-control" id="location" 
                                        placeholder="Ej: Área de producción, Línea 3, Sector B" required>
                             </div>
+
+                            <!-- NUEVA SECCIÓN: ORDEN DE TRABAJO (OT) -->
+                            <div class="form-group">
+                                <label for="ot">Orden de Trabajo (OT)</label>
+                                <input type="text" class="form-control" id="ot" 
+                                       placeholder="Ingrese el número de orden de trabajo (opcional)">
+                            </div>
                             
                             <div class="form-group">
                                 <label for="category">Tipo de riesgo *</label>
@@ -1538,7 +1545,7 @@
         }
 
         // ==============================================
-        // FUNCIONES CRUD (MANTENER IGUAL)
+        // FUNCIONES CRUD
         // ==============================================
         async function cargarReportes() {
             showLoading(true);
@@ -1638,7 +1645,7 @@
         }
 
         // ==============================================
-        // FUNCIONES DE INTERFAZ (MANTENER IGUAL)
+        // FUNCIONES DE INTERFAZ
         // ==============================================
         function actualizarUI() {
             actualizarEstadisticas();
@@ -2153,6 +2160,7 @@
                 reportado_por: document.getElementById('reporter-name').value,
                 descripcion: document.getElementById('description').value,
                 ubicacion: document.getElementById('location').value,
+                ot: document.getElementById('ot').value, // NUEVO CAMPO OT
                 categoria: document.getElementById('category').value,
                 prioridad: document.getElementById('priority').value,
                 estado: 'pendiente',
