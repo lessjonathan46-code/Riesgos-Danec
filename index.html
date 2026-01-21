@@ -32,7 +32,7 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
 
         .container {
@@ -140,7 +140,7 @@
             border-radius: 5px;
             font-size: 16px;
             transition: border 0.3s;
-            -webkit-appearance: none;
+            -webkit-appearance: none; /* Remove default iOS styling */
         }
 
         .form-control:focus {
@@ -161,7 +161,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            touch-action: manipulation;
+            touch-action: manipulation; /* Better touch on mobile */
         }
 
         .btn-primary {
@@ -234,7 +234,7 @@
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
-            -webkit-overflow-scrolling: touch;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
 
         table {
@@ -258,6 +258,24 @@
 
         table tr:hover {
             background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        /* TIEMPO RESPUESTA */
+        .tiempo-respuesta {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .tiempo-respuesta.rapido {
+            color: var(--safe);
+        }
+
+        .tiempo-respuesta.moderado {
+            color: var(--warning);
+        }
+
+        .tiempo-respuesta.lento {
+            color: var(--danger);
         }
 
         /* GRÁFICOS */
@@ -554,34 +572,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* TIEMPOS DE REPARACIÓN */
-        .tiempo-info {
-            font-size: 11px;
-            line-height: 1.3;
-        }
-
-        .tiempo-info small {
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .tiempo-alerta {
-            color: #e74c3c;
-            font-weight: bold;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .stat-subtitle {
-            font-size: 12px;
-            color: #7f8c8d;
-            margin-top: 5px;
-        }
-
         /* MOBILE SPECIFIC STYLES */
         .mobile-image-buttons {
             display: none;
@@ -630,7 +620,7 @@
 
         /* TOUCH FRIENDLY STYLES */
         .touch-friendly {
-            min-height: 44px;
+            min-height: 44px; /* Minimum touch target size */
             min-width: 44px;
         }
 
@@ -673,14 +663,16 @@
                 text-align: center;
             }
             
+            /* Botones más grandes en móvil */
             .btn {
                 padding: 12px 15px;
                 font-size: 14px;
             }
             
+            /* Asegurar que inputs sean fáciles de tocar */
             .form-control {
                 padding: 12px;
-                font-size: 16px;
+                font-size: 16px; /* Previene zoom automático en iOS */
             }
             
             textarea.form-control {
@@ -692,9 +684,10 @@
             }
 
             .image-upload-label {
-                pointer-events: none;
+                pointer-events: none; /* Let buttons handle clicks on mobile */
             }
 
+            /* Mejorar el modal para móvil */
             .modal-content {
                 width: 95%;
                 padding: 20px;
@@ -712,6 +705,7 @@
                 font-size: 30px;
             }
 
+            /* Adjust table for mobile */
             table th, table td {
                 padding: 8px 10px;
                 font-size: 14px;
@@ -746,6 +740,7 @@
                 margin-bottom: 10px;
             }
 
+            /* Make sure everything fits on small screens */
             .card {
                 padding: 15px;
             }
@@ -857,10 +852,10 @@
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-hard-hat"></i>
-                    <h1>Sistema de Condiciones Inseguras Danec-Mantenimiento</h1>
+                    <h1>Sistema de Condiciones Inseguras Danec - Mantenimiento</h1>
                 </div>
                 <div class="status-badge" id="connection-status">
-                    <i class="fas fa-database"></i> Conectado a Supabase
+                    <i class="fas fa-database"></i> Conectado a Danec
                 </div>
             </div>
         </div>
@@ -876,7 +871,6 @@
                         <li><a href="#" data-page="registro"><i class="fas fa-plus-circle"></i> Nuevo Reporte</a></li>
                         <li><a href="#" data-page="historial"><i class="fas fa-history"></i> Historial</a></li>
                         <li><a href="#" data-page="analisis"><i class="fas fa-chart-bar"></i> Análisis</a></li>
-                        <li><a href="#" data-page="tiempos"><i class="fas fa-clock"></i> Tiempos</a></li>
                         <li><a href="#" data-page="config"><i class="fas fa-cog"></i> Configuración</a></li>
                     </ul>
                 </nav>
@@ -914,33 +908,6 @@
                         </div>
                     </div>
 
-                    <!-- Nuevo: Métricas de Tiempos -->
-                    <div class="card">
-                        <h2><i class="fas fa-clock"></i> Métricas de Tiempos de Reparación</h2>
-                        <div class="stats-container" id="tiempos-metrics">
-                            <div class="stat-card">
-                                <div class="stat-title">Tiempo Promedio Respuesta</div>
-                                <div class="stat-value" id="avg-response-time">0h</div>
-                                <div class="stat-subtitle">Desde reporte hasta inicio</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Tiempo Promedio Reparación</div>
-                                <div class="stat-value" id="avg-repair-time">0h</div>
-                                <div class="stat-subtitle">Desde inicio hasta finalización</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Tiempo Promedio Total</div>
-                                <div class="stat-value" id="avg-total-time">0h</div>
-                                <div class="stat-subtitle">Desde reporte hasta finalización</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Cumplimiento SLA</div>
-                                <div class="stat-value" id="sla-compliance">0%</div>
-                                <div class="stat-subtitle">Reportes completados a tiempo</div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="card">
                         <h2><i class="fas fa-chart-line"></i> Evolución de Reportes por Ubicación</h2>
                         <div class="chart-controls">
@@ -975,9 +942,8 @@
                                         <th>Ubicación</th>
                                         <th>OT</th>
                                         <th>Reportado por</th>
-                                        <th>Fecha</th>
+                                        <th>Fecha y Hora</th>
                                         <th>Estado</th>
-                                        <th>Tiempos</th>
                                         <th>Evidencia</th>
                                     </tr>
                                 </thead>
@@ -1012,6 +978,18 @@
                                        placeholder="Ej: Área de producción, Línea 3, Sector B" required>
                             </div>
                             
+                            <!-- NUEVA SECCIÓN: HORA DEL REPORTE -->
+                            <div class="form-group">
+                                <label for="hora-reporte">Hora del reporte *</label>
+                                <?php
+                                // Generar hora actual del servidor
+                                date_default_timezone_set('America/Bogota'); // Ajusta según tu zona horaria
+                                $horaActual = date('H:i');
+                                ?>
+                                <input type="time" class="form-control" id="hora-reporte" 
+                                       value="<?php echo $horaActual; ?>" required>
+                            </div>
+                            
                             <!-- NUEVA SECCIÓN: ORDEN DE TRABAJO -->
                             <div class="form-group">
                                 <label for="ot">Orden de Trabajo (OT)</label>
@@ -1021,13 +999,22 @@
                             
                             <div class="form-group">
                                 <label for="category">Tipo de riesgo *</label>
+                                 <div style="font-size: 0.85rem; color: #6c757d; margin-bottom: 8px;">
+        <span style="font-weight: 600; color:#0d6efd;">Físicos:</span> Ruido, vibraciones, temperaturas extremas, radiación.<br>
+        <span style="font-weight: 600; color:#198754;">Químicos:</span> Exposición a polvos, humos, gases, vapores, solventes.<br>
+        <span style="font-weight: 600; color:#dc3545;">Biológicos:</span> Virus, bacterias, hongos, parásitos.<br>
+        <span style="font-weight: 600; color:#fd7e14;">Ergonómicos:</span> Manejo de cargas, movimientos repetitivos, posturas inadecuadas.<br>
+        <span style="font-weight: 600; color:#6f42c1;">Psicosociales:</span> Estrés, sobrecarga de trabajo, monotonía, acoso laboral.<br>
+        <span style="font-weight: 600; color:#495057;">Mecánicos:</span> Atrapamientos, caídas, golpes por objetos.
+    </div>
+                                
                                 <select class="form-control" id="category" required>
                                     <option value="">Seleccione el tipo de riesgo</option>
-                                    <option value="electrico">Eléctrico</option>
+                                    <option value="fisico">Fisico</option>
                                     <option value="mecanico">Mecánico</option>
-                                    <option value="alturas">Trabajo en alturas</option>
+                                    <option value="biologicos">Biológicos</option>
                                     <option value="quimico">Químico</option>
-                                    <option value="incendio">Incendio</option>
+                                    <option value="psicosociales">Psicosociales</option>
                                     <option value="ergonomico">Ergonómico</option>
                                     <option value="otro">Otro</option>
                                 </select>
@@ -1035,6 +1022,19 @@
                             
                             <div class="form-group">
                                 <label for="priority">Nivel de Riesgo *</label>
+                                <div style="font-size: 0.85rem; margin-bottom: 8px; color:#6c757d;">
+        <span style="font-weight:600; color:#198754;">Bajo:</span>
+        Baja probabilidad y Lesiones leves (cortes superficiales, golpes menores), sin afectaciones graves ni interrupciones operativas.<br>
+
+        <span style="font-weight:600; color:#ffc107;">Medio:</span>
+        Probabilidad moderada y consecuencias controlables,Caídas a distinto nivel de baja altura (< 5 m) <br>
+
+        <span style="font-weight:600; color:#fd7e14;">Alto:</span>
+        Alta probabilidad o consecuencias severas, Atrapamientos, aplastamientos, contacto con partes móviles<br>
+
+        <span style="font-weight:600; color:#dc3545;">Crítico:</span>
+        Riesgo inaceptable con consecuencias potencialmente mortales o catastróficas, fugas, trabajos en alturas.
+    </div>
                                 <select class="form-control" id="priority" required>
                                     <option value="">Seleccione el nivel de riesgo</option>
                                     <option value="bajo">Bajo</option>
@@ -1107,10 +1107,11 @@
                                         <th>OT</th>
                                         <th>Categoría</th>
                                         <th>Fecha Reporte</th>
+                                        <th>Fecha Reparación</th>
+                                        <th>Tiempo Respuesta</th>
                                         <th>Reportado por</th>
                                         <th>Nivel Riesgo</th>
                                         <th>Estado</th>
-                                        <th>Tiempos</th>
                                         <th>Fotos</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -1145,28 +1146,6 @@
                     </div>
                 </div>
 
-                <!-- Nueva página: Análisis de Tiempos -->
-                <div id="tiempos-page" class="page" style="display: none;">
-                    <div class="card">
-                        <h2><i class="fas fa-clock"></i> Análisis de Tiempos de Reparación</h2>
-                        
-                        <div class="analysis-tabs">
-                            <button class="tab-btn active" data-tiempo="respuesta">Tiempos de Respuesta</button>
-                            <button class="tab-btn" data-tiempo="reparacion">Tiempos de Reparación</button>
-                            <button class="tab-btn" data-tiempo="total">Tiempos Totales</button>
-                            <button class="tab-btn" data-tiempo="sla">Cumplimiento SLA</button>
-                        </div>
-                        
-                        <div class="chart-container">
-                            <canvas id="tiempos-chart"></canvas>
-                        </div>
-                        
-                        <div id="tiempos-detallados" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                            <!-- Métricas detalladas se cargarán aquí -->
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Configuración -->
                 <div id="config-page" class="page" style="display: none;">
                     <div class="card">
@@ -1181,6 +1160,20 @@
                                 <p><strong>URL:</strong> biaxvbaqtpelvqeeumnu.supabase.co</p>
                                 <p><strong>Total reportes:</strong> <span id="config-total">0</span></p>
                                 <p><strong>Última actualización:</strong> <span id="last-update">Hoy</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Herramientas de Corrección -->
+                        <div style="margin-top: 30px;">
+                            <h3><i class="fas fa-tools"></i> Herramientas de Corrección</h3>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                                <p>Corregir fechas de reportes existentes:</p>
+                                <button class="btn btn-warning" onclick="corregirFechasReportes()" style="margin-top: 10px;">
+                                    <i class="fas fa-sync-alt"></i> Corregir Fechas y Calcular Tiempos
+                                </button>
+                                <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                                    <i class="fas fa-exclamation-triangle"></i> Esto sincronizará fecha_reporte con fecha y recalculará todos los tiempos
+                                </p>
                             </div>
                         </div>
                         
@@ -1207,345 +1200,23 @@
 
     <script>
         // ==============================================
-        // CONFIGURACIÓN DE SUPABASE
+        // CONFIGURACIÓN DE SUPABASE (YA CONECTADA)
         // ==============================================
         const SUPABASE_URL = 'https://biaxvbaqtpelvqeeumnu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYXh2YmFxdHBlbHZxZWV1bW51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMzY3NDcsImV4cCI6MjA4MzgxMjc0N30.vMAuHAkGVKv2WrC1Fb9aH-1O97_-4shzn6VPbpgsuio';
-
-        // Configuración de SLA (Service Level Agreement)
-        const SLA_CONFIG = {
-            'critico': 240,    // 4 horas en minutos
-            'alto': 480,       // 8 horas en minutos
-            'medio': 1440,     // 24 horas en minutos
-            'bajo': 2880       // 48 horas en minutos
-        };
 
         let supabaseClient = null;
         let reportes = [];
         let lineChart = null;
         let analysisChart = null;
-        let tiemposChart = null;
         let currentFilter = 'all';
         let currentAnalysisTab = 'categoria';
-        let currentTiempoTab = 'respuesta';
         let currentCompletionReportId = null;
         let evidenceImage = null;
         let completionImage = null;
         let currentCameraStream = null;
         let isForCompletion = false;
 
-        // ==============================================
-        // FUNCIONES DE MEDICIÓN DE TIEMPOS
-        // ==============================================
-
-        function calcularTiemposReporte(reporte) {
-    if (!reporte) {
-        console.warn('calcularTiemposReporte: Reporte nulo');
-        return null;
-    }
-    
-    const ahora = new Date();
-    
-    // DEBUG: Ver qué fechas tenemos
-    console.log('DEBUG - Fechas del reporte:', {
-        id: reporte.id,
-        fecha_reporte: reporte.fecha_reporte,
-        fecha: reporte.fecha,
-        created_at: reporte.created_at,
-        fecha_inicio: reporte.fecha_inicio_proceso,
-        fecha_finalizacion: reporte.fecha_finalizacion,
-        estado: reporte.estado
-    });
-    
-    // 1. Determinar fecha de reporte CON VALIDACIÓN
-    let fechaReporte = null;
-    let fechaReporteSource = 'none';
-    
-    if (reporte.fecha_reporte) {
-        fechaReporte = new Date(reporte.fecha_reporte);
-        fechaReporteSource = 'fecha_reporte';
-    } else if (reporte.created_at) {
-        fechaReporte = new Date(reporte.created_at);
-        fechaReporteSource = 'created_at';
-    } else if (reporte.fecha) {
-        // Si solo tenemos fecha (YYYY-MM-DD), agregar hora mediodía
-        const fechaStr = reporte.fecha.includes('T') ? 
-            reporte.fecha : 
-            reporte.fecha + 'T12:00:00';
-        fechaReporte = new Date(fechaStr);
-        fechaReporteSource = 'fecha';
-    }
-    
-    // Validar que la fecha sea válida
-    if (!fechaReporte || isNaN(fechaReporte.getTime())) {
-        console.error('Fecha de reporte inválida para ID:', reporte.id, {
-            fecha_reporte: reporte.fecha_reporte,
-            fecha: reporte.fecha,
-            created_at: reporte.created_at
-        });
-        return null;
-    }
-    
-    console.log(`Fecha reporte (${fechaReporteSource}): ${fechaReporte.toISOString()}`);
-    
-    // 2. Obtener otras fechas
-    const fechaInicio = reporte.fecha_inicio_proceso ? 
-        new Date(reporte.fecha_inicio_proceso) : null;
-    const fechaFinalizacion = reporte.fecha_finalizacion ? 
-        new Date(reporte.fecha_finalizacion) : null;
-    
-    // Validar fechas
-    if (fechaInicio && isNaN(fechaInicio.getTime())) {
-        console.error('Fecha inicio inválida:', reporte.fecha_inicio_proceso);
-        return null;
-    }
-    if (fechaFinalizacion && isNaN(fechaFinalizacion.getTime())) {
-        console.error('Fecha finalización inválida:', reporte.fecha_finalizacion);
-        return null;
-    }
-    
-    const tiempos = {
-        tiempoRespuesta: null,
-        tiempoReparacion: null,
-        tiempoTotal: null,
-        estaAtrasado: false,
-        tiempoRestante: null,
-        porcentajeCompletado: 0,
-        fuenteFecha: fechaReporteSource
-    };
-    
-    // 3. Calcular tiempo de respuesta
-    if (fechaInicio) {
-        const diferenciaMs = fechaInicio - fechaReporte;
-        if (diferenciaMs >= 0) {
-            tiempos.tiempoRespuesta = Math.floor(diferenciaMs / (1000 * 60));
-            console.log(`Tiempo respuesta: ${tiempos.tiempoRespuesta}min (${diferenciaMs}ms)`);
-        } else {
-            console.warn('Diferencia negativa en tiempo respuesta:', diferenciaMs);
-            tiempos.tiempoRespuesta = 0; // Si la fecha inicio es anterior al reporte
-        }
-    }
-    
-    // 4. Calcular tiempo de reparación
-    if (fechaInicio && fechaFinalizacion) {
-        const diferenciaMs = fechaFinalizacion - fechaInicio;
-        if (diferenciaMs >= 0) {
-            tiempos.tiempoReparacion = Math.floor(diferenciaMs / (1000 * 60));
-            console.log(`Tiempo reparación: ${tiempos.tiempoReparacion}min (${diferenciaMs}ms)`);
-        } else {
-            console.warn('Diferencia negativa en tiempo reparación:', diferenciaMs);
-            tiempos.tiempoReparacion = 0;
-        }
-    }
-    
-    // 5. Calcular tiempo total
-    if (fechaFinalizacion) {
-        const diferenciaMs = fechaFinalizacion - fechaReporte;
-        if (diferenciaMs >= 0) {
-            tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60));
-            console.log(`Tiempo total (finalizado): ${tiempos.tiempoTotal}min`);
-        } else {
-            tiempos.tiempoTotal = 0;
-        }
-    } else {
-        // Reporte aún no finalizado
-        const diferenciaMs = ahora - fechaReporte;
-        if (diferenciaMs >= 0) {
-            tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60));
-            console.log(`Tiempo total (en progreso): ${tiempos.tiempoTotal}min`);
-        } else {
-            tiempos.tiempoTotal = 0;
-        }
-    }
-    
-    // 6. Verificar SLA
-    if (tiempos.tiempoTotal !== null && reporte.prioridad) {
-        const slaEsperado = SLA_CONFIG[reporte.prioridad] || 2880;
-        tiempos.estaAtrasado = tiempos.tiempoTotal > slaEsperado;
-        tiempos.tiempoRestante = Math.max(0, slaEsperado - tiempos.tiempoTotal);
-        tiempos.porcentajeCompletado = Math.min(100, Math.round((tiempos.tiempoTotal / slaEsperado) * 100));
-        
-        console.log(`SLA: ${reporte.prioridad}=${slaEsperado}min, Actual=${tiempos.tiempoTotal}min, Atrasado=${tiempos.estaAtrasado}`);
-    } else if (!reporte.prioridad) {
-        console.warn('Reporte sin prioridad, no se puede calcular SLA:', reporte.id);
-    }
-    
-    console.log('Resultado tiempos:', tiempos);
-    return tiempos;
-}
-
-// FUNCIÓN MEJORADA para formatear tiempo
-function formatearTiempo(minutos) {
-    if (minutos === null || minutos === undefined || minutos === 0 || isNaN(minutos)) {
-        return 'N/A';
-    }
-    
-    minutos = Math.round(minutos);
-    
-    if (minutos < 60) {
-        return `${minutos} min`;
-    } else if (minutos < 1440) {
-        const horas = Math.floor(minutos / 60);
-        const minsRestantes = minutos % 60;
-        return minsRestantes > 0 ? `${horas}h ${minsRestantes}min` : `${horas}h`;
-    } else {
-        const dias = Math.floor(minutos / 1440);
-        const horasRestantes = Math.floor((minutos % 1440) / 60);
-        return horasRestantes > 0 ? `${dias}d ${horasRestantes}h` : `${dias}d`;
-    }
-}
-
-// FUNCIÓN MEJORADA para calcular métricas
-function calcularMetricasTiempos() {
-    const reportesCompletados = reportes.filter(r => r.estado === 'reparado');
-    console.log(`Reportes reparados: ${reportesCompletados.length}`);
-    
-    const reportesConTiempos = reportesCompletados.filter(r => r.tiempo_total_minutos !== null);
-    console.log(`Reportes con tiempo_total: ${reportesConTiempos.length}`);
-    
-    if (reportesConTiempos.length === 0) {
-        console.warn('No hay reportes con tiempos calculados');
-        
-        // Intentar calcular tiempos para reportes reparados
-        const reportesSinTiempos = reportesCompletados.filter(r => r.tiempo_total_minutos === null);
-        console.log(`Reportes reparados sin tiempos: ${reportesSinTiempos.length}`);
-        
-        if (reportesSinTiempos.length > 0) {
-            // Calcular en tiempo real para mostrar algo
-            let tiemposReales = [];
-            reportesSinTiempos.forEach(reporte => {
-                const tiempos = calcularTiemposReporte(reporte);
-                if (tiempos && tiempos.tiempoTotal !== null) {
-                    tiemposReales.push(tiempos);
-                }
-            });
-            
-            if (tiemposReales.length > 0) {
-                const avgTotal = tiemposReales.reduce((sum, t) => sum + t.tiempoTotal, 0) / tiemposReales.length;
-                document.getElementById('avg-total-time').textContent = formatearTiempo(avgTotal);
-                document.getElementById('avg-response-time').textContent = 'N/A';
-                document.getElementById('avg-repair-time').textContent = 'N/A';
-                document.getElementById('sla-compliance').textContent = 'N/A';
-                return;
-            }
-        }
-        
-        document.getElementById('avg-response-time').textContent = 'N/A';
-        document.getElementById('avg-repair-time').textContent = 'N/A';
-        document.getElementById('avg-total-time').textContent = 'N/A';
-        document.getElementById('sla-compliance').textContent = '0%';
-        return;
-    }
-    
-    // Tiempos promedio
-    const avgResponse = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_respuesta_minutos || 0), 0) / reportesConTiempos.length;
-    const avgRepair = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_reparacion_minutos || 0), 0) / reportesConTiempos.length;
-    const avgTotal = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_total_minutos || 0), 0) / reportesConTiempos.length;
-    
-    console.log('Promedios calculados:', {
-        respuesta: avgResponse,
-        reparacion: avgRepair,
-        total: avgTotal
-    });
-    
-    // Cumplimiento SLA
-    const cumplenSLA = reportesConTiempos.filter(reporte => {
-        if (!reporte.prioridad) return false;
-        const slaEsperado = SLA_CONFIG[reporte.prioridad] || 2880;
-        return reporte.tiempo_total_minutos <= slaEsperado;
-    }).length;
-    
-    const slaPercentage = reportesConTiempos.length > 0 ? 
-        Math.round((cumplenSLA / reportesConTiempos.length) * 100) : 0;
-    
-    console.log(`SLA: ${cumplenSLA}/${reportesConTiempos.length} = ${slaPercentage}%`);
-    
-    // Actualizar UI
-    document.getElementById('avg-response-time').textContent = formatearTiempo(avgResponse);
-    document.getElementById('avg-repair-time').textContent = formatearTiempo(avgRepair);
-    document.getElementById('avg-total-time').textContent = formatearTiempo(avgTotal);
-    document.getElementById('sla-compliance').textContent = `${slaPercentage}%`;
-}
-
-// FUNCIÓN NUEVA: Actualizar tiempos en la base de datos
-async function actualizarTiemposEnBD(reporteId) {
-    try {
-        // Obtener reporte
-        const { data: reporte, error } = await supabaseClient
-            .from('condiciones_inseguras')
-            .select('*')
-            .eq('id', reporteId)
-            .single();
-        
-        if (error) throw error;
-        
-        // Calcular tiempos
-        const tiempos = calcularTiemposReporte(reporte);
-        
-        if (tiempos) {
-            // Actualizar en BD
-            const { error: updateError } = await supabaseClient
-                .from('condiciones_inseguras')
-                .update({
-                    tiempo_respuesta_minutos: tiempos.tiempoRespuesta,
-                    tiempo_reparacion_minutos: tiempos.tiempoReparacion,
-                    tiempo_total_minutos: tiempos.tiempoTotal
-                })
-                .eq('id', reporteId);
-            
-            if (updateError) throw updateError;
-            
-            console.log(`✅ Tiempos actualizados para reporte ${reporteId}`);
-            return true;
-        }
-        
-        return false;
-    } catch (error) {
-        console.error(`Error actualizando tiempos para ${reporteId}:`, error);
-        return false;
-    }
-}
-
-// FUNCIÓN NUEVA: Diagnosticar por qué no se calculan tiempos
-function diagnosticarTiempos() {
-    console.log('=== DIAGNÓSTICO DE TIEMPOS ===');
-    console.log(`Total reportes: ${reportes.length}`);
-    
-    // Verificar columnas existentes
-    if (reportes.length > 0) {
-        const primerReporte = reportes[0];
-        console.log('Columnas disponibles en primer reporte:', Object.keys(primerReporte));
-        
-        // Verificar fechas
-        console.log('Fechas del primer reporte:', {
-            fecha_reporte: primerReporte.fecha_reporte,
-            fecha_inicio_proceso: primerReporte.fecha_inicio_proceso,
-            fecha_finalizacion: primerReporte.fecha_finalizacion,
-            created_at: primerReporte.created_at,
-            fecha: primerReporte.fecha
-        });
-        
-        // Calcular tiempos para ver qué pasa
-        const tiempos = calcularTiemposReporte(primerReporte);
-        console.log('Cálculo para primer reporte:', tiempos);
-    }
-    
-    // Estadísticas
-    const conFechaReporte = reportes.filter(r => r.fecha_reporte).length;
-    const conFechaInicio = reportes.filter(r => r.fecha_inicio_proceso).length;
-    const conFechaFin = reportes.filter(r => r.fecha_finalizacion).length;
-    const conTiempoTotal = reportes.filter(r => r.tiempo_total_minutos !== null).length;
-    const reparados = reportes.filter(r => r.estado === 'reparado').length;
-    
-    console.log('Estadísticas:');
-    console.log(`- Con fecha_reporte: ${conFechaReporte}/${reportes.length}`);
-    console.log(`- Con fecha_inicio_proceso: ${conFechaInicio}/${reportes.length}`);
-    console.log(`- Con fecha_finalizacion: ${conFechaFin}/${reportes.length}`);
-    console.log(`- Con tiempo_total_minutos: ${conTiempoTotal}/${reportes.length}`);
-    console.log(`- Reportes reparados: ${reparados}/${reportes.length}`);
-    
-    alert(`Diagnóstico completo. Ver consola (F12).\n\nReportes: ${reportes.length}\nCon tiempos: ${conTiempoTotal}\nReparados: ${reparados}`);
-}
         // ==============================================
         // DETECCIÓN DE DISPOSITIVO MÓVIL
         // ==============================================
@@ -1557,9 +1228,11 @@ function diagnosticarTiempos() {
         function checkMobileCompatibility() {
             if (isMobileDevice()) {
                 console.log('Dispositivo móvil detectado');
+                // Mostrar botones específicos para móvil
                 document.getElementById('mobileImageButtons').style.display = 'flex';
                 document.getElementById('uploadText').textContent = '📱 Elige cómo subir la imagen:';
                 
+                // Para el modal de completar
                 const completionButtons = document.getElementById('completionMobileButtons');
                 if (completionButtons) {
                     completionButtons.style.display = 'flex';
@@ -1581,6 +1254,18 @@ function diagnosticarTiempos() {
             return date.toLocaleDateString('es-ES', {
                 year: 'numeric',
                 month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatDateOnly(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'short',
                 day: 'numeric'
             });
         }
@@ -1589,6 +1274,204 @@ function diagnosticarTiempos() {
             const timestamp = new Date().getTime();
             const random = Math.random().toString(36).substring(2, 8);
             return `${type}_${id}_${timestamp}_${random}`;
+        }
+
+        // ==============================================
+        // FUNCIONES PARA MEDICIÓN DE TIEMPOS
+        // ==============================================
+
+        function calcularTiemposReporte(reporte) {
+            if (!reporte) return null;
+            
+            try {
+                const ahora = new Date();
+                
+                // Usar fecha_reporte que ahora incluye hora exacta
+                const fechaReporte = new Date(reporte.fecha_reporte || reporte.created_at);
+                const fechaInicio = reporte.fecha_inicio_proceso ? new Date(reporte.fecha_inicio_proceso) : null;
+                const fechaFinalizacion = reporte.fecha_finalizacion ? new Date(reporte.fecha_finalizacion) : null;
+                
+                // Validar fechas
+                if (isNaN(fechaReporte.getTime())) {
+                    console.error('Fecha de reporte inválida:', reporte.fecha_reporte);
+                    return null;
+                }
+                
+                const tiempos = {
+                    tiempoRespuesta: null,
+                    tiempoReparacion: null,
+                    tiempoTotal: null,
+                    fechaReporte: fechaReporte,
+                    fechaInicio: fechaInicio,
+                    fechaFinalizacion: fechaFinalizacion
+                };
+                
+                // Tiempo de respuesta (desde reporte hasta inicio de proceso)
+                if (fechaInicio) {
+                    const diferenciaMs = fechaInicio - fechaReporte;
+                    if (diferenciaMs >= 0) {
+                        tiempos.tiempoRespuesta = Math.floor(diferenciaMs / (1000 * 60)); // minutos
+                    }
+                }
+                
+                // Tiempo de reparación (desde inicio hasta finalización)
+                if (fechaInicio && fechaFinalizacion) {
+                    const diferenciaMs = fechaFinalizacion - fechaInicio;
+                    if (diferenciaMs >= 0) {
+                        tiempos.tiempoReparacion = Math.floor(diferenciaMs / (1000 * 60)); // minutos
+                    }
+                }
+                
+                // Tiempo total (desde reporte hasta finalización o hasta ahora)
+                if (fechaFinalizacion) {
+                    const diferenciaMs = fechaFinalizacion - fechaReporte;
+                    if (diferenciaMs >= 0) {
+                        tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60)); // minutos
+                    }
+                } else {
+                    const diferenciaMs = ahora - fechaReporte;
+                    tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60)); // minutos
+                }
+                
+                console.log('Tiempos calculados para reporte', reporte.id, ':', tiempos);
+                return tiempos;
+                
+            } catch (error) {
+                console.error('Error calculando tiempos:', error);
+                return null;
+            }
+        }
+
+        function formatearTiempo(minutos) {
+            if (minutos === null || minutos === undefined || isNaN(minutos)) {
+                return 'N/A';
+            }
+            
+            if (minutos < 60) {
+                return `${minutos} min`;
+            } else if (minutos < 1440) {
+                const horas = Math.floor(minutos / 60);
+                const minsRestantes = minutos % 60;
+                return minsRestantes > 0 ? `${horas}h ${minsRestantes}min` : `${horas}h`;
+            } else {
+                const dias = Math.floor(minutos / 1440);
+                const horasRestantes = Math.floor((minutos % 1440) / 60);
+                return horasRestantes > 0 ? `${dias}d ${horasRestantes}h` : `${dias}d`;
+            }
+        }
+
+        // Función para actualizar tiempos en la base de datos
+        async function actualizarTiemposEnBD(reporteId) {
+            try {
+                // Obtener el reporte
+                const { data: reporte, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('*')
+                    .eq('id', reporteId)
+                    .single();
+                
+                if (error) throw error;
+                
+                // Calcular tiempos
+                const tiempos = calcularTiemposReporte(reporte);
+                
+                if (tiempos) {
+                    // Actualizar en la base de datos
+                    const { error: updateError } = await supabaseClient
+                        .from('condiciones_inseguras')
+                        .update({
+                            tiempo_respuesta_minutos: tiempos.tiempoRespuesta,
+                            tiempo_reparacion_minutos: tiempos.tiempoReparacion,
+                            tiempo_total_minutos: tiempos.tiempoTotal,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', reporteId);
+                    
+                    if (updateError) throw updateError;
+                    
+                    console.log(`✅ Tiempos actualizados para reporte ${reporteId}`);
+                    return true;
+                }
+                
+                return false;
+            } catch (error) {
+                console.error(`Error actualizando tiempos para ${reporteId}:`, error);
+                return false;
+            }
+        }
+
+        // ==============================================
+        // FUNCIÓN PARA CORREGIR REPORTES EXISTENTES
+        // ==============================================
+        async function corregirFechasReportes() {
+            showLoading(true);
+            try {
+                const { data: todosReportes, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('id, fecha, fecha_reporte, created_at')
+                    .order('id', { ascending: true });
+                
+                if (error) throw error;
+                
+                let corregidos = 0;
+                const ahora = new Date().toISOString();
+                
+                for (const reporte of todosReportes) {
+                    if (reporte.fecha && reporte.fecha_reporte) {
+                        const fechaDate = new Date(reporte.fecha + 'T00:00:00');
+                        const fechaReporteDate = new Date(reporte.fecha_reporte);
+                        
+                        // Verificar si son días diferentes (más de 12 horas de diferencia)
+                        const diferenciaHoras = Math.abs(fechaReporteDate - fechaDate) / (1000 * 60 * 60);
+                        
+                        if (diferenciaHoras > 12) {
+                            console.log(`Corrigiendo reporte ${reporte.id}:`, {
+                                fecha: reporte.fecha,
+                                fecha_reporte_actual: reporte.fecha_reporte,
+                                diferencia_horas: diferenciaHoras
+                            });
+                            
+                            // Crear nueva fecha_reporte (mismo día que fecha, hora de created_at o mediodía)
+                            let nuevaFechaReporte;
+                            if (reporte.created_at) {
+                                const createdDate = new Date(reporte.created_at);
+                                nuevaFechaReporte = reporte.fecha + 'T' + 
+                                    createdDate.getHours().toString().padStart(2, '0') + ':' + 
+                                    createdDate.getMinutes().toString().padStart(2, '0') + ':00';
+                            } else {
+                                nuevaFechaReporte = reporte.fecha + 'T12:00:00';
+                            }
+                            
+                            await supabaseClient
+                                .from('condiciones_inseguras')
+                                .update({ 
+                                    fecha_reporte: nuevaFechaReporte,
+                                    updated_at: ahora
+                                })
+                                .eq('id', reporte.id);
+                            
+                            corregidos++;
+                            
+                            // Calcular tiempos para este reporte
+                            await actualizarTiemposEnBD(reporte.id);
+                            
+                            // Pequeña pausa para no sobrecargar
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                        }
+                    }
+                }
+                
+                showLoading(false);
+                alert(`✅ ${corregidos} reportes corregidos. Recargando datos...`);
+                
+                // Recargar para ver cambios
+                await cargarReportes();
+                
+            } catch (error) {
+                console.error('Error corrigiendo fechas:', error);
+                showLoading(false);
+                alert('❌ Error corrigiendo fechas: ' + error.message);
+            }
         }
 
         // ==============================================
@@ -1627,9 +1510,10 @@ function diagnosticarTiempos() {
             const cameraPreview = document.getElementById('cameraPreview');
             const video = document.getElementById('cameraVideo');
 
+            // Solicitar permiso de cámara
             navigator.mediaDevices.getUserMedia({ 
                 video: { 
-                    facingMode: 'environment',
+                    facingMode: 'environment', // Cámara trasera
                     width: { ideal: 1280 },
                     height: { ideal: 720 }
                 },
@@ -1638,6 +1522,8 @@ function diagnosticarTiempos() {
                 currentCameraStream = stream;
                 video.srcObject = stream;
                 cameraPreview.style.display = 'block';
+                
+                // Bloquear scroll cuando la cámara está abierta
                 document.body.style.overflow = 'hidden';
             }).catch(err => {
                 console.error('Error accediendo a la cámara:', err);
@@ -1668,6 +1554,7 @@ function diagnosticarTiempos() {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
+            // Convertir a blob y optimizar
             canvas.toBlob(async (blob) => {
                 const optimizedBlob = await optimizeImageForMobile(new File([blob], 'foto.jpg', { type: 'image/jpeg' }));
                 
@@ -1690,13 +1577,15 @@ function diagnosticarTiempos() {
                     return;
                 }
 
-                if (file.size > 1024 * 1024 || isMobileDevice()) {
+                // Solo optimizar si es muy grande o siempre en móvil
+                if (file.size > 1024 * 1024 || isMobileDevice()) { // Mayor a 1MB
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const img = new Image();
                         img.onload = function() {
                             const canvas = document.createElement('canvas');
                             
+                            // Calcular nuevas dimensiones (máximo 1200px)
                             let width = img.width;
                             let height = img.height;
                             const maxSize = 1200;
@@ -1715,6 +1604,7 @@ function diagnosticarTiempos() {
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, width, height);
                             
+                            // Convertir a JPEG con calidad 80%
                             canvas.toBlob(function(blob) {
                                 const optimizedFile = new File([blob], file.name, {
                                     type: 'image/jpeg',
@@ -1723,12 +1613,13 @@ function diagnosticarTiempos() {
                                 resolve(optimizedFile);
                             }, 'image/jpeg', 0.8);
                         };
-                        img.onerror = () => resolve(file);
+                        img.onerror = () => resolve(file); // Fallback al archivo original
                         img.src = e.target.result;
                     };
-                    reader.onerror = () => resolve(file);
+                    reader.onerror = () => resolve(file); // Fallback al archivo original
                     reader.readAsDataURL(file);
                 } else {
+                    // No necesita optimización
                     resolve(file);
                 }
             });
@@ -1738,9 +1629,12 @@ function diagnosticarTiempos() {
         // MANEJO DE IMÁGENES
         // ==============================================
         function setupImageUpload() {
+            // Configurar subida de imagen de evidencia
             const evidenceInput = document.getElementById('evidenceImage');
             const evidenceLabel = document.getElementById('imageUploadLabel');
+            const evidencePreview = document.getElementById('imagePreview');
             
+            // Solo configurar clic directo en desktop
             if (!isMobileDevice()) {
                 evidenceLabel.addEventListener('click', () => evidenceInput.click());
             }
@@ -1748,12 +1642,14 @@ function diagnosticarTiempos() {
             evidenceInput.addEventListener('change', async function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    await handleImageUpload(file, document.getElementById('imagePreview'), 'evidenceImage');
+                    await handleImageUpload(file, evidencePreview, 'evidenceImage');
                 }
             });
             
+            // Configurar subida de imagen de completado
             const completionInput = document.getElementById('completionImage');
             const completionLabel = document.getElementById('completionImageLabel');
+            const completionPreview = document.getElementById('completionPreview');
             
             if (!isMobileDevice()) {
                 completionLabel.addEventListener('click', () => completionInput.click());
@@ -1762,7 +1658,7 @@ function diagnosticarTiempos() {
             completionInput.addEventListener('change', async function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    await handleImageUpload(file, document.getElementById('completionPreview'), 'completionImage');
+                    await handleImageUpload(file, completionPreview, 'completionImage');
                 }
             });
         }
@@ -1776,6 +1672,7 @@ function diagnosticarTiempos() {
             showLoading(true);
             
             try {
+                // Optimizar imagen
                 const optimizedFile = await optimizeImageForMobile(file);
                 
                 if (optimizedFile.size > 5 * 1024 * 1024) {
@@ -1784,6 +1681,7 @@ function diagnosticarTiempos() {
                     return;
                 }
                 
+                // Asignar a la variable correspondiente
                 if (type === 'evidenceImage') {
                     evidenceImage = optimizedFile;
                     previewImage(optimizedFile, previewContainer, 'Evidencia del reporte');
@@ -1794,6 +1692,7 @@ function diagnosticarTiempos() {
                 
             } catch (error) {
                 console.error('Error procesando imagen:', error);
+                // Fallback al archivo original
                 if (type === 'evidenceImage') {
                     evidenceImage = file;
                     previewImage(file, previewContainer, 'Evidencia del reporte');
@@ -1849,6 +1748,7 @@ function diagnosticarTiempos() {
                 
                 if (error) throw error;
                 
+                // Obtener URL pública
                 const { data: { publicUrl } } = supabaseClient
                     .storage
                     .from(bucket)
@@ -1870,19 +1770,20 @@ function diagnosticarTiempos() {
             
             modalImage.src = imageUrl;
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // Bloquear scroll
         }
 
         function closeImageModal() {
             document.getElementById('imageModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = 'auto'; // Restaurar scroll
         }
 
         function openCompletionModal(reportId) {
             currentCompletionReportId = reportId;
             document.getElementById('completionModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // Bloquear scroll
             
+            // Resetear el formulario de completar
             completionImage = null;
             document.getElementById('completionPreview').innerHTML = '';
             document.getElementById('completionImage').value = '';
@@ -1891,7 +1792,7 @@ function diagnosticarTiempos() {
 
         function closeCompletionModal() {
             document.getElementById('completionModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = 'auto'; // Restaurar scroll
             currentCompletionReportId = null;
         }
 
@@ -1900,8 +1801,10 @@ function diagnosticarTiempos() {
         // ==============================================
         async function inicializarSupabase() {
             try {
+                // Crear cliente Supabase con credenciales preconfiguradas
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 
+                // Verificar conexión
                 const { data, error } = await supabaseClient
                     .from('condiciones_inseguras')
                     .select('count', { count: 'exact', head: true });
@@ -1922,7 +1825,7 @@ function diagnosticarTiempos() {
         }
 
         // ==============================================
-        // FUNCIONES CRUD
+        // FUNCIONES CRUD (CON MEJORAS PARA FECHAS)
         // ==============================================
         async function cargarReportes() {
             showLoading(true);
@@ -1946,73 +1849,129 @@ function diagnosticarTiempos() {
         }
 
         async function guardarReporte(reporte) {
-    showLoading(true);
-    try {
-        // Obtener la fecha actual
-        const ahora = new Date();
-        const hoy = ahora.toISOString().split('T')[0];
-        
-        // Asegurar que fecha_reporte coincida con fecha (mismo día)
-        // Si no se especifica fecha, usar hoy
-        const fechaReporte = reporte.fecha || hoy;
-        
-        // Crear fecha_reporte con hora específica (08:00 AM)
-        // Esto evita que Supabase use DEFAULT NOW() que pone fecha/hora de inserción
-        const fechaReporteTimestamp = fechaReporte + 'T08:00:00';
-        
-        // Asignar las fechas correctamente
-        reporte.fecha_reporte = fechaReporteTimestamp;  // Esto sobreescribirá DEFAULT NOW()
-        reporte.fecha = fechaReporte;
-        reporte.created_at = ahora.toISOString();
-        reporte.updated_at = ahora.toISOString();
-        
-        console.log('Guardando con fechas sincronizadas:', {
-            fecha: reporte.fecha,
-            fecha_reporte: reporte.fecha_reporte
-        });
-        
-        // SUBIR IMAGEN (CÓDIGO ORIGINAL - SIN MODIFICAR)
-        if (evidenceImage) {
-            const imageUrl = await uploadImageToSupabase(evidenceImage);
-            if (imageUrl) {
-                reporte.foto_antes = imageUrl;
+            showLoading(true);
+            try {
+                // COMBINAR FECHA Y HORA PARA CREAR fecha_reporte EXACTA
+                const fechaReporteCompleta = reporte.fecha + 'T' + reporte.hora_reporte + ':00';
+                
+                // Asignar fecha_reporte para que coincida exactamente con la fecha y hora del reporte
+                reporte.fecha_reporte = fechaReporteCompleta;
+                
+                // Eliminar la propiedad temporal hora_reporte
+                delete reporte.hora_reporte;
+                
+                console.log('Fechas configuradas:', {
+                    fecha: reporte.fecha,
+                    fecha_reporte: reporte.fecha_reporte
+                });
+                
+                // SUBIR IMAGEN (CÓDIGO ORIGINAL - SIN MODIFICAR)
+                if (evidenceImage) {
+                    const imageUrl = await uploadImageToSupabase(evidenceImage);
+                    if (imageUrl) {
+                        reporte.foto_antes = imageUrl;
+                    }
+                }
+                
+                const { data, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .insert([reporte])
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                showLoading(false);
+                alert('✅ Reporte guardado exitosamente');
+                await cargarReportes();
+                return data;
+                
+            } catch (error) {
+                console.error('Error guardando reporte:', error);
+                showLoading(false);
+                alert('❌ Error al guardar el reporte');
+                return null;
             }
         }
-        
-        const { data, error } = await supabaseClient
-            .from('condiciones_inseguras')
-            .insert([reporte])
-            .select()
-            .single();
-        
-        if (error) throw error;
-        
-        showLoading(false);
-        alert('✅ Reporte guardado exitosamente');
-        await cargarReportes();
-        return data;
-        
-    } catch (error) {
-        console.error('Error guardando reporte:', error);
-        showLoading(false);
-        alert('❌ Error al guardar el reporte');
-        return null;
-    }
-}
+
+        async function completarReporte(id, imageUrl, notas) {
+            try {
+                const ahora = new Date().toISOString();
+                const updateData = {
+                    estado: 'reparado',
+                    fecha_reparacion: ahora.split('T')[0],
+                    fecha_finalizacion: ahora,
+                    notas_reparacion: notas,
+                    foto_despues: imageUrl,
+                    updated_at: ahora
+                };
+                
+                const { error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .update(updateData)
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                // Calcular y guardar tiempos automáticamente
+                await actualizarTiemposEnBD(id);
+                
+                await cargarReportes();
+                closeCompletionModal();
+                alert('✅ Reporte completado exitosamente');
+                
+            } catch (error) {
+                console.error('Error completando reporte:', error);
+                alert('❌ Error al completar el reporte');
+            }
+        }
+
+        async function cambiarEstado(id, nuevoEstado) {
+            try {
+                const ahora = new Date().toISOString();
+                const updateData = { 
+                    estado: nuevoEstado,
+                    updated_at: ahora 
+                };
+                
+                // Registrar timestamp según el estado
+                if (nuevoEstado === 'en proceso') {
+                    updateData.fecha_inicio_proceso = ahora;
+                } else if (nuevoEstado === 'reparado') {
+                    updateData.fecha_finalizacion = ahora;
+                }
+                
+                const { error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .update(updateData)
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                // Calcular y guardar tiempos automáticamente
+                await actualizarTiemposEnBD(id);
+                
+                await cargarReportes();
+                alert('✅ Estado actualizado y tiempos calculados');
+                
+            } catch (error) {
+                console.error('Error actualizando estado:', error);
+                alert('❌ Error al actualizar el estado');
+            }
+        }
 
         // ==============================================
         // FUNCIONES DE INTERFAZ
         // ==============================================
         function actualizarUI() {
             actualizarEstadisticas();
-            calcularMetricasTiempos();
             actualizarTablaReciente();
             actualizarTablaHistorial();
             actualizarSelectUbicaciones();
             actualizarGraficoLinea();
             actualizarAnalisis();
-            actualizarAnalisisTiempos();
             
+            // Actualizar sidebar
             document.getElementById('total-count-sidebar').textContent = reportes.length;
             document.getElementById('config-total').textContent = reportes.length;
             document.getElementById('last-update').textContent = new Date().toLocaleString();
@@ -2032,7 +1991,7 @@ function diagnosticarTiempos() {
 
         function actualizarTablaReciente() {
             const tbody = document.querySelector('#recent-table tbody');
-            const recientes = reportes.slice(0, 8);
+            const recientes = reportes.slice(0, 8); // Mostrar 8 más recientes
             
             tbody.innerHTML = recientes.map(reporte => {
                 let badgeClass = 'badge-pendiente';
@@ -2042,6 +2001,20 @@ function diagnosticarTiempos() {
                 const descCorta = reporte.descripcion.length > 60 
                     ? reporte.descripcion.substring(0, 60) + '...' 
                     : reporte.descripcion;
+                
+                // Formatear fecha con hora si está disponible
+                let fechaMostrar = formatDate(reporte.fecha);
+                if (reporte.fecha_reporte) {
+                    const fechaHora = new Date(reporte.fecha_reporte);
+                    fechaMostrar = fechaHora.toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    }) + ' ' + fechaHora.toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
                 
                 // Generar miniaturas de fotos
                 let fotosHTML = '<div class="photos-container">';
@@ -2066,15 +2039,6 @@ function diagnosticarTiempos() {
                 }
                 fotosHTML += '</div>';
                 
-                // Calcular tiempos
-                const tiempos = calcularTiemposReporte(reporte);
-                const tiemposHTML = `
-                    <div class="tiempo-info">
-                        <small><strong>Total:</strong> ${formatearTiempo(reporte.tiempo_total_minutos)}</small><br>
-                        <small><strong>Respuesta:</strong> ${formatearTiempo(reporte.tiempo_respuesta_minutos)}</small>
-                    </div>
-                `;
-                
                 return `
                     <tr>
                         <td>${reporte.id}</td>
@@ -2082,9 +2046,8 @@ function diagnosticarTiempos() {
                         <td>${reporte.ubicacion || 'N/A'}</td>
                         <td>${reporte.ot || 'N/A'}</td>
                         <td>${reporte.reportado_por || 'N/A'}</td>
-                        <td>${formatDate(reporte.fecha)}</td>
+                        <td>${fechaMostrar}</td>
                         <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
-                        <td>${tiemposHTML}</td>
                         <td>${fotosHTML}</td>
                     </tr>
                 `;
@@ -2095,6 +2058,7 @@ function diagnosticarTiempos() {
             const tbody = document.querySelector('#history-table tbody');
             let reportesFiltrados = [...reportes];
             
+            // Aplicar filtro
             if (currentFilter === 'pendiente') {
                 reportesFiltrados = reportes.filter(r => r.estado === 'pendiente');
             } else if (currentFilter === 'en proceso') {
@@ -2108,6 +2072,31 @@ function diagnosticarTiempos() {
                 if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
                 if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
                 
+                // Calcular tiempos para mostrar
+                const tiempos = calcularTiemposReporte(reporte);
+                const tiempoTotal = reporte.tiempo_total_minutos !== null ? 
+                    reporte.tiempo_total_minutos : (tiempos ? tiempos.tiempoTotal : null);
+                
+                const tiempoRespuesta = reporte.tiempo_respuesta_minutos !== null ? 
+                    reporte.tiempo_respuesta_minutos : (tiempos ? tiempos.tiempoRespuesta : null);
+                
+                const tiempoReparacion = reporte.tiempo_reparacion_minutos !== null ? 
+                    reporte.tiempo_reparacion_minutos : (tiempos ? tiempos.tiempoReparacion : null);
+                
+                // Formatear fecha con hora si está disponible
+                let fechaReporteMostrar = formatDate(reporte.fecha);
+                if (reporte.fecha_reporte) {
+                    const fechaHora = new Date(reporte.fecha_reporte);
+                    fechaReporteMostrar = fechaHora.toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    }) + ' ' + fechaHora.toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+                
                 // Generar miniaturas de fotos
                 let fotosHTML = '<div class="photos-container">';
                 if (reporte.foto_antes) {
@@ -2130,21 +2119,6 @@ function diagnosticarTiempos() {
                     fotosHTML += '<span style="color: #999; font-size: 12px;">Sin fotos</span>';
                 }
                 fotosHTML += '</div>';
-                
-                // Calcular tiempos
-                const tiempos = calcularTiemposReporte(reporte);
-                let tiempoClass = '';
-                if (tiempos.estaAtrasado) {
-                    tiempoClass = 'tiempo-alerta';
-                }
-                
-                const tiemposHTML = `
-                    <div class="tiempo-info ${tiempoClass}">
-                        <small><strong>Total:</strong> ${formatearTiempo(reporte.tiempo_total_minutos)}</small><br>
-                        <small><strong>Respuesta:</strong> ${formatearTiempo(reporte.tiempo_respuesta_minutos)}</small><br>
-                        <small><strong>Reparación:</strong> ${formatearTiempo(reporte.tiempo_reparacion_minutos)}</small>
-                    </div>
-                `;
                 
                 let acciones = '';
                 if (reporte.estado === 'pendiente') {
@@ -2174,11 +2148,18 @@ function diagnosticarTiempos() {
                         <td>${reporte.ubicacion || 'N/A'}</td>
                         <td>${reporte.ot || 'N/A'}</td>
                         <td>${reporte.categoria || 'N/A'}</td>
-                        <td>${formatDate(reporte.fecha)}</td>
+                        <td>${fechaReporteMostrar}</td>
+                        <td>${reporte.fecha_reparacion ? formatDate(reporte.fecha_reparacion) : 'N/A'}</td>
+                        <td>
+                            <div style="font-size: 11px; line-height: 1.3;">
+                                <div><strong>Total:</strong> ${formatearTiempo(tiempoTotal)}</div>
+                                <div><strong>Respuesta:</strong> ${formatearTiempo(tiempoRespuesta)}</div>
+                                <div><strong>Reparación:</strong> ${formatearTiempo(tiempoReparacion)}</div>
+                            </div>
+                        </td>
                         <td>${reporte.reportado_por || 'N/A'}</td>
                         <td>${reporte.prioridad || 'N/A'}</td>
                         <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
-                        <td>${tiemposHTML}</td>
                         <td>${fotosHTML}</td>
                         <td>${acciones}</td>
                     </tr>
@@ -2204,19 +2185,23 @@ function diagnosticarTiempos() {
             const ubicacion = document.getElementById('location-select').value;
             const periodo = parseInt(document.getElementById('period-select').value);
             
+            // Filtrar reportes
             let reportesFiltrados = reportes;
             if (ubicacion) {
                 reportesFiltrados = reportes.filter(r => r.ubicacion === ubicacion);
             }
             
+            // Obtener últimos N meses
             const fechaFin = new Date();
             const fechaInicio = new Date();
             fechaInicio.setMonth(fechaInicio.getMonth() - periodo);
             
+            // Agrupar por mes
             const datosPorMes = {};
             const labels = [];
             const valores = [];
             
+            // Generar meses
             for (let i = periodo - 1; i >= 0; i--) {
                 const fecha = new Date();
                 fecha.setMonth(fecha.getMonth() - i);
@@ -2227,6 +2212,7 @@ function diagnosticarTiempos() {
                 datosPorMes[clave] = 0;
             }
             
+            // Contar reportes por mes
             reportesFiltrados.forEach(reporte => {
                 if (reporte.fecha) {
                     const fecha = new Date(reporte.fecha);
@@ -2238,10 +2224,12 @@ function diagnosticarTiempos() {
                 }
             });
             
+            // Crear array de valores
             Object.keys(datosPorMes).forEach(clave => {
                 valores.push(datosPorMes[clave]);
             });
             
+            // Crear o actualizar gráfico
             if (lineChart) {
                 lineChart.data.labels = labels;
                 lineChart.data.datasets[0].data = valores;
@@ -2343,6 +2331,7 @@ function diagnosticarTiempos() {
                 });
             }
             
+            // Actualizar según la pestaña activa
             actualizarGraficoAnalisis(currentAnalysisTab);
             actualizarEstadisticasAnalisis(currentAnalysisTab);
         }
@@ -2354,6 +2343,7 @@ function diagnosticarTiempos() {
 
             switch(tipo) {
                 case 'categoria':
+                    // Análisis por categoría
                     const categorias = {};
                     reportes.forEach(reporte => {
                         const cat = reporte.categoria || 'Sin categoría';
@@ -2366,6 +2356,7 @@ function diagnosticarTiempos() {
                     break;
                     
                 case 'riesgo':
+                    // Análisis por nivel de riesgo
                     const riesgos = {};
                     reportes.forEach(reporte => {
                         const riesgo = reporte.prioridad || 'Sin especificar';
@@ -2378,6 +2369,7 @@ function diagnosticarTiempos() {
                     break;
                     
                 case 'estado':
+                    // Análisis por estado
                     const estados = {};
                     reportes.forEach(reporte => {
                         const estado = reporte.estado || 'pendiente';
@@ -2390,12 +2382,14 @@ function diagnosticarTiempos() {
                     break;
                     
                 case 'ubicacion':
+                    // Análisis por ubicación (top 10)
                     const ubicaciones = {};
                     reportes.forEach(reporte => {
                         const ubicacion = reporte.ubicacion || 'Sin ubicación';
                         ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
                     });
                     
+                    // Ordenar y tomar top 10
                     const sorted = Object.entries(ubicaciones)
                         .sort((a, b) => b[1] - a[1])
                         .slice(0, 10);
@@ -2406,6 +2400,7 @@ function diagnosticarTiempos() {
                     break;
             }
 
+            // Actualizar gráfico
             analysisChart.data.labels = labels;
             analysisChart.data.datasets[0].data = datos;
             analysisChart.data.datasets[0].label = titulo;
@@ -2499,6 +2494,7 @@ function diagnosticarTiempos() {
                         ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
                     });
                     
+                    // Tomar top 5
                     const top5 = Object.entries(ubicaciones)
                         .sort((a, b) => b[1] - a[1])
                         .slice(0, 5);
@@ -2510,229 +2506,8 @@ function diagnosticarTiempos() {
                                 <div class="stat-title">${ubicacion}</div>
                                 <div class="stat-value">${cantidad}</div>
                                 <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
-                            </div>
                         `;
                     });
-                    break;
-            }
-            
-            statsContainer.innerHTML = statsHTML;
-        }
-
-        // ==============================================
-        // ANÁLISIS DE TIEMPOS
-        // ==============================================
-        function actualizarAnalisisTiempos() {
-            if (!tiemposChart) {
-                const ctx = document.getElementById('tiempos-chart').getContext('2d');
-                tiemposChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: [],
-                        datasets: [{
-                            label: '',
-                            data: [],
-                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                            borderColor: 'rgb(52, 152, 219)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Tiempo (minutos)'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            actualizarGraficoTiempos(currentTiempoTab);
-            actualizarEstadisticasTiempos(currentTiempoTab);
-        }
-
-        function actualizarGraficoTiempos(tipo) {
-            let labels = [];
-            let datos = [];
-            let titulo = '';
-
-            switch(tipo) {
-                case 'respuesta':
-                    // Tiempos de respuesta por prioridad
-                    const tiemposRespuesta = {};
-                    reportes.forEach(reporte => {
-                        if (reporte.tiempo_respuesta_minutos) {
-                            const prioridad = reporte.prioridad || 'Sin especificar';
-                            if (!tiemposRespuesta[prioridad]) {
-                                tiemposRespuesta[prioridad] = [];
-                            }
-                            tiemposRespuesta[prioridad].push(reporte.tiempo_respuesta_minutos);
-                        }
-                    });
-                    
-                    labels = Object.keys(tiemposRespuesta);
-                    datos = labels.map(prioridad => {
-                        const tiempos = tiemposRespuesta[prioridad];
-                        return Math.round(tiempos.reduce((a, b) => a + b, 0) / tiempos.length);
-                    });
-                    titulo = 'Tiempo Promedio de Respuesta por Prioridad';
-                    break;
-                    
-                case 'reparacion':
-                    // Tiempos de reparación por categoría
-                    const tiemposReparacion = {};
-                    reportes.forEach(reporte => {
-                        if (reporte.tiempo_reparacion_minutos) {
-                            const categoria = reporte.categoria || 'Sin categoría';
-                            if (!tiemposReparacion[categoria]) {
-                                tiemposReparacion[categoria] = [];
-                            }
-                            tiemposReparacion[categoria].push(reporte.tiempo_reparacion_minutos);
-                        }
-                    });
-                    
-                    labels = Object.keys(tiemposReparacion);
-                    datos = labels.map(categoria => {
-                        const tiempos = tiemposReparacion[categoria];
-                        return Math.round(tiempos.reduce((a, b) => a + b, 0) / tiempos.length);
-                    });
-                    titulo = 'Tiempo Promedio de Reparación por Categoría';
-                    break;
-                    
-                case 'total':
-                    // Tiempos totales por ubicación (top 5)
-                    const tiemposTotal = {};
-                    reportes.forEach(reporte => {
-                        if (reporte.tiempo_total_minutos && reporte.ubicacion) {
-                            if (!tiemposTotal[reporte.ubicacion]) {
-                                tiemposTotal[reporte.ubicacion] = [];
-                            }
-                            tiemposTotal[reporte.ubicacion].push(reporte.tiempo_total_minutos);
-                        }
-                    });
-                    
-                    const sortedTotal = Object.entries(tiemposTotal)
-                        .sort((a, b) => b[1].length - a[1].length)
-                        .slice(0, 5);
-                    
-                    labels = sortedTotal.map(item => item[0]);
-                    datos = sortedTotal.map(item => {
-                        const tiempos = item[1];
-                        return Math.round(tiempos.reduce((a, b) => a + b, 0) / tiempos.length);
-                    });
-                    titulo = 'Tiempo Promedio Total por Ubicación (Top 5)';
-                    break;
-                    
-                case 'sla':
-                    // Cumplimiento SLA por prioridad
-                    const cumplimientoSLA = {};
-                    reportes.forEach(reporte => {
-                        if (reporte.tiempo_total_minutos && reporte.prioridad) {
-                            const prioridad = reporte.prioridad;
-                            if (!cumplimientoSLA[prioridad]) {
-                                cumplimientoSLA[prioridad] = { total: 0, cumplidos: 0 };
-                            }
-                            cumplimientoSLA[prioridad].total++;
-                            const slaEsperado = SLA_CONFIG[prioridad] || 2880;
-                            if (reporte.tiempo_total_minutos <= slaEsperado) {
-                                cumplimientoSLA[prioridad].cumplidos++;
-                            }
-                        }
-                    });
-                    
-                    labels = Object.keys(cumplimientoSLA);
-                    datos = labels.map(prioridad => {
-                        const { total, cumplidos } = cumplimientoSLA[prioridad];
-                        return Math.round((cumplidos / total) * 100);
-                    });
-                    titulo = 'Porcentaje de Cumplimiento SLA por Prioridad';
-                    break;
-            }
-
-            tiemposChart.data.labels = labels;
-            tiemposChart.data.datasets[0].data = datos;
-            tiemposChart.data.datasets[0].label = titulo;
-            tiemposChart.update();
-        }
-
-        function actualizarEstadisticasTiempos(tipo) {
-            const statsContainer = document.getElementById('tiempos-detallados');
-            let statsHTML = '';
-            
-            switch(tipo) {
-                case 'respuesta':
-                    const reportesConRespuesta = reportes.filter(r => r.tiempo_respuesta_minutos);
-                    if (reportesConRespuesta.length > 0) {
-                        const min = Math.min(...reportesConRespuesta.map(r => r.tiempo_respuesta_minutos));
-                        const max = Math.max(...reportesConRespuesta.map(r => r.tiempo_respuesta_minutos));
-                        const avg = reportesConRespuesta.reduce((sum, r) => sum + r.tiempo_respuesta_minutos, 0) / reportesConRespuesta.length;
-                        
-                        statsHTML = `
-                            <div class="stat-card">
-                                <div class="stat-title">Tiempo Mínimo Respuesta</div>
-                                <div class="stat-value">${formatearTiempo(min)}</div>
-                                <div class="stat-subtitle">Mejor caso</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Tiempo Máximo Respuesta</div>
-                                <div class="stat-value">${formatearTiempo(max)}</div>
-                                <div class="stat-subtitle">Peor caso</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Tiempo Promedio Respuesta</div>
-                                <div class="stat-value">${formatearTiempo(avg)}</div>
-                                <div class="stat-subtitle">Promedio general</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Reportes Analizados</div>
-                                <div class="stat-value">${reportesConRespuesta.length}</div>
-                                <div class="stat-subtitle">Con tiempos registrados</div>
-                            </div>
-                        `;
-                    }
-                    break;
-                    
-                case 'reparacion':
-                    const reportesConReparacion = reportes.filter(r => r.tiempo_reparacion_minutos);
-                    if (reportesConReparacion.length > 0) {
-                        const min = Math.min(...reportesConReparacion.map(r => r.tiempo_reparacion_minutos));
-                        const max = Math.max(...reportesConReparacion.map(r => r.tiempo_reparacion_minutos));
-                        const avg = reportesConReparacion.reduce((sum, r) => sum + r.tiempo_reparacion_minutos, 0) / reportesConReparacion.length;
-                        
-                        statsHTML = `
-                            <div class="stat-card">
-                                <div class="stat-title">Reparación Más Rápida</div>
-                                <div class="stat-value">${formatearTiempo(min)}</div>
-                                <div class="stat-subtitle">Mejor caso</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Reparación Más Lenta</div>
-                                <div class="stat-value">${formatearTiempo(max)}</div>
-                                <div class="stat-subtitle">Peor caso</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Promedio Reparación</div>
-                                <div class="stat-value">${formatearTiempo(avg)}</div>
-                                <div class="stat-subtitle">Tiempo promedio</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-title">Eficiencia</div>
-                                <div class="stat-value">${Math.round((avg / 480) * 100)}%</div>
-                                <div class="stat-subtitle">vs meta de 8 horas</div>
-                            </div>
-                        `;
-                    }
                     break;
             }
             
@@ -2743,47 +2518,86 @@ function diagnosticarTiempos() {
         // EVENT HANDLERS
         // ==============================================
         async function submitReporte(event) {
-    event.preventDefault();
-    
-    const reporte = {
-        reportado_por: document.getElementById('reporter-name').value,
-        descripcion: document.getElementById('description').value,
-        ubicacion: document.getElementById('location').value,
-        ot: document.getElementById('ot').value,
-        categoria: document.getElementById('category').value,
-        prioridad: document.getElementById('priority').value,
-        estado: 'pendiente',
-        // Usar fecha actual para nuevos reportes
-        fecha: new Date().toISOString().split('T')[0],
-        foto_antes: null
-    };
-    
-    if (!reporte.reportado_por || !reporte.descripcion || !reporte.ubicacion || 
-        !reporte.categoria || !reporte.prioridad) {
-        alert('❌ Por favor complete todos los campos obligatorios');
-        return;
-    }
-    
-    await guardarReporte(reporte);
-    
-    // Resto del código ORIGINAL - SIN MODIFICAR
-    document.getElementById('report-form').reset();
-    evidenceImage = null;
-    document.getElementById('imagePreview').innerHTML = '';
-    document.getElementById('evidenceImage').value = '';
-    document.querySelector('.nav-menu a[data-page="dashboard"]').click();
-}
+            event.preventDefault();
+            
+            const horaActual = new Date();
+            const horaReporte = document.getElementById('hora-reporte').value || 
+                               horaActual.getHours().toString().padStart(2, '0') + ':' + 
+                               horaActual.getMinutes().toString().padStart(2, '0');
+            
+            const reporte = {
+                reportado_por: document.getElementById('reporter-name').value,
+                descripcion: document.getElementById('description').value,
+                ubicacion: document.getElementById('location').value,
+                ot: document.getElementById('ot').value,
+                categoria: document.getElementById('category').value,
+                prioridad: document.getElementById('priority').value,
+                estado: 'pendiente',
+                fecha: new Date().toISOString().split('T')[0], // Solo fecha
+                hora_reporte: horaReporte, // Nueva propiedad
+                foto_antes: null
+            };
+            
+            if (!reporte.reportado_por || !reporte.descripcion || !reporte.ubicacion || 
+                !reporte.categoria || !reporte.prioridad) {
+                alert('❌ Por favor complete todos los campos obligatorios');
+                return;
+            }
+            
+            await guardarReporte(reporte);
+            document.getElementById('report-form').reset();
+            evidenceImage = null;
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('evidenceImage').value = '';
+            document.querySelector('.nav-menu a[data-page="dashboard"]').click();
+        }
+
+        async function submitCompletion() {
+            if (!completionImage) {
+                alert('❌ Por favor suba una foto de la reparación realizada');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const imageUrl = await uploadImageToSupabase(completionImage, 'evidencias', 'reparaciones');
+                if (!imageUrl) {
+                    throw new Error('Error subiendo imagen');
+                }
+                
+                const notas = document.getElementById('completionNotes').value;
+                await completarReporte(currentCompletionReportId, imageUrl, notas);
+                
+            } catch (error) {
+                console.error('Error completando reporte:', error);
+                alert('❌ Error al completar el reporte');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('report-form').reset();
+            evidenceImage = null;
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('evidenceImage').value = '';
+        }
 
         // ==============================================
         // INICIALIZACIÓN DE LA APLICACIÓN
         // ==============================================
         document.addEventListener('DOMContentLoaded', async function() {
+            // Configurar cierre de modales
             document.querySelector('.image-modal-close').addEventListener('click', closeImageModal);
             document.getElementById('imageModal').addEventListener('click', function(e) {
                 if (e.target === this) closeImageModal();
             });
             
+            // Configurar para móvil
             checkMobileCompatibility();
+            
+            // Configurar subida de imágenes
             setupImageUpload();
             
             // Inicializar navegación
@@ -2792,19 +2606,18 @@ function diagnosticarTiempos() {
                     e.preventDefault();
                     const page = this.getAttribute('data-page');
                     
+                    // Actualizar navegación activa
                     document.querySelectorAll('.nav-menu a').forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
                     
+                    // Mostrar página correspondiente
                     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
                     document.getElementById(`${page}-page`).style.display = 'block';
                     
+                    // Si es análisis, actualizar gráfico
                     if (page === 'analisis') {
                         setTimeout(() => {
                             actualizarAnalisis();
-                        }, 100);
-                    } else if (page === 'tiempos') {
-                        setTimeout(() => {
-                            actualizarAnalisisTiempos();
                         }, 100);
                     }
                 });
@@ -2849,19 +2662,11 @@ function diagnosticarTiempos() {
             // Configurar pestañas de análisis
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    if (this.closest('#analisis-page')) {
-                        document.querySelectorAll('#analisis-page .tab-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                        currentAnalysisTab = this.getAttribute('data-chart');
-                        actualizarGraficoAnalisis(currentAnalysisTab);
-                        actualizarEstadisticasAnalisis(currentAnalysisTab);
-                    } else if (this.closest('#tiempos-page')) {
-                        document.querySelectorAll('#tiempos-page .tab-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                        currentTiempoTab = this.getAttribute('data-tiempo');
-                        actualizarGraficoTiempos(currentTiempoTab);
-                        actualizarEstadisticasTiempos(currentTiempoTab);
-                    }
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentAnalysisTab = this.getAttribute('data-chart');
+                    actualizarGraficoAnalisis(currentAnalysisTab);
+                    actualizarEstadisticasAnalisis(currentAnalysisTab);
                 });
             });
             
@@ -2882,12 +2687,20 @@ function diagnosticarTiempos() {
 
             // Manejar cambios de orientación en móvil
             window.addEventListener('orientationchange', function() {
+                // Redibujar gráficos cuando cambia la orientación
                 setTimeout(() => {
                     if (lineChart) lineChart.resize();
                     if (analysisChart) analysisChart.resize();
-                    if (tiemposChart) tiemposChart.resize();
                 }, 300);
             });
+        });
+
+        // Manejar cuando la página se vuelve visible (por ejemplo, al volver de la cámara)
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                // La página volvió a ser visible
+                console.log('Página visible de nuevo');
+            }
         });
 
         // Exportar funciones globales
@@ -2904,6 +2717,7 @@ function diagnosticarTiempos() {
         window.selectCompletionFromGallery = selectCompletionFromGallery;
         window.capturePhoto = capturePhoto;
         window.closeCamera = closeCamera;
+        window.corregirFechasReportes = corregirFechasReportes;
     </script>
 </body>
 </html>
