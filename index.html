@@ -1946,132 +1946,59 @@ function diagnosticarTiempos() {
         }
 
         async function guardarReporte(reporte) {
-            showLoading(true);
-            try {
-                // Agregar timestamps automáticamente
-                reporte.fecha_reporte = new Date().toISOString();
-                reporte.fecha = new Date().toISOString().split('T')[0];
-                
-                // Subir imagen si existe
-                if (evidenceImage) {
-                    const imageUrl = await uploadImageToSupabase(evidenceImage);
-                    if (imageUrl) {
-                        reporte.foto_antes = imageUrl;
-                    }
-                }
-                
-                const { data, error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .insert([reporte])
-                    .select()
-                    .single();
-                
-                if (error) throw error;
-                
-                showLoading(false);
-                alert('✅ Reporte guardado exitosamente');
-                await cargarReportes();
-                return data;
-                
-            } catch (error) {
-                console.error('Error guardando reporte:', error);
-                showLoading(false);
-                alert('❌ Error al guardar el reporte');
-                return null;
+    showLoading(true);
+    try {
+        // Obtener la fecha actual
+        const ahora = new Date();
+        const hoy = ahora.toISOString().split('T')[0];
+        
+        // Asegurar que fecha_reporte coincida con fecha (mismo día)
+        // Si no se especifica fecha, usar hoy
+        const fechaReporte = reporte.fecha || hoy;
+        
+        // Crear fecha_reporte con hora específica (08:00 AM)
+        // Esto evita que Supabase use DEFAULT NOW() que pone fecha/hora de inserción
+        const fechaReporteTimestamp = fechaReporte + 'T08:00:00';
+        
+        // Asignar las fechas correctamente
+        reporte.fecha_reporte = fechaReporteTimestamp;  // Esto sobreescribirá DEFAULT NOW()
+        reporte.fecha = fechaReporte;
+        reporte.created_at = ahora.toISOString();
+        reporte.updated_at = ahora.toISOString();
+        
+        console.log('Guardando con fechas sincronizadas:', {
+            fecha: reporte.fecha,
+            fecha_reporte: reporte.fecha_reporte
+        });
+        
+        // SUBIR IMAGEN (CÓDIGO ORIGINAL - SIN MODIFICAR)
+        if (evidenceImage) {
+            const imageUrl = await uploadImageToSupabase(evidenceImage);
+            if (imageUrl) {
+                reporte.foto_antes = imageUrl;
             }
         }
-
-        async function completarReporte(id, imageUrl, notas) {
-            try {
-                const ahora = new Date().toISOString();
-                const updateData = {
-                    estado: 'reparado',
-                    fecha_reparacion: ahora.split('T')[0],
-                    fecha_finalizacion: ahora,
-                    notas_reparacion: notas,
-                    foto_despues: imageUrl
-                };
-                
-                const { error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .update(updateData)
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                // Recalcular tiempos
-                await recalcularTiemposReporte(id);
-                
-                await cargarReportes();
-                closeCompletionModal();
-                alert('✅ Reporte completado exitosamente');
-                
-            } catch (error) {
-                console.error('Error completando reporte:', error);
-                alert('❌ Error al completar el reporte');
-            }
-        }
-
-        async function cambiarEstado(id, nuevoEstado) {
-            try {
-                const updateData = { estado: nuevoEstado };
-                const ahora = new Date().toISOString();
-                
-                // Registrar timestamp según el estado
-                if (nuevoEstado === 'en proceso') {
-                    updateData.fecha_inicio_proceso = ahora;
-                } else if (nuevoEstado === 'reparado') {
-                    updateData.fecha_finalizacion = ahora;
-                }
-                
-                const { error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .update(updateData)
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                // Recalcular tiempos
-                await recalcularTiemposReporte(id);
-                
-                await cargarReportes();
-                alert('✅ Estado actualizado');
-                
-            } catch (error) {
-                console.error('Error actualizando estado:', error);
-                alert('❌ Error al actualizar el estado');
-            }
-        }
-
-        async function recalcularTiemposReporte(id) {
-            try {
-                const { data: reporte, error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .select('*')
-                    .eq('id', id)
-                    .single();
-                
-                if (error) throw error;
-                
-                const tiempos = calcularTiemposReporte(reporte);
-                
-                if (tiempos) {
-                    const updateTiempos = {
-                        tiempo_respuesta_minutos: tiempos.tiempoRespuesta,
-                        tiempo_reparacion_minutos: tiempos.tiempoReparacion,
-                        tiempo_total_minutos: tiempos.tiempoTotal
-                    };
-                    
-                    await supabaseClient
-                        .from('condiciones_inseguras')
-                        .update(updateTiempos)
-                        .eq('id', id);
-                }
-                
-            } catch (error) {
-                console.error('Error recalculando tiempos:', error);
-            }
-        }
+        
+        const { data, error } = await supabaseClient
+            .from('condiciones_inseguras')
+            .insert([reporte])
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
+        showLoading(false);
+        alert('✅ Reporte guardado exitosamente');
+        await cargarReportes();
+        return data;
+        
+    } catch (error) {
+        console.error('Error guardando reporte:', error);
+        showLoading(false);
+        alert('❌ Error al guardar el reporte');
+        return null;
+    }
+}
 
         // ==============================================
         // FUNCIONES DE INTERFAZ
@@ -2816,65 +2743,36 @@ function diagnosticarTiempos() {
         // EVENT HANDLERS
         // ==============================================
         async function submitReporte(event) {
-            event.preventDefault();
-            
-            const reporte = {
-                reportado_por: document.getElementById('reporter-name').value,
-                descripcion: document.getElementById('description').value,
-                ubicacion: document.getElementById('location').value,
-                ot: document.getElementById('ot').value,
-                categoria: document.getElementById('category').value,
-                prioridad: document.getElementById('priority').value,
-                estado: 'pendiente',
-                fecha: new Date().toISOString().split('T')[0],
-                foto_antes: null
-            };
-            
-            if (!reporte.reportado_por || !reporte.descripcion || !reporte.ubicacion || 
-                !reporte.categoria || !reporte.prioridad) {
-                alert('❌ Por favor complete todos los campos obligatorios');
-                return;
-            }
-            
-            await guardarReporte(reporte);
-            document.getElementById('report-form').reset();
-            evidenceImage = null;
-            document.getElementById('imagePreview').innerHTML = '';
-            document.getElementById('evidenceImage').value = '';
-            document.querySelector('.nav-menu a[data-page="dashboard"]').click();
-        }
-
-        async function submitCompletion() {
-            if (!completionImage) {
-                alert('❌ Por favor suba una foto de la reparación realizada');
-                return;
-            }
-            
-            showLoading(true);
-            
-            try {
-                const imageUrl = await uploadImageToSupabase(completionImage, 'evidencias', 'reparaciones');
-                if (!imageUrl) {
-                    throw new Error('Error subiendo imagen');
-                }
-                
-                const notas = document.getElementById('completionNotes').value;
-                await completarReporte(currentCompletionReportId, imageUrl, notas);
-                
-            } catch (error) {
-                console.error('Error completando reporte:', error);
-                alert('❌ Error al completar el reporte');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        function resetForm() {
-            document.getElementById('report-form').reset();
-            evidenceImage = null;
-            document.getElementById('imagePreview').innerHTML = '';
-            document.getElementById('evidenceImage').value = '';
-        }
+    event.preventDefault();
+    
+    const reporte = {
+        reportado_por: document.getElementById('reporter-name').value,
+        descripcion: document.getElementById('description').value,
+        ubicacion: document.getElementById('location').value,
+        ot: document.getElementById('ot').value,
+        categoria: document.getElementById('category').value,
+        prioridad: document.getElementById('priority').value,
+        estado: 'pendiente',
+        // Usar fecha actual para nuevos reportes
+        fecha: new Date().toISOString().split('T')[0],
+        foto_antes: null
+    };
+    
+    if (!reporte.reportado_por || !reporte.descripcion || !reporte.ubicacion || 
+        !reporte.categoria || !reporte.prioridad) {
+        alert('❌ Por favor complete todos los campos obligatorios');
+        return;
+    }
+    
+    await guardarReporte(reporte);
+    
+    // Resto del código ORIGINAL - SIN MODIFICAR
+    document.getElementById('report-form').reset();
+    evidenceImage = null;
+    document.getElementById('imagePreview').innerHTML = '';
+    document.getElementById('evidenceImage').value = '';
+    document.querySelector('.nav-menu a[data-page="dashboard"]').click();
+}
 
         // ==============================================
         // INICIALIZACIÓN DE LA APLICACIÓN
