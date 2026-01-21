@@ -32,7 +32,7 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
@@ -140,7 +140,7 @@
             border-radius: 5px;
             font-size: 16px;
             transition: border 0.3s;
-            -webkit-appearance: none; /* Remove default iOS styling */
+            -webkit-appearance: none;
         }
 
         .form-control:focus {
@@ -161,7 +161,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            touch-action: manipulation; /* Better touch on mobile */
+            touch-action: manipulation;
         }
 
         .btn-primary {
@@ -234,7 +234,7 @@
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -554,6 +554,34 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        /* TIEMPOS DE REPARACIÓN */
+        .tiempo-info {
+            font-size: 11px;
+            line-height: 1.3;
+        }
+
+        .tiempo-info small {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .tiempo-alerta {
+            color: #e74c3c;
+            font-weight: bold;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .stat-subtitle {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
         /* MOBILE SPECIFIC STYLES */
         .mobile-image-buttons {
             display: none;
@@ -602,7 +630,7 @@
 
         /* TOUCH FRIENDLY STYLES */
         .touch-friendly {
-            min-height: 44px; /* Minimum touch target size */
+            min-height: 44px;
             min-width: 44px;
         }
 
@@ -645,16 +673,14 @@
                 text-align: center;
             }
             
-            /* Botones más grandes en móvil */
             .btn {
                 padding: 12px 15px;
                 font-size: 14px;
             }
             
-            /* Asegurar que inputs sean fáciles de tocar */
             .form-control {
                 padding: 12px;
-                font-size: 16px; /* Previene zoom automático en iOS */
+                font-size: 16px;
             }
             
             textarea.form-control {
@@ -666,10 +692,9 @@
             }
 
             .image-upload-label {
-                pointer-events: none; /* Let buttons handle clicks on mobile */
+                pointer-events: none;
             }
 
-            /* Mejorar el modal para móvil */
             .modal-content {
                 width: 95%;
                 padding: 20px;
@@ -687,7 +712,6 @@
                 font-size: 30px;
             }
 
-            /* Adjust table for mobile */
             table th, table td {
                 padding: 8px 10px;
                 font-size: 14px;
@@ -722,7 +746,6 @@
                 margin-bottom: 10px;
             }
 
-            /* Make sure everything fits on small screens */
             .card {
                 padding: 15px;
             }
@@ -834,10 +857,10 @@
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-hard-hat"></i>
-                    <h1>Sistema de Condiciones Inseguras Danec - Mantenimiento</h1>
+                    <h1>Sistema de Condiciones Inseguras Danec-Mantenimiento</h1>
                 </div>
                 <div class="status-badge" id="connection-status">
-                    <i class="fas fa-database"></i> Conectado a Danec
+                    <i class="fas fa-database"></i> Conectado a Supabase
                 </div>
             </div>
         </div>
@@ -853,6 +876,7 @@
                         <li><a href="#" data-page="registro"><i class="fas fa-plus-circle"></i> Nuevo Reporte</a></li>
                         <li><a href="#" data-page="historial"><i class="fas fa-history"></i> Historial</a></li>
                         <li><a href="#" data-page="analisis"><i class="fas fa-chart-bar"></i> Análisis</a></li>
+                        <li><a href="#" data-page="tiempos"><i class="fas fa-clock"></i> Tiempos</a></li>
                         <li><a href="#" data-page="config"><i class="fas fa-cog"></i> Configuración</a></li>
                     </ul>
                 </nav>
@@ -887,6 +911,33 @@
                         <div class="stat-card">
                             <div class="stat-title">Reparados</div>
                             <div class="stat-value" id="repaired-count">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Nuevo: Métricas de Tiempos -->
+                    <div class="card">
+                        <h2><i class="fas fa-clock"></i> Métricas de Tiempos de Reparación</h2>
+                        <div class="stats-container" id="tiempos-metrics">
+                            <div class="stat-card">
+                                <div class="stat-title">Tiempo Promedio Respuesta</div>
+                                <div class="stat-value" id="avg-response-time">0h</div>
+                                <div class="stat-subtitle">Desde reporte hasta inicio</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Tiempo Promedio Reparación</div>
+                                <div class="stat-value" id="avg-repair-time">0h</div>
+                                <div class="stat-subtitle">Desde inicio hasta finalización</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Tiempo Promedio Total</div>
+                                <div class="stat-value" id="avg-total-time">0h</div>
+                                <div class="stat-subtitle">Desde reporte hasta finalización</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Cumplimiento SLA</div>
+                                <div class="stat-value" id="sla-compliance">0%</div>
+                                <div class="stat-subtitle">Reportes completados a tiempo</div>
+                            </div>
                         </div>
                     </div>
 
@@ -926,6 +977,7 @@
                                         <th>Reportado por</th>
                                         <th>Fecha</th>
                                         <th>Estado</th>
+                                        <th>Tiempos</th>
                                         <th>Evidencia</th>
                                     </tr>
                                 </thead>
@@ -969,22 +1021,13 @@
                             
                             <div class="form-group">
                                 <label for="category">Tipo de riesgo *</label>
-                                 <div style="font-size: 0.85rem; color: #6c757d; margin-bottom: 8px;">
-        <span style="font-weight: 600; color:#0d6efd;">Físicos:</span> Ruido, vibraciones, temperaturas extremas, radiación.<br>
-        <span style="font-weight: 600; color:#198754;">Químicos:</span> Exposición a polvos, humos, gases, vapores, solventes.<br>
-        <span style="font-weight: 600; color:#dc3545;">Biológicos:</span> Virus, bacterias, hongos, parásitos.<br>
-        <span style="font-weight: 600; color:#fd7e14;">Ergonómicos:</span> Manejo de cargas, movimientos repetitivos, posturas inadecuadas.<br>
-        <span style="font-weight: 600; color:#6f42c1;">Psicosociales:</span> Estrés, sobrecarga de trabajo, monotonía, acoso laboral.<br>
-        <span style="font-weight: 600; color:#495057;">Mecánicos:</span> Atrapamientos, caídas, golpes por objetos.
-    </div>
-                                
                                 <select class="form-control" id="category" required>
                                     <option value="">Seleccione el tipo de riesgo</option>
-                                    <option value="fisico">Fisico</option>
+                                    <option value="electrico">Eléctrico</option>
                                     <option value="mecanico">Mecánico</option>
-                                    <option value="biologicos">Biológicos</option>
+                                    <option value="alturas">Trabajo en alturas</option>
                                     <option value="quimico">Químico</option>
-                                    <option value="psicosociales">Psicosociales</option>
+                                    <option value="incendio">Incendio</option>
                                     <option value="ergonomico">Ergonómico</option>
                                     <option value="otro">Otro</option>
                                 </select>
@@ -992,19 +1035,6 @@
                             
                             <div class="form-group">
                                 <label for="priority">Nivel de Riesgo *</label>
-                                <div style="font-size: 0.85rem; margin-bottom: 8px; color:#6c757d;">
-        <span style="font-weight:600; color:#198754;">Bajo:</span>
-        Baja probabilidad y Lesiones leves (cortes superficiales, golpes menores), sin afectaciones graves ni interrupciones operativas.<br>
-
-        <span style="font-weight:600; color:#ffc107;">Medio:</span>
-        Probabilidad moderada y consecuencias controlables,Caídas a distinto nivel de baja altura (< 5 m) <br>
-
-        <span style="font-weight:600; color:#fd7e14;">Alto:</span>
-        Alta probabilidad o consecuencias severas, Atrapamientos, aplastamientos, contacto con partes móviles<br>
-
-        <span style="font-weight:600; color:#dc3545;">Crítico:</span>
-        Riesgo inaceptable con consecuencias potencialmente mortales o catastróficas, fugas, trabajos en alturas.
-    </div>
                                 <select class="form-control" id="priority" required>
                                     <option value="">Seleccione el nivel de riesgo</option>
                                     <option value="bajo">Bajo</option>
@@ -1076,10 +1106,11 @@
                                         <th>Ubicación</th>
                                         <th>OT</th>
                                         <th>Categoría</th>
-                                        <th>Fecha</th>
+                                        <th>Fecha Reporte</th>
                                         <th>Reportado por</th>
                                         <th>Nivel Riesgo</th>
                                         <th>Estado</th>
+                                        <th>Tiempos</th>
                                         <th>Fotos</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -1110,6 +1141,28 @@
                         
                         <div id="analysis-stats" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                             <!-- Estadísticas se mostrarán aquí -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nueva página: Análisis de Tiempos -->
+                <div id="tiempos-page" class="page" style="display: none;">
+                    <div class="card">
+                        <h2><i class="fas fa-clock"></i> Análisis de Tiempos de Reparación</h2>
+                        
+                        <div class="analysis-tabs">
+                            <button class="tab-btn active" data-tiempo="respuesta">Tiempos de Respuesta</button>
+                            <button class="tab-btn" data-tiempo="reparacion">Tiempos de Reparación</button>
+                            <button class="tab-btn" data-tiempo="total">Tiempos Totales</button>
+                            <button class="tab-btn" data-tiempo="sla">Cumplimiento SLA</button>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="tiempos-chart"></canvas>
+                        </div>
+                        
+                        <div id="tiempos-detallados" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                            <!-- Métricas detalladas se cargarán aquí -->
                         </div>
                     </div>
                 </div>
@@ -1154,22 +1207,130 @@
 
     <script>
         // ==============================================
-        // CONFIGURACIÓN DE SUPABASE (YA CONECTADA)
+        // CONFIGURACIÓN DE SUPABASE
         // ==============================================
         const SUPABASE_URL = 'https://biaxvbaqtpelvqeeumnu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYXh2YmFxdHBlbHZxZWV1bW51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMzY3NDcsImV4cCI6MjA4MzgxMjc0N30.vMAuHAkGVKv2WrC1Fb9aH-1O97_-4shzn6VPbpgsuio';
+
+        // Configuración de SLA (Service Level Agreement)
+        const SLA_CONFIG = {
+            'critico': 240,    // 4 horas en minutos
+            'alto': 480,       // 8 horas en minutos
+            'medio': 1440,     // 24 horas en minutos
+            'bajo': 2880       // 48 horas en minutos
+        };
 
         let supabaseClient = null;
         let reportes = [];
         let lineChart = null;
         let analysisChart = null;
+        let tiemposChart = null;
         let currentFilter = 'all';
         let currentAnalysisTab = 'categoria';
+        let currentTiempoTab = 'respuesta';
         let currentCompletionReportId = null;
         let evidenceImage = null;
         let completionImage = null;
         let currentCameraStream = null;
         let isForCompletion = false;
+
+        // ==============================================
+        // FUNCIONES DE MEDICIÓN DE TIEMPOS
+        // ==============================================
+
+        function calcularTiemposReporte(reporte) {
+            if (!reporte) return null;
+            
+            const ahora = new Date();
+            const fechaReporte = new Date(reporte.fecha_reporte || reporte.fecha || reporte.created_at);
+            const fechaInicio = reporte.fecha_inicio_proceso ? new Date(reporte.fecha_inicio_proceso) : null;
+            const fechaFinalizacion = reporte.fecha_finalizacion ? new Date(reporte.fecha_finalizacion) : null;
+            
+            const tiempos = {
+                tiempoRespuesta: null,
+                tiempoReparacion: null,
+                tiempoTotal: null,
+                estaAtrasado: false,
+                tiempoRestante: null,
+                porcentajeCompletado: 0
+            };
+            
+            // Tiempo de respuesta (desde reporte hasta inicio de proceso)
+            if (fechaInicio) {
+                tiempos.tiempoRespuesta = Math.floor((fechaInicio - fechaReporte) / (1000 * 60)); // minutos
+            }
+            
+            // Tiempo de reparación (desde inicio hasta finalización)
+            if (fechaInicio && fechaFinalizacion) {
+                tiempos.tiempoReparacion = Math.floor((fechaFinalizacion - fechaInicio) / (1000 * 60)); // minutos
+            }
+            
+            // Tiempo total (desde reporte hasta finalización)
+            if (fechaFinalizacion) {
+                tiempos.tiempoTotal = Math.floor((fechaFinalizacion - fechaReporte) / (1000 * 60)); // minutos
+            } else if (fechaReporte) {
+                // Tiempo transcurrido hasta ahora (si aún no está finalizado)
+                tiempos.tiempoTotal = Math.floor((ahora - fechaReporte) / (1000 * 60));
+            }
+            
+            // Verificar si está atrasado según SLA
+            const slaEsperado = SLA_CONFIG[reporte.prioridad] || 2880;
+            if (tiempos.tiempoTotal !== null) {
+                tiempos.estaAtrasado = tiempos.tiempoTotal > slaEsperado;
+                tiempos.tiempoRestante = Math.max(0, slaEsperado - tiempos.tiempoTotal);
+                tiempos.porcentajeCompletado = Math.min(100, Math.round((tiempos.tiempoTotal / slaEsperado) * 100));
+            }
+            
+            return tiempos;
+        }
+
+        function formatearTiempo(minutos) {
+            if (minutos === null || minutos === undefined || minutos === 0) return 'N/A';
+            
+            if (minutos < 60) {
+                return `${minutos} min`;
+            } else if (minutos < 1440) {
+                const horas = Math.floor(minutos / 60);
+                const minsRestantes = minutos % 60;
+                return minsRestantes > 0 ? `${horas}h ${minsRestantes}min` : `${horas}h`;
+            } else {
+                const dias = Math.floor(minutos / 1440);
+                const horasRestantes = Math.floor((minutos % 1440) / 60);
+                return horasRestantes > 0 ? `${dias}d ${horasRestantes}h` : `${dias}d`;
+            }
+        }
+
+        function calcularMetricasTiempos() {
+            const reportesCompletados = reportes.filter(r => r.estado === 'reparado');
+            const reportesConTiempos = reportesCompletados.filter(r => r.tiempo_total_minutos);
+            
+            if (reportesConTiempos.length === 0) {
+                document.getElementById('avg-response-time').textContent = 'N/A';
+                document.getElementById('avg-repair-time').textContent = 'N/A';
+                document.getElementById('avg-total-time').textContent = 'N/A';
+                document.getElementById('sla-compliance').textContent = '0%';
+                return;
+            }
+            
+            // Tiempos promedio
+            const avgResponse = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_respuesta_minutos || 0), 0) / reportesConTiempos.length;
+            const avgRepair = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_reparacion_minutos || 0), 0) / reportesConTiempos.length;
+            const avgTotal = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_total_minutos || 0), 0) / reportesConTiempos.length;
+            
+            // Cumplimiento SLA
+            const cumplenSLA = reportesConTiempos.filter(reporte => {
+                const slaEsperado = SLA_CONFIG[reporte.prioridad] || 2880;
+                return reporte.tiempo_total_minutos <= slaEsperado;
+            }).length;
+            
+            const slaPercentage = Math.round((cumplenSLA / reportesConTiempos.length) * 100);
+            
+            // Actualizar UI
+            document.getElementById('avg-response-time').textContent = formatearTiempo(avgResponse);
+            document.getElementById('avg-repair-time').textContent = formatearTiempo(avgRepair);
+            document.getElementById('avg-total-time').textContent = formatearTiempo(avgTotal);
+            document.getElementById('sla-compliance').textContent = `${slaPercentage}%`;
+        }
 
         // ==============================================
         // DETECCIÓN DE DISPOSITIVO MÓVIL
@@ -1182,11 +1343,9 @@
         function checkMobileCompatibility() {
             if (isMobileDevice()) {
                 console.log('Dispositivo móvil detectado');
-                // Mostrar botones específicos para móvil
                 document.getElementById('mobileImageButtons').style.display = 'flex';
                 document.getElementById('uploadText').textContent = '📱 Elige cómo subir la imagen:';
                 
-                // Para el modal de completar
                 const completionButtons = document.getElementById('completionMobileButtons');
                 if (completionButtons) {
                     completionButtons.style.display = 'flex';
@@ -1254,10 +1413,9 @@
             const cameraPreview = document.getElementById('cameraPreview');
             const video = document.getElementById('cameraVideo');
 
-            // Solicitar permiso de cámara
             navigator.mediaDevices.getUserMedia({ 
                 video: { 
-                    facingMode: 'environment', // Cámara trasera
+                    facingMode: 'environment',
                     width: { ideal: 1280 },
                     height: { ideal: 720 }
                 },
@@ -1266,8 +1424,6 @@
                 currentCameraStream = stream;
                 video.srcObject = stream;
                 cameraPreview.style.display = 'block';
-                
-                // Bloquear scroll cuando la cámara está abierta
                 document.body.style.overflow = 'hidden';
             }).catch(err => {
                 console.error('Error accediendo a la cámara:', err);
@@ -1298,7 +1454,6 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Convertir a blob y optimizar
             canvas.toBlob(async (blob) => {
                 const optimizedBlob = await optimizeImageForMobile(new File([blob], 'foto.jpg', { type: 'image/jpeg' }));
                 
@@ -1321,15 +1476,13 @@
                     return;
                 }
 
-                // Solo optimizar si es muy grande o siempre en móvil
-                if (file.size > 1024 * 1024 || isMobileDevice()) { // Mayor a 1MB
+                if (file.size > 1024 * 1024 || isMobileDevice()) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const img = new Image();
                         img.onload = function() {
                             const canvas = document.createElement('canvas');
                             
-                            // Calcular nuevas dimensiones (máximo 1200px)
                             let width = img.width;
                             let height = img.height;
                             const maxSize = 1200;
@@ -1348,7 +1501,6 @@
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, width, height);
                             
-                            // Convertir a JPEG con calidad 80%
                             canvas.toBlob(function(blob) {
                                 const optimizedFile = new File([blob], file.name, {
                                     type: 'image/jpeg',
@@ -1357,13 +1509,12 @@
                                 resolve(optimizedFile);
                             }, 'image/jpeg', 0.8);
                         };
-                        img.onerror = () => resolve(file); // Fallback al archivo original
+                        img.onerror = () => resolve(file);
                         img.src = e.target.result;
                     };
-                    reader.onerror = () => resolve(file); // Fallback al archivo original
+                    reader.onerror = () => resolve(file);
                     reader.readAsDataURL(file);
                 } else {
-                    // No necesita optimización
                     resolve(file);
                 }
             });
@@ -1373,12 +1524,9 @@
         // MANEJO DE IMÁGENES
         // ==============================================
         function setupImageUpload() {
-            // Configurar subida de imagen de evidencia
             const evidenceInput = document.getElementById('evidenceImage');
             const evidenceLabel = document.getElementById('imageUploadLabel');
-            const evidencePreview = document.getElementById('imagePreview');
             
-            // Solo configurar clic directo en desktop
             if (!isMobileDevice()) {
                 evidenceLabel.addEventListener('click', () => evidenceInput.click());
             }
@@ -1386,14 +1534,12 @@
             evidenceInput.addEventListener('change', async function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    await handleImageUpload(file, evidencePreview, 'evidenceImage');
+                    await handleImageUpload(file, document.getElementById('imagePreview'), 'evidenceImage');
                 }
             });
             
-            // Configurar subida de imagen de completado
             const completionInput = document.getElementById('completionImage');
             const completionLabel = document.getElementById('completionImageLabel');
-            const completionPreview = document.getElementById('completionPreview');
             
             if (!isMobileDevice()) {
                 completionLabel.addEventListener('click', () => completionInput.click());
@@ -1402,7 +1548,7 @@
             completionInput.addEventListener('change', async function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    await handleImageUpload(file, completionPreview, 'completionImage');
+                    await handleImageUpload(file, document.getElementById('completionPreview'), 'completionImage');
                 }
             });
         }
@@ -1416,7 +1562,6 @@
             showLoading(true);
             
             try {
-                // Optimizar imagen
                 const optimizedFile = await optimizeImageForMobile(file);
                 
                 if (optimizedFile.size > 5 * 1024 * 1024) {
@@ -1425,7 +1570,6 @@
                     return;
                 }
                 
-                // Asignar a la variable correspondiente
                 if (type === 'evidenceImage') {
                     evidenceImage = optimizedFile;
                     previewImage(optimizedFile, previewContainer, 'Evidencia del reporte');
@@ -1436,7 +1580,6 @@
                 
             } catch (error) {
                 console.error('Error procesando imagen:', error);
-                // Fallback al archivo original
                 if (type === 'evidenceImage') {
                     evidenceImage = file;
                     previewImage(file, previewContainer, 'Evidencia del reporte');
@@ -1492,7 +1635,6 @@
                 
                 if (error) throw error;
                 
-                // Obtener URL pública
                 const { data: { publicUrl } } = supabaseClient
                     .storage
                     .from(bucket)
@@ -1514,20 +1656,19 @@
             
             modalImage.src = imageUrl;
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Bloquear scroll
+            document.body.style.overflow = 'hidden';
         }
 
         function closeImageModal() {
             document.getElementById('imageModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restaurar scroll
+            document.body.style.overflow = 'auto';
         }
 
         function openCompletionModal(reportId) {
             currentCompletionReportId = reportId;
             document.getElementById('completionModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Bloquear scroll
+            document.body.style.overflow = 'hidden';
             
-            // Resetear el formulario de completar
             completionImage = null;
             document.getElementById('completionPreview').innerHTML = '';
             document.getElementById('completionImage').value = '';
@@ -1536,7 +1677,7 @@
 
         function closeCompletionModal() {
             document.getElementById('completionModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restaurar scroll
+            document.body.style.overflow = 'auto';
             currentCompletionReportId = null;
         }
 
@@ -1545,10 +1686,8 @@
         // ==============================================
         async function inicializarSupabase() {
             try {
-                // Crear cliente Supabase con credenciales preconfiguradas
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 
-                // Verificar conexión
                 const { data, error } = await supabaseClient
                     .from('condiciones_inseguras')
                     .select('count', { count: 'exact', head: true });
@@ -1569,7 +1708,7 @@
         }
 
         // ==============================================
-        // FUNCIONES CRUD (MANTENER IGUAL)
+        // FUNCIONES CRUD
         // ==============================================
         async function cargarReportes() {
             showLoading(true);
@@ -1595,6 +1734,10 @@
         async function guardarReporte(reporte) {
             showLoading(true);
             try {
+                // Agregar timestamps automáticamente
+                reporte.fecha_reporte = new Date().toISOString();
+                reporte.fecha = new Date().toISOString().split('T')[0];
+                
                 // Subir imagen si existe
                 if (evidenceImage) {
                     const imageUrl = await uploadImageToSupabase(evidenceImage);
@@ -1626,9 +1769,11 @@
 
         async function completarReporte(id, imageUrl, notas) {
             try {
+                const ahora = new Date().toISOString();
                 const updateData = {
                     estado: 'reparado',
-                    fecha_reparacion: new Date().toISOString().split('T')[0],
+                    fecha_reparacion: ahora.split('T')[0],
+                    fecha_finalizacion: ahora,
                     notas_reparacion: notas,
                     foto_despues: imageUrl
                 };
@@ -1640,6 +1785,9 @@
                 
                 if (error) throw error;
                 
+                // Recalcular tiempos
+                await recalcularTiemposReporte(id);
+                
                 await cargarReportes();
                 closeCompletionModal();
                 alert('✅ Reporte completado exitosamente');
@@ -1650,14 +1798,27 @@
             }
         }
 
-        async function actualizarEstado(id, nuevoEstado) {
+        async function cambiarEstado(id, nuevoEstado) {
             try {
+                const updateData = { estado: nuevoEstado };
+                const ahora = new Date().toISOString();
+                
+                // Registrar timestamp según el estado
+                if (nuevoEstado === 'en proceso') {
+                    updateData.fecha_inicio_proceso = ahora;
+                } else if (nuevoEstado === 'reparado') {
+                    updateData.fecha_finalizacion = ahora;
+                }
+                
                 const { error } = await supabaseClient
                     .from('condiciones_inseguras')
-                    .update({ estado: nuevoEstado })
+                    .update(updateData)
                     .eq('id', id);
                 
                 if (error) throw error;
+                
+                // Recalcular tiempos
+                await recalcularTiemposReporte(id);
                 
                 await cargarReportes();
                 alert('✅ Estado actualizado');
@@ -1668,18 +1829,49 @@
             }
         }
 
+        async function recalcularTiemposReporte(id) {
+            try {
+                const { data: reporte, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                
+                if (error) throw error;
+                
+                const tiempos = calcularTiemposReporte(reporte);
+                
+                if (tiempos) {
+                    const updateTiempos = {
+                        tiempo_respuesta_minutos: tiempos.tiempoRespuesta,
+                        tiempo_reparacion_minutos: tiempos.tiempoReparacion,
+                        tiempo_total_minutos: tiempos.tiempoTotal
+                    };
+                    
+                    await supabaseClient
+                        .from('condiciones_inseguras')
+                        .update(updateTiempos)
+                        .eq('id', id);
+                }
+                
+            } catch (error) {
+                console.error('Error recalculando tiempos:', error);
+            }
+        }
+
         // ==============================================
-        // FUNCIONES DE INTERFAZ (MANTENER IGUAL)
+        // FUNCIONES DE INTERFAZ
         // ==============================================
         function actualizarUI() {
             actualizarEstadisticas();
+            calcularMetricasTiempos();
             actualizarTablaReciente();
             actualizarTablaHistorial();
             actualizarSelectUbicaciones();
             actualizarGraficoLinea();
             actualizarAnalisis();
+            actualizarAnalisisTiempos();
             
-            // Actualizar sidebar
             document.getElementById('total-count-sidebar').textContent = reportes.length;
             document.getElementById('config-total').textContent = reportes.length;
             document.getElementById('last-update').textContent = new Date().toLocaleString();
@@ -1699,7 +1891,7 @@
 
         function actualizarTablaReciente() {
             const tbody = document.querySelector('#recent-table tbody');
-            const recientes = reportes.slice(0, 8); // Mostrar 8 más recientes
+            const recientes = reportes.slice(0, 8);
             
             tbody.innerHTML = recientes.map(reporte => {
                 let badgeClass = 'badge-pendiente';
@@ -1733,6 +1925,15 @@
                 }
                 fotosHTML += '</div>';
                 
+                // Calcular tiempos
+                const tiempos = calcularTiemposReporte(reporte);
+                const tiemposHTML = `
+                    <div class="tiempo-info">
+                        <small><strong>Total:</strong> ${formatearTiempo(reporte.tiempo_total_minutos)}</small><br>
+                        <small><strong>Respuesta:</strong> ${formatearTiempo(reporte.tiempo_respuesta_minutos)}</small>
+                    </div>
+                `;
+                
                 return `
                     <tr>
                         <td>${reporte.id}</td>
@@ -1742,6 +1943,7 @@
                         <td>${reporte.reportado_por || 'N/A'}</td>
                         <td>${formatDate(reporte.fecha)}</td>
                         <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>${tiemposHTML}</td>
                         <td>${fotosHTML}</td>
                     </tr>
                 `;
@@ -1752,7 +1954,6 @@
             const tbody = document.querySelector('#history-table tbody');
             let reportesFiltrados = [...reportes];
             
-            // Aplicar filtro
             if (currentFilter === 'pendiente') {
                 reportesFiltrados = reportes.filter(r => r.estado === 'pendiente');
             } else if (currentFilter === 'en proceso') {
@@ -1789,6 +1990,21 @@
                 }
                 fotosHTML += '</div>';
                 
+                // Calcular tiempos
+                const tiempos = calcularTiemposReporte(reporte);
+                let tiempoClass = '';
+                if (tiempos.estaAtrasado) {
+                    tiempoClass = 'tiempo-alerta';
+                }
+                
+                const tiemposHTML = `
+                    <div class="tiempo-info ${tiempoClass}">
+                        <small><strong>Total:</strong> ${formatearTiempo(reporte.tiempo_total_minutos)}</small><br>
+                        <small><strong>Respuesta:</strong> ${formatearTiempo(reporte.tiempo_respuesta_minutos)}</small><br>
+                        <small><strong>Reparación:</strong> ${formatearTiempo(reporte.tiempo_reparacion_minutos)}</small>
+                    </div>
+                `;
+                
                 let acciones = '';
                 if (reporte.estado === 'pendiente') {
                     acciones = `
@@ -1821,6 +2037,7 @@
                         <td>${reporte.reportado_por || 'N/A'}</td>
                         <td>${reporte.prioridad || 'N/A'}</td>
                         <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>${tiemposHTML}</td>
                         <td>${fotosHTML}</td>
                         <td>${acciones}</td>
                     </tr>
@@ -1846,23 +2063,19 @@
             const ubicacion = document.getElementById('location-select').value;
             const periodo = parseInt(document.getElementById('period-select').value);
             
-            // Filtrar reportes
             let reportesFiltrados = reportes;
             if (ubicacion) {
                 reportesFiltrados = reportes.filter(r => r.ubicacion === ubicacion);
             }
             
-            // Obtener últimos N meses
             const fechaFin = new Date();
             const fechaInicio = new Date();
             fechaInicio.setMonth(fechaInicio.getMonth() - periodo);
             
-            // Agrupar por mes
             const datosPorMes = {};
             const labels = [];
             const valores = [];
             
-            // Generar meses
             for (let i = periodo - 1; i >= 0; i--) {
                 const fecha = new Date();
                 fecha.setMonth(fecha.getMonth() - i);
@@ -1873,7 +2086,6 @@
                 datosPorMes[clave] = 0;
             }
             
-            // Contar reportes por mes
             reportesFiltrados.forEach(reporte => {
                 if (reporte.fecha) {
                     const fecha = new Date(reporte.fecha);
@@ -1885,12 +2097,10 @@
                 }
             });
             
-            // Crear array de valores
             Object.keys(datosPorMes).forEach(clave => {
                 valores.push(datosPorMes[clave]);
             });
             
-            // Crear o actualizar gráfico
             if (lineChart) {
                 lineChart.data.labels = labels;
                 lineChart.data.datasets[0].data = valores;
@@ -1992,7 +2202,6 @@
                 });
             }
             
-            // Actualizar según la pestaña activa
             actualizarGraficoAnalisis(currentAnalysisTab);
             actualizarEstadisticasAnalisis(currentAnalysisTab);
         }
@@ -2004,7 +2213,6 @@
 
             switch(tipo) {
                 case 'categoria':
-                    // Análisis por categoría
                     const categorias = {};
                     reportes.forEach(reporte => {
                         const cat = reporte.categoria || 'Sin categoría';
@@ -2017,7 +2225,6 @@
                     break;
                     
                 case 'riesgo':
-                    // Análisis por nivel de riesgo
                     const riesgos = {};
                     reportes.forEach(reporte => {
                         const riesgo = reporte.prioridad || 'Sin especificar';
@@ -2030,7 +2237,6 @@
                     break;
                     
                 case 'estado':
-                    // Análisis por estado
                     const estados = {};
                     reportes.forEach(reporte => {
                         const estado = reporte.estado || 'pendiente';
@@ -2043,14 +2249,12 @@
                     break;
                     
                 case 'ubicacion':
-                    // Análisis por ubicación (top 10)
                     const ubicaciones = {};
                     reportes.forEach(reporte => {
                         const ubicacion = reporte.ubicacion || 'Sin ubicación';
                         ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
                     });
                     
-                    // Ordenar y tomar top 10
                     const sorted = Object.entries(ubicaciones)
                         .sort((a, b) => b[1] - a[1])
                         .slice(0, 10);
@@ -2061,7 +2265,6 @@
                     break;
             }
 
-            // Actualizar gráfico
             analysisChart.data.labels = labels;
             analysisChart.data.datasets[0].data = datos;
             analysisChart.data.datasets[0].label = titulo;
@@ -2155,7 +2358,6 @@
                         ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
                     });
                     
-                    // Tomar top 5
                     const top5 = Object.entries(ubicaciones)
                         .sort((a, b) => b[1] - a[1])
                         .slice(0, 5);
@@ -2177,6 +2379,226 @@
         }
 
         // ==============================================
+        // ANÁLISIS DE TIEMPOS
+        // ==============================================
+        function actualizarAnalisisTiempos() {
+            if (!tiemposChart) {
+                const ctx = document.getElementById('tiempos-chart').getContext('2d');
+                tiemposChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: '',
+                            data: [],
+                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                            borderColor: 'rgb(52, 152, 219)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Tiempo (minutos)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            actualizarGraficoTiempos(currentTiempoTab);
+            actualizarEstadisticasTiempos(currentTiempoTab);
+        }
+
+        function actualizarGraficoTiempos(tipo) {
+            let labels = [];
+            let datos = [];
+            let titulo = '';
+
+            switch(tipo) {
+                case 'respuesta':
+                    // Tiempos de respuesta por prioridad
+                    const tiemposRespuesta = {};
+                    reportes.forEach(reporte => {
+                        if (reporte.tiempo_respuesta_minutos) {
+                            const prioridad = reporte.prioridad || 'Sin especificar';
+                            if (!tiemposRespuesta[prioridad]) {
+                                tiemposRespuesta[prioridad] = [];
+                            }
+                            tiemposRespuesta[prioridad].push(reporte.tiempo_respuesta_minutos);
+                        }
+                    });
+                    
+                    labels = Object.keys(tiemposRespuesta);
+                    datos = labels.map(prioridad => {
+                        const tiempos = tiemposRespuesta[prioridad];
+                        return Math.round(tiempos.reduce((a, b) => a + b, 0) / tiempos.length);
+                    });
+                    titulo = 'Tiempo Promedio de Respuesta por Prioridad';
+                    break;
+                    
+                case 'reparacion':
+                    // Tiempos de reparación por categoría
+                    const tiemposReparacion = {};
+                    reportes.forEach(reporte => {
+                        if (reporte.tiempo_reparacion_minutos) {
+                            const categoria = reporte.categoria || 'Sin categoría';
+                            if (!tiemposReparacion[categoria]) {
+                                tiemposReparacion[categoria] = [];
+                            }
+                            tiemposReparacion[categoria].push(reporte.tiempo_reparacion_minutos);
+                        }
+                    });
+                    
+                    labels = Object.keys(tiemposReparacion);
+                    datos = labels.map(categoria => {
+                        const tiempos = tiemposReparacion[categoria];
+                        return Math.round(tiempos.reduce((a, b) => a + b, 0) / tiempos.length);
+                    });
+                    titulo = 'Tiempo Promedio de Reparación por Categoría';
+                    break;
+                    
+                case 'total':
+                    // Tiempos totales por ubicación (top 5)
+                    const tiemposTotal = {};
+                    reportes.forEach(reporte => {
+                        if (reporte.tiempo_total_minutos && reporte.ubicacion) {
+                            if (!tiemposTotal[reporte.ubicacion]) {
+                                tiemposTotal[reporte.ubicacion] = [];
+                            }
+                            tiemposTotal[reporte.ubicacion].push(reporte.tiempo_total_minutos);
+                        }
+                    });
+                    
+                    const sortedTotal = Object.entries(tiemposTotal)
+                        .sort((a, b) => b[1].length - a[1].length)
+                        .slice(0, 5);
+                    
+                    labels = sortedTotal.map(item => item[0]);
+                    datos = sortedTotal.map(item => {
+                        const tiempos = item[1];
+                        return Math.round(tiempos.reduce((a, b) => a + b, 0) / tiempos.length);
+                    });
+                    titulo = 'Tiempo Promedio Total por Ubicación (Top 5)';
+                    break;
+                    
+                case 'sla':
+                    // Cumplimiento SLA por prioridad
+                    const cumplimientoSLA = {};
+                    reportes.forEach(reporte => {
+                        if (reporte.tiempo_total_minutos && reporte.prioridad) {
+                            const prioridad = reporte.prioridad;
+                            if (!cumplimientoSLA[prioridad]) {
+                                cumplimientoSLA[prioridad] = { total: 0, cumplidos: 0 };
+                            }
+                            cumplimientoSLA[prioridad].total++;
+                            const slaEsperado = SLA_CONFIG[prioridad] || 2880;
+                            if (reporte.tiempo_total_minutos <= slaEsperado) {
+                                cumplimientoSLA[prioridad].cumplidos++;
+                            }
+                        }
+                    });
+                    
+                    labels = Object.keys(cumplimientoSLA);
+                    datos = labels.map(prioridad => {
+                        const { total, cumplidos } = cumplimientoSLA[prioridad];
+                        return Math.round((cumplidos / total) * 100);
+                    });
+                    titulo = 'Porcentaje de Cumplimiento SLA por Prioridad';
+                    break;
+            }
+
+            tiemposChart.data.labels = labels;
+            tiemposChart.data.datasets[0].data = datos;
+            tiemposChart.data.datasets[0].label = titulo;
+            tiemposChart.update();
+        }
+
+        function actualizarEstadisticasTiempos(tipo) {
+            const statsContainer = document.getElementById('tiempos-detallados');
+            let statsHTML = '';
+            
+            switch(tipo) {
+                case 'respuesta':
+                    const reportesConRespuesta = reportes.filter(r => r.tiempo_respuesta_minutos);
+                    if (reportesConRespuesta.length > 0) {
+                        const min = Math.min(...reportesConRespuesta.map(r => r.tiempo_respuesta_minutos));
+                        const max = Math.max(...reportesConRespuesta.map(r => r.tiempo_respuesta_minutos));
+                        const avg = reportesConRespuesta.reduce((sum, r) => sum + r.tiempo_respuesta_minutos, 0) / reportesConRespuesta.length;
+                        
+                        statsHTML = `
+                            <div class="stat-card">
+                                <div class="stat-title">Tiempo Mínimo Respuesta</div>
+                                <div class="stat-value">${formatearTiempo(min)}</div>
+                                <div class="stat-subtitle">Mejor caso</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Tiempo Máximo Respuesta</div>
+                                <div class="stat-value">${formatearTiempo(max)}</div>
+                                <div class="stat-subtitle">Peor caso</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Tiempo Promedio Respuesta</div>
+                                <div class="stat-value">${formatearTiempo(avg)}</div>
+                                <div class="stat-subtitle">Promedio general</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Reportes Analizados</div>
+                                <div class="stat-value">${reportesConRespuesta.length}</div>
+                                <div class="stat-subtitle">Con tiempos registrados</div>
+                            </div>
+                        `;
+                    }
+                    break;
+                    
+                case 'reparacion':
+                    const reportesConReparacion = reportes.filter(r => r.tiempo_reparacion_minutos);
+                    if (reportesConReparacion.length > 0) {
+                        const min = Math.min(...reportesConReparacion.map(r => r.tiempo_reparacion_minutos));
+                        const max = Math.max(...reportesConReparacion.map(r => r.tiempo_reparacion_minutos));
+                        const avg = reportesConReparacion.reduce((sum, r) => sum + r.tiempo_reparacion_minutos, 0) / reportesConReparacion.length;
+                        
+                        statsHTML = `
+                            <div class="stat-card">
+                                <div class="stat-title">Reparación Más Rápida</div>
+                                <div class="stat-value">${formatearTiempo(min)}</div>
+                                <div class="stat-subtitle">Mejor caso</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Reparación Más Lenta</div>
+                                <div class="stat-value">${formatearTiempo(max)}</div>
+                                <div class="stat-subtitle">Peor caso</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Promedio Reparación</div>
+                                <div class="stat-value">${formatearTiempo(avg)}</div>
+                                <div class="stat-subtitle">Tiempo promedio</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-title">Eficiencia</div>
+                                <div class="stat-value">${Math.round((avg / 480) * 100)}%</div>
+                                <div class="stat-subtitle">vs meta de 8 horas</div>
+                            </div>
+                        `;
+                    }
+                    break;
+            }
+            
+            statsContainer.innerHTML = statsHTML;
+        }
+
+        // ==============================================
         // EVENT HANDLERS
         // ==============================================
         async function submitReporte(event) {
@@ -2186,7 +2608,7 @@
                 reportado_por: document.getElementById('reporter-name').value,
                 descripcion: document.getElementById('description').value,
                 ubicacion: document.getElementById('location').value,
-                ot: document.getElementById('ot').value, // NUEVO CAMPO OT
+                ot: document.getElementById('ot').value,
                 categoria: document.getElementById('category').value,
                 prioridad: document.getElementById('priority').value,
                 estado: 'pendiente',
@@ -2240,24 +2662,16 @@
             document.getElementById('evidenceImage').value = '';
         }
 
-        function cambiarEstado(id, nuevoEstado) {
-            actualizarEstado(id, nuevoEstado);
-        }
-
         // ==============================================
         // INICIALIZACIÓN DE LA APLICACIÓN
         // ==============================================
         document.addEventListener('DOMContentLoaded', async function() {
-            // Configurar cierre de modales
             document.querySelector('.image-modal-close').addEventListener('click', closeImageModal);
             document.getElementById('imageModal').addEventListener('click', function(e) {
                 if (e.target === this) closeImageModal();
             });
             
-            // Configurar para móvil
             checkMobileCompatibility();
-            
-            // Configurar subida de imágenes
             setupImageUpload();
             
             // Inicializar navegación
@@ -2266,18 +2680,19 @@
                     e.preventDefault();
                     const page = this.getAttribute('data-page');
                     
-                    // Actualizar navegación activa
                     document.querySelectorAll('.nav-menu a').forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Mostrar página correspondiente
                     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
                     document.getElementById(`${page}-page`).style.display = 'block';
                     
-                    // Si es análisis, actualizar gráfico
                     if (page === 'analisis') {
                         setTimeout(() => {
                             actualizarAnalisis();
+                        }, 100);
+                    } else if (page === 'tiempos') {
+                        setTimeout(() => {
+                            actualizarAnalisisTiempos();
                         }, 100);
                     }
                 });
@@ -2322,11 +2737,19 @@
             // Configurar pestañas de análisis
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentAnalysisTab = this.getAttribute('data-chart');
-                    actualizarGraficoAnalisis(currentAnalysisTab);
-                    actualizarEstadisticasAnalisis(currentAnalysisTab);
+                    if (this.closest('#analisis-page')) {
+                        document.querySelectorAll('#analisis-page .tab-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentAnalysisTab = this.getAttribute('data-chart');
+                        actualizarGraficoAnalisis(currentAnalysisTab);
+                        actualizarEstadisticasAnalisis(currentAnalysisTab);
+                    } else if (this.closest('#tiempos-page')) {
+                        document.querySelectorAll('#tiempos-page .tab-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentTiempoTab = this.getAttribute('data-tiempo');
+                        actualizarGraficoTiempos(currentTiempoTab);
+                        actualizarEstadisticasTiempos(currentTiempoTab);
+                    }
                 });
             });
             
@@ -2347,20 +2770,12 @@
 
             // Manejar cambios de orientación en móvil
             window.addEventListener('orientationchange', function() {
-                // Redibujar gráficos cuando cambia la orientación
                 setTimeout(() => {
                     if (lineChart) lineChart.resize();
                     if (analysisChart) analysisChart.resize();
+                    if (tiemposChart) tiemposChart.resize();
                 }, 300);
             });
-        });
-
-        // Manejar cuando la página se vuelve visible (por ejemplo, al volver de la cámara)
-        document.addEventListener('visibilitychange', function() {
-            if (document.visibilityState === 'visible') {
-                // La página volvió a ser visible
-                console.log('Página visible de nuevo');
-            }
         });
 
         // Exportar funciones globales
