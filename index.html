@@ -1375,220 +1375,176 @@
 }
 
 // FUNCIÓN MEJORADA para formatear tiempo
-function calcularTiemposReporte(reporte) {
-    if (!reporte) {
-        console.warn('Reporte nulo');
-        return null;
+function formatearTiempo(minutos) {
+    if (minutos === null || minutos === undefined || minutos === 0 || isNaN(minutos)) {
+        return 'N/A';
     }
     
-    const ahora = new Date();
+    minutos = Math.round(minutos);
     
-    console.log('=== CÁLCULO DE TIEMPOS ===');
-    console.log('Reporte ID:', reporte.id);
-    console.log('Fecha registro:', reporte.fecha);
-    console.log('Fecha cálculo (fecha_reporte):', reporte.fecha_reporte);
-    console.log('Fecha inicio:', reporte.fecha_inicio_proceso);
-    console.log('Fecha fin:', reporte.fecha_finalizacion);
-    
-    // DECISIÓN IMPORTANTE: Usar fecha, no fecha_reporte
-    let fechaReporte;
-    let fuenteFecha = 'fecha';
-    
-    if (reporte.fecha) {
-        // Convertir "YYYY-MM-DD" a "YYYY-MM-DDTHH:MM:SS"
-        const fechaStr = reporte.fecha.includes('T') ? 
-            reporte.fecha : 
-            reporte.fecha + 'T12:00:00'; // Hora mediodía para cálculo
-        fechaReporte = new Date(fechaStr);
-        
-        console.log('Usando FECHA del reporte para cálculo:', fechaReporte.toISOString());
-        
-        // Si fecha_reporte es diferente, mostrar advertencia
-        if (reporte.fecha_reporte) {
-            const fechaReporteBD = new Date(reporte.fecha_reporte);
-            const diferenciaDias = Math.floor((fechaReporteBD - fechaReporte) / (1000 * 60 * 60 * 24));
-            if (diferenciaDias !== 0) {
-                console.warn(`⚠️ ADVERTENCIA: fecha (${reporte.fecha}) y fecha_reporte (${reporte.fecha_reporte}) difieren en ${diferenciaDias} días`);
-            }
-        }
-    } else if (reporte.created_at) {
-        fechaReporte = new Date(reporte.created_at);
-        fuenteFecha = 'created_at';
-        console.log('Usando CREATED_AT para cálculo:', fechaReporte.toISOString());
+    if (minutos < 60) {
+        return `${minutos} min`;
+    } else if (minutos < 1440) {
+        const horas = Math.floor(minutos / 60);
+        const minsRestantes = minutos % 60;
+        return minsRestantes > 0 ? `${horas}h ${minsRestantes}min` : `${horas}h`;
     } else {
-        console.error('No hay fecha disponible para cálculo');
-        return null;
+        const dias = Math.floor(minutos / 1440);
+        const horasRestantes = Math.floor((minutos % 1440) / 60);
+        return horasRestantes > 0 ? `${dias}d ${horasRestantes}h` : `${dias}d`;
     }
-    
-    // Validar fecha
-    if (isNaN(fechaReporte.getTime())) {
-        console.error('Fecha inválida');
-        return null;
-    }
-    
-    const fechaInicio = reporte.fecha_inicio_proceso ? 
-        new Date(reporte.fecha_inicio_proceso) : null;
-    const fechaFinalizacion = reporte.fecha_finalizacion ? 
-        new Date(reporte.fecha_finalizacion) : null;
-    
-    const tiempos = {
-        tiempoRespuesta: null,
-        tiempoReparacion: null,
-        tiempoTotal: null,
-        estaAtrasado: false,
-        tiempoRestante: null,
-        porcentajeCompletado: 0,
-        fuenteFecha: fuenteFecha,
-        fechaUsada: fechaReporte.toISOString()
-    };
-    
-    // Tiempo de respuesta
-    if (fechaInicio) {
-        const diferenciaMs = fechaInicio - fechaReporte;
-        if (diferenciaMs >= 0) {
-            tiempos.tiempoRespuesta = Math.floor(diferenciaMs / (1000 * 60));
-            console.log(`Tiempo respuesta: ${tiempos.tiempoRespuesta}min (${diferenciaMs}ms)`);
-        } else {
-            console.warn('Fecha inicio anterior a fecha reporte');
-            tiempos.tiempoRespuesta = 0;
-        }
-    }
-    
-    // Tiempo de reparación
-    if (fechaInicio && fechaFinalizacion) {
-        const diferenciaMs = fechaFinalizacion - fechaInicio;
-        if (diferenciaMs >= 0) {
-            tiempos.tiempoReparacion = Math.floor(diferenciaMs / (1000 * 60));
-            console.log(`Tiempo reparación: ${tiempos.tiempoReparacion}min`);
-        } else {
-            tiempos.tiempoReparacion = 0;
-        }
-    }
-    
-    // Tiempo total
-    if (fechaFinalizacion) {
-        const diferenciaMs = fechaFinalizacion - fechaReporte;
-        if (diferenciaMs >= 0) {
-            tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60));
-            console.log(`Tiempo total: ${tiempos.tiempoTotal}min`);
-        } else {
-            tiempos.tiempoTotal = 0;
-        }
-    } else {
-        const diferenciaMs = ahora - fechaReporte;
-        tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60));
-        console.log(`Tiempo total (no finalizado): ${tiempos.tiempoTotal}min`);
-    }
-    
-    // Verificar SLA
-    if (tiempos.tiempoTotal !== null && reporte.prioridad) {
-        const slaEsperado = SLA_CONFIG[reporte.prioridad] || 2880;
-        tiempos.estaAtrasado = tiempos.tiempoTotal > slaEsperado;
-        tiempos.tiempoRestante = Math.max(0, slaEsperado - tiempos.tiempoTotal);
-        tiempos.porcentajeCompletado = Math.min(100, Math.round((tiempos.tiempoTotal / slaEsperado) * 100));
-        
-        console.log(`SLA ${reporte.prioridad}: ${slaEsperado}min vs ${tiempos.tiempoTotal}min`);
-    }
-    
-    console.log('Resultado:', tiempos);
-    console.log('==============================');
-    return tiempos;
 }
 
-// FUNCIÓN PARA AJUSTAR fecha_reporte EN NUEVOS REPORTES
-async function guardarReporte(reporte) {
-    showLoading(true);
+// FUNCIÓN MEJORADA para calcular métricas
+function calcularMetricasTiempos() {
+    const reportesCompletados = reportes.filter(r => r.estado === 'reparado');
+    console.log(`Reportes reparados: ${reportesCompletados.length}`);
+    
+    const reportesConTiempos = reportesCompletados.filter(r => r.tiempo_total_minutos !== null);
+    console.log(`Reportes con tiempo_total: ${reportesConTiempos.length}`);
+    
+    if (reportesConTiempos.length === 0) {
+        console.warn('No hay reportes con tiempos calculados');
+        
+        // Intentar calcular tiempos para reportes reparados
+        const reportesSinTiempos = reportesCompletados.filter(r => r.tiempo_total_minutos === null);
+        console.log(`Reportes reparados sin tiempos: ${reportesSinTiempos.length}`);
+        
+        if (reportesSinTiempos.length > 0) {
+            // Calcular en tiempo real para mostrar algo
+            let tiemposReales = [];
+            reportesSinTiempos.forEach(reporte => {
+                const tiempos = calcularTiemposReporte(reporte);
+                if (tiempos && tiempos.tiempoTotal !== null) {
+                    tiemposReales.push(tiempos);
+                }
+            });
+            
+            if (tiemposReales.length > 0) {
+                const avgTotal = tiemposReales.reduce((sum, t) => sum + t.tiempoTotal, 0) / tiemposReales.length;
+                document.getElementById('avg-total-time').textContent = formatearTiempo(avgTotal);
+                document.getElementById('avg-response-time').textContent = 'N/A';
+                document.getElementById('avg-repair-time').textContent = 'N/A';
+                document.getElementById('sla-compliance').textContent = 'N/A';
+                return;
+            }
+        }
+        
+        document.getElementById('avg-response-time').textContent = 'N/A';
+        document.getElementById('avg-repair-time').textContent = 'N/A';
+        document.getElementById('avg-total-time').textContent = 'N/A';
+        document.getElementById('sla-compliance').textContent = '0%';
+        return;
+    }
+    
+    // Tiempos promedio
+    const avgResponse = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_respuesta_minutos || 0), 0) / reportesConTiempos.length;
+    const avgRepair = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_reparacion_minutos || 0), 0) / reportesConTiempos.length;
+    const avgTotal = reportesConTiempos.reduce((sum, r) => sum + (r.tiempo_total_minutos || 0), 0) / reportesConTiempos.length;
+    
+    console.log('Promedios calculados:', {
+        respuesta: avgResponse,
+        reparacion: avgRepair,
+        total: avgTotal
+    });
+    
+    // Cumplimiento SLA
+    const cumplenSLA = reportesConTiempos.filter(reporte => {
+        if (!reporte.prioridad) return false;
+        const slaEsperado = SLA_CONFIG[reporte.prioridad] || 2880;
+        return reporte.tiempo_total_minutos <= slaEsperado;
+    }).length;
+    
+    const slaPercentage = reportesConTiempos.length > 0 ? 
+        Math.round((cumplenSLA / reportesConTiempos.length) * 100) : 0;
+    
+    console.log(`SLA: ${cumplenSLA}/${reportesConTiempos.length} = ${slaPercentage}%`);
+    
+    // Actualizar UI
+    document.getElementById('avg-response-time').textContent = formatearTiempo(avgResponse);
+    document.getElementById('avg-repair-time').textContent = formatearTiempo(avgRepair);
+    document.getElementById('avg-total-time').textContent = formatearTiempo(avgTotal);
+    document.getElementById('sla-compliance').textContent = `${slaPercentage}%`;
+}
+
+// FUNCIÓN NUEVA: Actualizar tiempos en la base de datos
+async function actualizarTiemposEnBD(reporteId) {
     try {
-        const ahora = new Date();
-        
-        // IMPORTANTE: Hacer que fecha_reporte coincida con fecha
-        // Usar la fecha proporcionada o hoy
-        const fechaReporte = reporte.fecha || ahora.toISOString().split('T')[0];
-        
-        // Crear timestamp para fecha_reporte (usar mediodía)
-        const fechaReporteTimestamp = fechaReporte + 'T12:00:00';
-        
-        reporte.fecha_reporte = fechaReporteTimestamp; // Hacer coincidir con fecha
-        reporte.fecha = fechaReporte; // Mantener la fecha original
-        reporte.created_at = ahora.toISOString();
-        reporte.updated_at = ahora.toISOString();
-        
-        console.log('Guardando reporte con fechas sincronizadas:', {
-            fecha: reporte.fecha,
-            fecha_reporte: reporte.fecha_reporte
-        });
-        
-        // Resto del código...
-        
-        const { data, error } = await supabaseClient
+        // Obtener reporte
+        const { data: reporte, error } = await supabaseClient
             .from('condiciones_inseguras')
-            .insert([reporte])
-            .select()
+            .select('*')
+            .eq('id', reporteId)
             .single();
         
         if (error) throw error;
         
-        showLoading(false);
-        alert('✅ Reporte guardado exitosamente');
-        await cargarReportes();
-        return data;
+        // Calcular tiempos
+        const tiempos = calcularTiemposReporte(reporte);
         
+        if (tiempos) {
+            // Actualizar en BD
+            const { error: updateError } = await supabaseClient
+                .from('condiciones_inseguras')
+                .update({
+                    tiempo_respuesta_minutos: tiempos.tiempoRespuesta,
+                    tiempo_reparacion_minutos: tiempos.tiempoReparacion,
+                    tiempo_total_minutos: tiempos.tiempoTotal
+                })
+                .eq('id', reporteId);
+            
+            if (updateError) throw updateError;
+            
+            console.log(`✅ Tiempos actualizados para reporte ${reporteId}`);
+            return true;
+        }
+        
+        return false;
     } catch (error) {
-        console.error('Error guardando reporte:', error);
-        showLoading(false);
-        alert('❌ Error al guardar el reporte');
-        return null;
+        console.error(`Error actualizando tiempos para ${reporteId}:`, error);
+        return false;
     }
 }
 
-// FUNCIÓN PARA CORREGIR fecha_reporte EN REPORTES EXISTENTES
-async function corregirFechasReportes() {
-    showLoading(true);
-    try {
-        const { data: todosReportes, error } = await supabaseClient
-            .from('condiciones_inseguras')
-            .select('id, fecha, fecha_reporte');
+// FUNCIÓN NUEVA: Diagnosticar por qué no se calculan tiempos
+function diagnosticarTiempos() {
+    console.log('=== DIAGNÓSTICO DE TIEMPOS ===');
+    console.log(`Total reportes: ${reportes.length}`);
+    
+    // Verificar columnas existentes
+    if (reportes.length > 0) {
+        const primerReporte = reportes[0];
+        console.log('Columnas disponibles en primer reporte:', Object.keys(primerReporte));
         
-        if (error) throw error;
+        // Verificar fechas
+        console.log('Fechas del primer reporte:', {
+            fecha_reporte: primerReporte.fecha_reporte,
+            fecha_inicio_proceso: primerReporte.fecha_inicio_proceso,
+            fecha_finalizacion: primerReporte.fecha_finalizacion,
+            created_at: primerReporte.created_at,
+            fecha: primerReporte.fecha
+        });
         
-        let corregidos = 0;
-        
-        for (const reporte of todosReportes) {
-            if (reporte.fecha && reporte.fecha_reporte) {
-                const fechaDate = new Date(reporte.fecha + 'T00:00:00');
-                const fechaReporteDate = new Date(reporte.fecha_reporte);
-                
-                // Si difieren en más de 1 día, corregir
-                const diferenciaDias = Math.floor((fechaReporteDate - fechaDate) / (1000 * 60 * 60 * 24));
-                
-                if (Math.abs(diferenciaDias) > 1) {
-                    console.log(`Corrigiendo reporte ${reporte.id}: fecha=${reporte.fecha}, fecha_reporte=${reporte.fecha_reporte}, diferencia=${diferenciaDias}d`);
-                    
-                    // Hacer que fecha_reporte coincida con fecha (al mediodía)
-                    const nuevaFechaReporte = reporte.fecha + 'T12:00:00';
-                    
-                    await supabaseClient
-                        .from('condiciones_inseguras')
-                        .update({ 
-                            fecha_reporte: nuevaFechaReporte,
-                            updated_at: new Date().toISOString()
-                        })
-                        .eq('id', reporte.id);
-                    
-                    corregidos++;
-                }
-            }
-        }
-        
-        showLoading(false);
-        alert(`✅ ${corregidos} reportes corregidos. Recargando...`);
-        await cargarReportes();
-        
-    } catch (error) {
-        console.error('Error corrigiendo fechas:', error);
-        showLoading(false);
-        alert('❌ Error corrigiendo fechas');
+        // Calcular tiempos para ver qué pasa
+        const tiempos = calcularTiemposReporte(primerReporte);
+        console.log('Cálculo para primer reporte:', tiempos);
     }
+    
+    // Estadísticas
+    const conFechaReporte = reportes.filter(r => r.fecha_reporte).length;
+    const conFechaInicio = reportes.filter(r => r.fecha_inicio_proceso).length;
+    const conFechaFin = reportes.filter(r => r.fecha_finalizacion).length;
+    const conTiempoTotal = reportes.filter(r => r.tiempo_total_minutos !== null).length;
+    const reparados = reportes.filter(r => r.estado === 'reparado').length;
+    
+    console.log('Estadísticas:');
+    console.log(`- Con fecha_reporte: ${conFechaReporte}/${reportes.length}`);
+    console.log(`- Con fecha_inicio_proceso: ${conFechaInicio}/${reportes.length}`);
+    console.log(`- Con fecha_finalizacion: ${conFechaFin}/${reportes.length}`);
+    console.log(`- Con tiempo_total_minutos: ${conTiempoTotal}/${reportes.length}`);
+    console.log(`- Reportes reparados: ${reparados}/${reportes.length}`);
+    
+    alert(`Diagnóstico completo. Ver consola (F12).\n\nReportes: ${reportes.length}\nCon tiempos: ${conTiempoTotal}\nReparados: ${reparados}`);
 }
         // ==============================================
         // DETECCIÓN DE DISPOSITIVO MÓVIL
