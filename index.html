@@ -32,7 +32,7 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
@@ -140,7 +140,7 @@
             border-radius: 5px;
             font-size: 16px;
             transition: border 0.3s;
-            -webkit-appearance: none; /* Remove default iOS styling */
+            -webkit-appearance: none;
         }
 
         .form-control:focus {
@@ -161,7 +161,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            touch-action: manipulation; /* Better touch on mobile */
+            touch-action: manipulation;
         }
 
         .btn-primary {
@@ -234,7 +234,7 @@
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -620,7 +620,7 @@
 
         /* TOUCH FRIENDLY STYLES */
         .touch-friendly {
-            min-height: 44px; /* Minimum touch target size */
+            min-height: 44px;
             min-width: 44px;
         }
 
@@ -663,16 +663,14 @@
                 text-align: center;
             }
             
-            /* Botones más grandes en móvil */
             .btn {
                 padding: 12px 15px;
                 font-size: 14px;
             }
             
-            /* Asegurar que inputs sean fáciles de tocar */
             .form-control {
                 padding: 12px;
-                font-size: 16px; /* Previene zoom automático en iOS */
+                font-size: 16px;
             }
             
             textarea.form-control {
@@ -684,10 +682,9 @@
             }
 
             .image-upload-label {
-                pointer-events: none; /* Let buttons handle clicks on mobile */
+                pointer-events: none;
             }
 
-            /* Mejorar el modal para móvil */
             .modal-content {
                 width: 95%;
                 padding: 20px;
@@ -705,7 +702,6 @@
                 font-size: 30px;
             }
 
-            /* Adjust table for mobile */
             table th, table td {
                 padding: 8px 10px;
                 font-size: 14px;
@@ -740,7 +736,6 @@
                 margin-bottom: 10px;
             }
 
-            /* Make sure everything fits on small screens */
             .card {
                 padding: 15px;
             }
@@ -750,7 +745,6 @@
             }
         }
 
-        /* For very small screens (iPhone SE, etc) */
         @media (max-width: 320px) {
             .container {
                 padding: 10px;
@@ -766,7 +760,6 @@
             }
         }
 
-        /* Orientation specific */
         @media (max-height: 600px) and (orientation: landscape) {
             .modal-content {
                 max-height: 80vh;
@@ -942,7 +935,7 @@
                                         <th>Ubicación</th>
                                         <th>OT</th>
                                         <th>Reportado por</th>
-                                        <th>Fecha y Hora</th>
+                                        <th>Fecha y Hora Reporte</th>
                                         <th>Estado</th>
                                         <th>Evidencia</th>
                                     </tr>
@@ -978,19 +971,13 @@
                                        placeholder="Ej: Área de producción, Línea 3, Sector B" required>
                             </div>
                             
-                            <!-- NUEVA SECCIÓN: HORA DEL REPORTE -->
+                            <!-- HORA DEL REPORTE -->
                             <div class="form-group">
                                 <label for="hora-reporte">Hora del reporte *</label>
-                                <?php
-                                // Generar hora actual del servidor
-                                date_default_timezone_set('America/Bogota'); // Ajusta según tu zona horaria
-                                $horaActual = date('H:i');
-                                ?>
-                                <input type="time" class="form-control" id="hora-reporte" 
-                                       value="<?php echo $horaActual; ?>" required>
+                                <input type="time" class="form-control" id="hora-reporte" required>
                             </div>
                             
-                            <!-- NUEVA SECCIÓN: ORDEN DE TRABAJO -->
+                            <!-- ORDEN DE TRABAJO -->
                             <div class="form-group">
                                 <label for="ot">Orden de Trabajo (OT)</label>
                                 <input type="text" class="form-control" id="ot" 
@@ -1044,7 +1031,7 @@
                                 </select>
                             </div>
                             
-                            <!-- Sección para subir evidencia fotográfica MEJORADA PARA MÓVIL -->
+                            <!-- Sección para subir evidencia fotográfica -->
                             <div class="form-group">
                                 <label>Evidencia fotográfica (Opcional pero recomendada)</label>
                                 <div class="image-upload-container">
@@ -1176,6 +1163,25 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- Diagnóstico del Sistema -->
+                        <div style="margin-top: 30px;">
+                            <h3><i class="fas fa-stethoscope"></i> Diagnóstico del Sistema</h3>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                                <p>Diagnosticar problemas de fechas:</p>
+                                <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                                    <button class="btn btn-info" onclick="diagnosticarProblemasFechas()">
+                                        <i class="fas fa-search"></i> Diagnosticar Problemas
+                                    </button>
+                                    <button class="btn btn-danger" onclick="corregirTodosLosProblemas()">
+                                        <i class="fas fa-medkit"></i> Corregir Todos los Problemas
+                                    </button>
+                                </div>
+                                <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                                    <i class="fas fa-exclamation-triangle"></i> Esto revisará y corregirá fechas invertidas o inválidas
+                                </p>
+                            </div>
+                        </div>
                         
                         <div style="margin-top: 30px;">
                             <h3><i class="fas fa-info-circle"></i> Acerca del Sistema</h3>
@@ -1200,7 +1206,7 @@
 
     <script>
         // ==============================================
-        // CONFIGURACIÓN DE SUPABASE (YA CONECTADA)
+        // CONFIGURACIÓN DE SUPABASE
         // ==============================================
         const SUPABASE_URL = 'https://biaxvbaqtpelvqeeumnu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYXh2YmFxdHBlbHZxZWV1bW51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMzY3NDcsImV4cCI6MjA4MzgxMjc0N30.vMAuHAkGVKv2WrC1Fb9aH-1O97_-4shzn6VPbpgsuio';
@@ -1218,30 +1224,6 @@
         let isForCompletion = false;
 
         // ==============================================
-        // DETECCIÓN DE DISPOSITIVO MÓVIL
-        // ==============================================
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                   (window.innerWidth <= 768);
-        }
-
-        function checkMobileCompatibility() {
-            if (isMobileDevice()) {
-                console.log('Dispositivo móvil detectado');
-                // Mostrar botones específicos para móvil
-                document.getElementById('mobileImageButtons').style.display = 'flex';
-                document.getElementById('uploadText').textContent = '📱 Elige cómo subir la imagen:';
-                
-                // Para el modal de completar
-                const completionButtons = document.getElementById('completionMobileButtons');
-                if (completionButtons) {
-                    completionButtons.style.display = 'flex';
-                    document.getElementById('completionText').textContent = '📱 Elige cómo subir la imagen:';
-                }
-            }
-        }
-
-        // ==============================================
         // FUNCIONES DE UTILIDAD
         // ==============================================
         function showLoading(show) {
@@ -1251,6 +1233,7 @@
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
             const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'N/A';
             return date.toLocaleDateString('es-ES', {
                 year: 'numeric',
                 month: 'short',
@@ -1263,6 +1246,7 @@
         function formatDateOnly(dateString) {
             if (!dateString) return 'N/A';
             const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'N/A';
             return date.toLocaleDateString('es-ES', {
                 year: 'numeric',
                 month: 'short',
@@ -1276,8 +1260,13 @@
             return `${type}_${id}_${timestamp}_${random}`;
         }
 
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   (window.innerWidth <= 768);
+        }
+
         // ==============================================
-        // FUNCIONES PARA MEDICIÓN DE TIEMPOS
+        // FUNCIONES PARA MEDICIÓN DE TIEMPOS (CORREGIDAS)
         // ==============================================
 
         function calcularTiemposReporte(reporte) {
@@ -1286,58 +1275,87 @@
             try {
                 const ahora = new Date();
                 
-                // Usar fecha_reporte que ahora incluye hora exacta
-                const fechaReporte = new Date(reporte.fecha_reporte || reporte.created_at);
-                const fechaInicio = reporte.fecha_inicio_proceso ? new Date(reporte.fecha_inicio_proceso) : null;
-                const fechaFinalizacion = reporte.fecha_finalizacion ? new Date(reporte.fecha_finalizacion) : null;
-                
-                // Validar fechas
-                if (isNaN(fechaReporte.getTime())) {
-                    console.error('Fecha de reporte inválida:', reporte.fecha_reporte);
-                    return null;
+                // 1. FECHA DE REPORTE (DEBE SER LA MÁS ANTIGUA)
+                let fechaReporte;
+                if (reporte.fecha_reporte) {
+                    fechaReporte = new Date(reporte.fecha_reporte);
+                } else if (reporte.created_at) {
+                    fechaReporte = new Date(reporte.created_at);
+                } else {
+                    fechaReporte = new Date(reporte.fecha + 'T12:00:00');
                 }
                 
+                // 2. FECHA DE INICIO DE PROCESO (opcional)
+                let fechaInicio = null;
+                if (reporte.fecha_inicio_proceso) {
+                    fechaInicio = new Date(reporte.fecha_inicio_proceso);
+                }
+                
+                // 3. FECHA DE REPARACIÓN (opcional - solo para completados)
+                let fechaReparacion = null;
+                if (reporte.fecha_reparacion) {
+                    fechaReparacion = new Date(reporte.fecha_reparacion);
+                }
+                
+                // 4. VALIDAR FECHAS
+                if (isNaN(fechaReporte.getTime())) {
+                    console.error('❌ Fecha de reporte inválida:', reporte.fecha_reporte);
+                    fechaReporte = new Date();
+                }
+                
+                // 5. CALCULAR TIEMPOS
                 const tiempos = {
                     tiempoRespuesta: null,
                     tiempoReparacion: null,
                     tiempoTotal: null,
                     fechaReporte: fechaReporte,
                     fechaInicio: fechaInicio,
-                    fechaFinalizacion: fechaFinalizacion
+                    fechaReparacion: fechaReparacion,
+                    estado: reporte.estado
                 };
                 
-                // Tiempo de respuesta (desde reporte hasta inicio de proceso)
-                if (fechaInicio) {
+                // A. TIEMPO DE RESPUESTA (reporte → inicio)
+                if (fechaInicio && !isNaN(fechaInicio.getTime())) {
                     const diferenciaMs = fechaInicio - fechaReporte;
                     if (diferenciaMs >= 0) {
-                        tiempos.tiempoRespuesta = Math.floor(diferenciaMs / (1000 * 60)); // minutos
+                        tiempos.tiempoRespuesta = Math.floor(diferenciaMs / (1000 * 60));
+                    } else {
+                        tiempos.tiempoRespuesta = 0;
                     }
                 }
                 
-                // Tiempo de reparación (desde inicio hasta finalización)
-                if (fechaInicio && fechaFinalizacion) {
-                    const diferenciaMs = fechaFinalizacion - fechaInicio;
+                // B. TIEMPO DE REPARACIÓN (inicio → reparación)
+                if (fechaInicio && fechaReparacion && 
+                    !isNaN(fechaInicio.getTime()) && !isNaN(fechaReparacion.getTime())) {
+                    const diferenciaMs = fechaReparacion - fechaInicio;
                     if (diferenciaMs >= 0) {
-                        tiempos.tiempoReparacion = Math.floor(diferenciaMs / (1000 * 60)); // minutos
+                        tiempos.tiempoReparacion = Math.floor(diferenciaMs / (1000 * 60));
+                    } else {
+                        tiempos.tiempoReparacion = 0;
                     }
                 }
                 
-                // Tiempo total (desde reporte hasta finalización o hasta ahora)
-                if (fechaFinalizacion) {
-                    const diferenciaMs = fechaFinalizacion - fechaReporte;
+                // C. TIEMPO TOTAL (reporte → reparación o ahora)
+                if (fechaReparacion && !isNaN(fechaReparacion.getTime())) {
+                    const diferenciaMs = fechaReparacion - fechaReporte;
                     if (diferenciaMs >= 0) {
-                        tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60)); // minutos
+                        tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60));
+                    } else {
+                        console.warn('⚠️ Tiempo total negativo, fechas invertidas en reporte', reporte.id);
+                        tiempos.tiempoTotal = Math.abs(Math.floor(diferenciaMs / (1000 * 60)));
+                        // Marcar para corrección automática
+                        corregirFechasInvertidas(reporte.id, fechaReporte, fechaReparacion);
                     }
                 } else {
+                    // Si no está reparado, tiempo desde reporte hasta ahora
                     const diferenciaMs = ahora - fechaReporte;
-                    tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60)); // minutos
+                    tiempos.tiempoTotal = Math.floor(diferenciaMs / (1000 * 60));
                 }
                 
-                console.log('Tiempos calculados para reporte', reporte.id, ':', tiempos);
                 return tiempos;
                 
             } catch (error) {
-                console.error('Error calculando tiempos:', error);
+                console.error('❌ Error calculando tiempos:', error);
                 return null;
             }
         }
@@ -1360,10 +1378,39 @@
             }
         }
 
-        // Función para actualizar tiempos en la base de datos
+        // ==============================================
+        // FUNCIONES DE CORRECCIÓN DE FECHAS INVERTIDAS
+        // ==============================================
+
+        async function corregirFechasInvertidas(reporteId, fechaReporteActual, fechaReparacionActual) {
+            try {
+                console.log('🔄 Detectadas fechas invertidas en reporte', reporteId);
+                
+                // Intercambiar las fechas si reparación es anterior a reporte
+                const updateData = {
+                    fecha_reporte: fechaReparacionActual.toISOString(),
+                    fecha_reparacion: fechaReporteActual.toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+                
+                const { error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .update(updateData)
+                    .eq('id', reporteId);
+                
+                if (error) throw error;
+                
+                console.log('✅ Fechas corregidas para reporte', reporteId);
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Error corrigiendo fechas invertidas:', error);
+                return false;
+            }
+        }
+
         async function actualizarTiemposEnBD(reporteId) {
             try {
-                // Obtener el reporte
                 const { data: reporte, error } = await supabaseClient
                     .from('condiciones_inseguras')
                     .select('*')
@@ -1372,11 +1419,9 @@
                 
                 if (error) throw error;
                 
-                // Calcular tiempos
                 const tiempos = calcularTiemposReporte(reporte);
                 
                 if (tiempos) {
-                    // Actualizar en la base de datos
                     const { error: updateError } = await supabaseClient
                         .from('condiciones_inseguras')
                         .update({
@@ -1389,7 +1434,6 @@
                     
                     if (updateError) throw updateError;
                     
-                    console.log(`✅ Tiempos actualizados para reporte ${reporteId}`);
                     return true;
                 }
                 
@@ -1401,8 +1445,150 @@
         }
 
         // ==============================================
-        // FUNCIÓN PARA CORREGIR REPORTES EXISTENTES
+        // FUNCIONES DE DIAGNÓSTICO Y CORRECCIÓN
         // ==============================================
+
+        async function diagnosticarProblemasFechas() {
+            showLoading(true);
+            try {
+                const { data: todosReportes, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('id, estado, fecha, fecha_reporte, fecha_reparacion, created_at')
+                    .order('id', { ascending: true });
+                
+                if (error) throw error;
+                
+                let problemas = [];
+                
+                for (const reporte of todosReportes) {
+                    const fechaReporte = reporte.fecha_reporte ? new Date(reporte.fecha_reporte) : null;
+                    const fechaReparacion = reporte.fecha_reparacion ? new Date(reporte.fecha_reparacion) : null;
+                    
+                    // Chequeo 1: Fechas invertidas
+                    if (fechaReporte && fechaReparacion && fechaReparacion < fechaReporte) {
+                        problemas.push({
+                            id: reporte.id,
+                            problema: 'FECHAS INVERTIDAS',
+                            fecha_reporte: fechaReporte,
+                            fecha_reparacion: fechaReparacion
+                        });
+                    }
+                    
+                    // Chequeo 2: Fecha de reporte inválida
+                    if (fechaReporte && isNaN(fechaReporte.getTime())) {
+                        problemas.push({
+                            id: reporte.id,
+                            problema: 'FECHA_REPORTE INVÁLIDA',
+                            valor: reporte.fecha_reporte
+                        });
+                    }
+                    
+                    // Chequeo 3: Fecha de reparación inválida
+                    if (fechaReparacion && isNaN(fechaReparacion.getTime())) {
+                        problemas.push({
+                            id: reporte.id,
+                            problema: 'FECHA_REPARACION INVÁLIDA',
+                            valor: reporte.fecha_reparacion
+                        });
+                    }
+                }
+                
+                showLoading(false);
+                
+                if (problemas.length > 0) {
+                    console.table(problemas);
+                    alert(`⚠️ Se encontraron ${problemas.length} problemas de fechas:\n\n` +
+                          problemas.map(p => `Reporte ${p.id}: ${p.problema}`).join('\n'));
+                    
+                    return problemas;
+                } else {
+                    alert('✅ Todas las fechas están correctas');
+                    return [];
+                }
+                
+            } catch (error) {
+                console.error('Error en diagnóstico:', error);
+                showLoading(false);
+                alert('❌ Error realizando diagnóstico');
+                return null;
+            }
+        }
+
+        async function corregirTodosLosProblemas() {
+            showLoading(true);
+            try {
+                const problemas = await diagnosticarProblemasFechas();
+                
+                if (!problemas || problemas.length === 0) {
+                    showLoading(false);
+                    return;
+                }
+                
+                let corregidos = 0;
+                const ahora = new Date().toISOString();
+                
+                for (const problema of problemas) {
+                    const reporteId = problema.id;
+                    
+                    try {
+                        const { data: reporte, error } = await supabaseClient
+                            .from('condiciones_inseguras')
+                            .select('*')
+                            .eq('id', reporteId)
+                            .single();
+                        
+                        if (error) continue;
+                        
+                        let updateData = {};
+                        
+                        if (problema.problema === 'FECHAS INVERTIDAS') {
+                            updateData = {
+                                fecha_reporte: problema.fecha_reparacion.toISOString(),
+                                fecha_reparacion: problema.fecha_reporte.toISOString(),
+                                updated_at: ahora
+                            };
+                        } else if (problema.problema === 'FECHA_REPORTE INVÁLIDA') {
+                            if (reporte.created_at) {
+                                updateData.fecha_reporte = reporte.created_at;
+                            } else {
+                                updateData.fecha_reporte = reporte.fecha + 'T12:00:00';
+                            }
+                            updateData.updated_at = ahora;
+                        } else if (problema.problema === 'FECHA_REPARACION INVÁLIDA') {
+                            if (reporte.estado === 'reparado') {
+                                updateData.fecha_reparacion = ahora;
+                                updateData.updated_at = ahora;
+                            }
+                        }
+                        
+                        if (Object.keys(updateData).length > 0) {
+                            await supabaseClient
+                                .from('condiciones_inseguras')
+                                .update(updateData)
+                                .eq('id', reporteId);
+                            
+                            corregidos++;
+                            await actualizarTiemposEnBD(reporteId);
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                        }
+                        
+                    } catch (error) {
+                        console.error(`Error corrigiendo reporte ${reporteId}:`, error);
+                    }
+                }
+                
+                showLoading(false);
+                alert(`✅ ${corregidos} reportes corregidos de ${problemas.length} problemas detectados.\n\nRecargando datos...`);
+                
+                await cargarReportes();
+                
+            } catch (error) {
+                console.error('Error en corrección masiva:', error);
+                showLoading(false);
+                alert('❌ Error en corrección masiva');
+            }
+        }
+
         async function corregirFechasReportes() {
             showLoading(true);
             try {
@@ -1421,17 +1607,9 @@
                         const fechaDate = new Date(reporte.fecha + 'T00:00:00');
                         const fechaReporteDate = new Date(reporte.fecha_reporte);
                         
-                        // Verificar si son días diferentes (más de 12 horas de diferencia)
                         const diferenciaHoras = Math.abs(fechaReporteDate - fechaDate) / (1000 * 60 * 60);
                         
                         if (diferenciaHoras > 12) {
-                            console.log(`Corrigiendo reporte ${reporte.id}:`, {
-                                fecha: reporte.fecha,
-                                fecha_reporte_actual: reporte.fecha_reporte,
-                                diferencia_horas: diferenciaHoras
-                            });
-                            
-                            // Crear nueva fecha_reporte (mismo día que fecha, hora de created_at o mediodía)
                             let nuevaFechaReporte;
                             if (reporte.created_at) {
                                 const createdDate = new Date(reporte.created_at);
@@ -1451,11 +1629,7 @@
                                 .eq('id', reporte.id);
                             
                             corregidos++;
-                            
-                            // Calcular tiempos para este reporte
                             await actualizarTiemposEnBD(reporte.id);
-                            
-                            // Pequeña pausa para no sobrecargar
                             await new Promise(resolve => setTimeout(resolve, 100));
                         }
                     }
@@ -1463,178 +1637,393 @@
                 
                 showLoading(false);
                 alert(`✅ ${corregidos} reportes corregidos. Recargando datos...`);
-                
-                // Recargar para ver cambios
                 await cargarReportes();
                 
             } catch (error) {
                 console.error('Error corrigiendo fechas:', error);
                 showLoading(false);
-                alert('❌ Error corrigiendo fechas: ' + error.message);
+                alert('❌ Error corrigiendo fechas');
             }
         }
 
         // ==============================================
-        // FUNCIONES ESPECÍFICAS PARA MÓVIL
+        // FUNCIONES CRUD (CORREGIDAS)
         // ==============================================
-        function takePhoto() {
-            isForCompletion = false;
-            openCamera();
-        }
 
-        function takeCompletionPhoto() {
-            isForCompletion = true;
-            openCamera();
-        }
-
-        function selectFromGallery() {
-            isForCompletion = false;
-            const input = document.getElementById('evidenceImage');
-            input.removeAttribute('capture');
-            input.click();
-        }
-
-        function selectCompletionFromGallery() {
-            isForCompletion = true;
-            const input = document.getElementById('completionImage');
-            input.removeAttribute('capture');
-            input.click();
-        }
-
-        function openCamera() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert('Tu navegador no soporta acceso a cámara. Por favor usa la opción de galería.');
-                return;
-            }
-
-            const cameraPreview = document.getElementById('cameraPreview');
-            const video = document.getElementById('cameraVideo');
-
-            // Solicitar permiso de cámara
-            navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    facingMode: 'environment', // Cámara trasera
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                },
-                audio: false 
-            }).then(stream => {
-                currentCameraStream = stream;
-                video.srcObject = stream;
-                cameraPreview.style.display = 'block';
+        async function guardarReporte(reporte) {
+            showLoading(true);
+            try {
+                // IMPORTANTE: Crear fecha_reporte EXACTA
+                const ahora = new Date();
+                const horaReporte = reporte.hora_reporte || 
+                                   ahora.getHours().toString().padStart(2, '0') + ':' + 
+                                   ahora.getMinutes().toString().padStart(2, '0');
                 
-                // Bloquear scroll cuando la cámara está abierta
-                document.body.style.overflow = 'hidden';
-            }).catch(err => {
-                console.error('Error accediendo a la cámara:', err);
-                alert('No se pudo acceder a la cámara: ' + err.message + '\n\nPor favor usa la opción de galería.');
-            });
+                // fecha_reporte = fecha de hoy + hora especificada
+                reporte.fecha_reporte = reporte.fecha + 'T' + horaReporte + ':00';
+                
+                delete reporte.hora_reporte;
+                
+                console.log('📅 Guardando reporte con fecha_reporte:', reporte.fecha_reporte);
+                
+                // SUBIR IMAGEN (SIN MODIFICAR)
+                if (evidenceImage) {
+                    const imageUrl = await uploadImageToSupabase(evidenceImage);
+                    if (imageUrl) {
+                        reporte.foto_antes = imageUrl;
+                    }
+                }
+                
+                const { data, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .insert([reporte])
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                showLoading(false);
+                alert('✅ Reporte guardado exitosamente');
+                await cargarReportes();
+                return data;
+                
+            } catch (error) {
+                console.error('Error guardando reporte:', error);
+                showLoading(false);
+                alert('❌ Error al guardar el reporte');
+                return null;
+            }
         }
 
-        function closeCamera() {
-            const cameraPreview = document.getElementById('cameraPreview');
-            const video = document.getElementById('cameraVideo');
+        async function completarReporte(id, imageUrl, notas) {
+            try {
+                // IMPORTANTE: fecha_reparacion debe ser AHORA (no confundir con fecha_reporte)
+                const ahora = new Date().toISOString();
+                
+                const updateData = {
+                    estado: 'reparado',
+                    fecha_reparacion: ahora, // ✅ Esta es la fecha de COMPLETADO
+                    notas_reparacion: notas,
+                    foto_despues: imageUrl,
+                    updated_at: ahora
+                };
+                
+                console.log('🔧 Completando reporte con fecha_reparacion:', ahora);
+                
+                const { error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .update(updateData)
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                await actualizarTiemposEnBD(id);
+                await cargarReportes();
+                closeCompletionModal();
+                alert('✅ Reporte completado exitosamente');
+                
+            } catch (error) {
+                console.error('Error completando reporte:', error);
+                alert('❌ Error al completar el reporte');
+            }
+        }
+
+        async function cambiarEstado(id, nuevoEstado) {
+            try {
+                const ahora = new Date().toISOString();
+                const updateData = { 
+                    estado: nuevoEstado,
+                    updated_at: ahora 
+                };
+                
+                // Solo registrar fecha_inicio_proceso cuando se inicia
+                if (nuevoEstado === 'en proceso') {
+                    updateData.fecha_inicio_proceso = ahora;
+                }
+                
+                const { error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .update(updateData)
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                await actualizarTiemposEnBD(id);
+                await cargarReportes();
+                alert('✅ Estado actualizado y tiempos calculados');
+                
+            } catch (error) {
+                console.error('Error actualizando estado:', error);
+                alert('❌ Error al actualizar el estado');
+            }
+        }
+
+        // ==============================================
+        // FUNCIONES DE INTERFAZ
+        // ==============================================
+
+        async function cargarReportes() {
+            showLoading(true);
+            try {
+                const { data, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('*')
+                    .order('fecha', { ascending: false });
+                
+                if (error) throw error;
+                
+                reportes = data || [];
+                actualizarUI();
+                showLoading(false);
+                
+            } catch (error) {
+                console.error('Error cargando reportes:', error);
+                showLoading(false);
+                alert('Error al cargar los reportes');
+            }
+        }
+
+        function actualizarUI() {
+            actualizarEstadisticas();
+            actualizarTablaReciente();
+            actualizarTablaHistorial();
+            actualizarSelectUbicaciones();
+            actualizarGraficoLinea();
+            actualizarAnalisis();
             
-            if (currentCameraStream) {
-                currentCameraStream.getTracks().forEach(track => track.stop());
-                currentCameraStream = null;
+            document.getElementById('total-count-sidebar').textContent = reportes.length;
+            document.getElementById('config-total').textContent = reportes.length;
+            document.getElementById('last-update').textContent = new Date().toLocaleString();
+        }
+
+        function actualizarEstadisticas() {
+            const total = reportes.length;
+            const pendientes = reportes.filter(r => r.estado === 'pendiente').length;
+            const enProceso = reportes.filter(r => r.estado === 'en proceso').length;
+            const reparados = reportes.filter(r => r.estado === 'reparado').length;
+
+            document.getElementById('total-count').textContent = total;
+            document.getElementById('pending-count').textContent = pendientes;
+            document.getElementById('process-count').textContent = enProceso;
+            document.getElementById('repaired-count').textContent = reparados;
+        }
+
+        function actualizarTablaReciente() {
+            const tbody = document.querySelector('#recent-table tbody');
+            const recientes = reportes.slice(0, 8);
+            
+            tbody.innerHTML = recientes.map(reporte => {
+                let badgeClass = 'badge-pendiente';
+                if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
+                if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
+                
+                const descCorta = reporte.descripcion.length > 60 
+                    ? reporte.descripcion.substring(0, 60) + '...' 
+                    : reporte.descripcion;
+                
+                // Fecha de reporte con hora
+                let fechaMostrar = 'N/A';
+                if (reporte.fecha_reporte) {
+                    const fechaHora = new Date(reporte.fecha_reporte);
+                    if (!isNaN(fechaHora.getTime())) {
+                        fechaMostrar = fechaHora.toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        }) + ' ' + fechaHora.toLocaleTimeString('es-ES', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                }
+                
+                // Fotos
+                let fotosHTML = '<div class="photos-container">';
+                if (reporte.foto_antes) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
+                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
+                            <div class="photo-status">Reporte</div>
+                        </div>
+                    `;
+                }
+                if (reporte.foto_despues) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
+                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
+                            <div class="photo-status">Reparado</div>
+                        </div>
+                    `;
+                }
+                if (!reporte.foto_antes && !reporte.foto_despues) {
+                    fotosHTML += '<span style="color: #999; font-size: 12px;">Sin fotos</span>';
+                }
+                fotosHTML += '</div>';
+                
+                return `
+                    <tr>
+                        <td>${reporte.id}</td>
+                        <td>${descCorta}</td>
+                        <td>${reporte.ubicacion || 'N/A'}</td>
+                        <td>${reporte.ot || 'N/A'}</td>
+                        <td>${reporte.reportado_por || 'N/A'}</td>
+                        <td>${fechaMostrar}</td>
+                        <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>${fotosHTML}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function actualizarTablaHistorial() {
+            const tbody = document.querySelector('#history-table tbody');
+            let reportesFiltrados = [...reportes];
+            
+            if (currentFilter === 'pendiente') {
+                reportesFiltrados = reportes.filter(r => r.estado === 'pendiente');
+            } else if (currentFilter === 'en proceso') {
+                reportesFiltrados = reportes.filter(r => r.estado === 'en proceso');
+            } else if (currentFilter === 'reparado') {
+                reportesFiltrados = reportes.filter(r => r.estado === 'reparado');
             }
             
-            video.srcObject = null;
-            cameraPreview.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        function capturePhoto() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Convertir a blob y optimizar
-            canvas.toBlob(async (blob) => {
-                const optimizedBlob = await optimizeImageForMobile(new File([blob], 'foto.jpg', { type: 'image/jpeg' }));
+            tbody.innerHTML = reportesFiltrados.map(reporte => {
+                let badgeClass = 'badge-pendiente';
+                if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
+                if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
                 
-                if (isForCompletion) {
-                    completionImage = optimizedBlob;
-                    previewImage(optimizedBlob, document.getElementById('completionPreview'), 'Evidencia de reparación');
+                // Calcular tiempos
+                const tiempos = calcularTiemposReporte(reporte);
+                const tiempoTotal = reporte.tiempo_total_minutos !== null ? 
+                    reporte.tiempo_total_minutos : (tiempos ? tiempos.tiempoTotal : null);
+                const tiempoRespuesta = reporte.tiempo_respuesta_minutos !== null ? 
+                    reporte.tiempo_respuesta_minutos : (tiempos ? tiempos.tiempoRespuesta : null);
+                const tiempoReparacion = reporte.tiempo_reparacion_minutos !== null ? 
+                    reporte.tiempo_reparacion_minutos : (tiempos ? tiempos.tiempoReparacion : null);
+                
+                // Fecha de reporte
+                let fechaReporteMostrar = 'N/A';
+                if (reporte.fecha_reporte) {
+                    const fechaHora = new Date(reporte.fecha_reporte);
+                    if (!isNaN(fechaHora.getTime())) {
+                        fechaReporteMostrar = fechaHora.toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        }) + ' ' + fechaHora.toLocaleTimeString('es-ES', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                }
+                
+                // Fecha de reparación
+                let fechaReparacionMostrar = 'N/A';
+                if (reporte.fecha_reparacion) {
+                    const fechaHora = new Date(reporte.fecha_reparacion);
+                    if (!isNaN(fechaHora.getTime())) {
+                        fechaReparacionMostrar = fechaHora.toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        }) + ' ' + fechaHora.toLocaleTimeString('es-ES', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                }
+                
+                // Fotos
+                let fotosHTML = '<div class="photos-container">';
+                if (reporte.foto_antes) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
+                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
+                            <div class="photo-status">Reporte</div>
+                        </div>
+                    `;
+                }
+                if (reporte.foto_despues) {
+                    fotosHTML += `
+                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
+                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
+                            <div class="photo-status">Reparado</div>
+                        </div>
+                    `;
+                }
+                if (!reporte.foto_antes && !reporte.foto_despues) {
+                    fotosHTML += '<span style="color: #999; font-size: 12px;">Sin fotos</span>';
+                }
+                fotosHTML += '</div>';
+                
+                let acciones = '';
+                if (reporte.estado === 'pendiente') {
+                    acciones = `
+                        <button class="btn" onclick="cambiarEstado(${reporte.id}, 'en proceso')" style="padding: 5px 10px; font-size: 12px;">
+                            <i class="fas fa-play"></i> Iniciar
+                        </button>
+                    `;
+                } else if (reporte.estado === 'en proceso') {
+                    acciones = `
+                        <button class="btn btn-success" onclick="openCompletionModal(${reporte.id})" style="padding: 5px 10px; font-size: 12px;">
+                            <i class="fas fa-check"></i> Completar
+                        </button>
+                    `;
                 } else {
-                    evidenceImage = optimizedBlob;
-                    previewImage(optimizedBlob, document.getElementById('imagePreview'), 'Evidencia del reporte');
+                    acciones = `
+                        <button class="btn btn-warning" onclick="cambiarEstado(${reporte.id}, 'pendiente')" style="padding: 5px 10px; font-size: 12px;">
+                            <i class="fas fa-undo"></i> Reabrir
+                        </button>
+                    `;
                 }
                 
-                closeCamera();
-            }, 'image/jpeg', 0.8);
-        }
-
-        async function optimizeImageForMobile(file) {
-            return new Promise((resolve, reject) => {
-                if (!file.type.startsWith('image/')) {
-                    reject(new Error('No es una imagen válida'));
-                    return;
-                }
-
-                // Solo optimizar si es muy grande o siempre en móvil
-                if (file.size > 1024 * 1024 || isMobileDevice()) { // Mayor a 1MB
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = new Image();
-                        img.onload = function() {
-                            const canvas = document.createElement('canvas');
-                            
-                            // Calcular nuevas dimensiones (máximo 1200px)
-                            let width = img.width;
-                            let height = img.height;
-                            const maxSize = 1200;
-                            
-                            if (width > height && width > maxSize) {
-                                height = (height * maxSize) / width;
-                                width = maxSize;
-                            } else if (height > maxSize) {
-                                width = (width * maxSize) / height;
-                                height = maxSize;
-                            }
-                            
-                            canvas.width = width;
-                            canvas.height = height;
-                            
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-                            
-                            // Convertir a JPEG con calidad 80%
-                            canvas.toBlob(function(blob) {
-                                const optimizedFile = new File([blob], file.name, {
-                                    type: 'image/jpeg',
-                                    lastModified: Date.now()
-                                });
-                                resolve(optimizedFile);
-                            }, 'image/jpeg', 0.8);
-                        };
-                        img.onerror = () => resolve(file); // Fallback al archivo original
-                        img.src = e.target.result;
-                    };
-                    reader.onerror = () => resolve(file); // Fallback al archivo original
-                    reader.readAsDataURL(file);
-                } else {
-                    // No necesita optimización
-                    resolve(file);
-                }
-            });
+                return `
+                    <tr>
+                        <td>${reporte.id}</td>
+                        <td>${reporte.descripcion}</td>
+                        <td>${reporte.ubicacion || 'N/A'}</td>
+                        <td>${reporte.ot || 'N/A'}</td>
+                        <td>${reporte.categoria || 'N/A'}</td>
+                        <td>${fechaReporteMostrar}</td>
+                        <td>${fechaReparacionMostrar}</td>
+                        <td>
+                            <div style="font-size: 11px; line-height: 1.3;">
+                                <div><strong>Total:</strong> ${formatearTiempo(tiempoTotal)}</div>
+                                <div><strong>Respuesta:</strong> ${formatearTiempo(tiempoRespuesta)}</div>
+                                <div><strong>Reparación:</strong> ${formatearTiempo(tiempoReparacion)}</div>
+                            </div>
+                        </td>
+                        <td>${reporte.reportado_por || 'N/A'}</td>
+                        <td>${reporte.prioridad || 'N/A'}</td>
+                        <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
+                        <td>${fotosHTML}</td>
+                        <td>${acciones}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         // ==============================================
-        // MANEJO DE IMÁGENES
+        // FUNCIONES DE IMÁGENES (SIN MODIFICAR)
         // ==============================================
+
+        function checkMobileCompatibility() {
+            if (isMobileDevice()) {
+                document.getElementById('mobileImageButtons').style.display = 'flex';
+                document.getElementById('uploadText').textContent = '📱 Elige cómo subir la imagen:';
+                const completionButtons = document.getElementById('completionMobileButtons');
+                if (completionButtons) {
+                    completionButtons.style.display = 'flex';
+                    document.getElementById('completionText').textContent = '📱 Elige cómo subir la imagen:';
+                }
+            }
+        }
+
         function setupImageUpload() {
-            // Configurar subida de imagen de evidencia
             const evidenceInput = document.getElementById('evidenceImage');
             const evidenceLabel = document.getElementById('imageUploadLabel');
             const evidencePreview = document.getElementById('imagePreview');
             
-            // Solo configurar clic directo en desktop
             if (!isMobileDevice()) {
                 evidenceLabel.addEventListener('click', () => evidenceInput.click());
             }
@@ -1646,7 +2035,6 @@
                 }
             });
             
-            // Configurar subida de imagen de completado
             const completionInput = document.getElementById('completionImage');
             const completionLabel = document.getElementById('completionImageLabel');
             const completionPreview = document.getElementById('completionPreview');
@@ -1672,7 +2060,6 @@
             showLoading(true);
             
             try {
-                // Optimizar imagen
                 const optimizedFile = await optimizeImageForMobile(file);
                 
                 if (optimizedFile.size > 5 * 1024 * 1024) {
@@ -1681,7 +2068,6 @@
                     return;
                 }
                 
-                // Asignar a la variable correspondiente
                 if (type === 'evidenceImage') {
                     evidenceImage = optimizedFile;
                     previewImage(optimizedFile, previewContainer, 'Evidencia del reporte');
@@ -1692,7 +2078,6 @@
                 
             } catch (error) {
                 console.error('Error procesando imagen:', error);
-                // Fallback al archivo original
                 if (type === 'evidenceImage') {
                     evidenceImage = file;
                     previewImage(file, previewContainer, 'Evidencia del reporte');
@@ -1748,7 +2133,6 @@
                 
                 if (error) throw error;
                 
-                // Obtener URL pública
                 const { data: { publicUrl } } = supabaseClient
                     .storage
                     .from(bucket)
@@ -1762,28 +2146,172 @@
         }
 
         // ==============================================
-        // MODALES PARA IMÁGENES
+        // FUNCIONES DE CÁMARA (SIN MODIFICAR)
         // ==============================================
+
+        function takePhoto() {
+            isForCompletion = false;
+            openCamera();
+        }
+
+        function takeCompletionPhoto() {
+            isForCompletion = true;
+            openCamera();
+        }
+
+        function selectFromGallery() {
+            isForCompletion = false;
+            const input = document.getElementById('evidenceImage');
+            input.removeAttribute('capture');
+            input.click();
+        }
+
+        function selectCompletionFromGallery() {
+            isForCompletion = true;
+            const input = document.getElementById('completionImage');
+            input.removeAttribute('capture');
+            input.click();
+        }
+
+        function openCamera() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Tu navegador no soporta acceso a cámara. Por favor usa la opción de galería.');
+                return;
+            }
+
+            const cameraPreview = document.getElementById('cameraPreview');
+            const video = document.getElementById('cameraVideo');
+
+            navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
+                audio: false 
+            }).then(stream => {
+                currentCameraStream = stream;
+                video.srcObject = stream;
+                cameraPreview.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }).catch(err => {
+                console.error('Error accediendo a la cámara:', err);
+                alert('No se pudo acceder a la cámara: ' + err.message + '\n\nPor favor usa la opción de galería.');
+            });
+        }
+
+        function closeCamera() {
+            const cameraPreview = document.getElementById('cameraPreview');
+            const video = document.getElementById('cameraVideo');
+            
+            if (currentCameraStream) {
+                currentCameraStream.getTracks().forEach(track => track.stop());
+                currentCameraStream = null;
+            }
+            
+            video.srcObject = null;
+            cameraPreview.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            canvas.toBlob(async (blob) => {
+                const optimizedBlob = await optimizeImageForMobile(new File([blob], 'foto.jpg', { type: 'image/jpeg' }));
+                
+                if (isForCompletion) {
+                    completionImage = optimizedBlob;
+                    previewImage(optimizedBlob, document.getElementById('completionPreview'), 'Evidencia de reparación');
+                } else {
+                    evidenceImage = optimizedBlob;
+                    previewImage(optimizedBlob, document.getElementById('imagePreview'), 'Evidencia del reporte');
+                }
+                
+                closeCamera();
+            }, 'image/jpeg', 0.8);
+        }
+
+        async function optimizeImageForMobile(file) {
+            return new Promise((resolve, reject) => {
+                if (!file.type.startsWith('image/')) {
+                    reject(new Error('No es una imagen válida'));
+                    return;
+                }
+
+                if (file.size > 1024 * 1024 || isMobileDevice()) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            
+                            let width = img.width;
+                            let height = img.height;
+                            const maxSize = 1200;
+                            
+                            if (width > height && width > maxSize) {
+                                height = (height * maxSize) / width;
+                                width = maxSize;
+                            } else if (height > maxSize) {
+                                width = (width * maxSize) / height;
+                                height = maxSize;
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            canvas.toBlob(function(blob) {
+                                const optimizedFile = new File([blob], file.name, {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                });
+                                resolve(optimizedFile);
+                            }, 'image/jpeg', 0.8);
+                        };
+                        img.onerror = () => resolve(file);
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = () => resolve(file);
+                    reader.readAsDataURL(file);
+                } else {
+                    resolve(file);
+                }
+            });
+        }
+
+        // ==============================================
+        // FUNCIONES DE MODALES
+        // ==============================================
+
         function openImageModal(imageUrl) {
             const modal = document.getElementById('imageModal');
             const modalImage = document.getElementById('modalImage');
             
             modalImage.src = imageUrl;
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Bloquear scroll
+            document.body.style.overflow = 'hidden';
         }
 
         function closeImageModal() {
             document.getElementById('imageModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restaurar scroll
+            document.body.style.overflow = 'auto';
         }
 
         function openCompletionModal(reportId) {
             currentCompletionReportId = reportId;
             document.getElementById('completionModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Bloquear scroll
+            document.body.style.overflow = 'hidden';
             
-            // Resetear el formulario de completar
             completionImage = null;
             document.getElementById('completionPreview').innerHTML = '';
             document.getElementById('completionImage').value = '';
@@ -1792,731 +2320,14 @@
 
         function closeCompletionModal() {
             document.getElementById('completionModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restaurar scroll
+            document.body.style.overflow = 'auto';
             currentCompletionReportId = null;
-        }
-
-        // ==============================================
-        // INICIALIZACIÓN DE SUPABASE
-        // ==============================================
-        async function inicializarSupabase() {
-            try {
-                // Crear cliente Supabase con credenciales preconfiguradas
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                
-                // Verificar conexión
-                const { data, error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .select('count', { count: 'exact', head: true });
-                
-                if (error) throw error;
-                
-                console.log('✅ Conectado exitosamente a Supabase');
-                document.getElementById('db-status').textContent = 'Conectado ✓';
-                document.getElementById('config-status').textContent = 'Conectado ✓';
-                
-                return true;
-            } catch (error) {
-                console.error('❌ Error conectando a Supabase:', error);
-                document.getElementById('db-status').textContent = 'Error de conexión';
-                document.getElementById('config-status').textContent = 'Error de conexión';
-                return false;
-            }
-        }
-
-        // ==============================================
-        // FUNCIONES CRUD (CON MEJORAS PARA FECHAS)
-        // ==============================================
-        async function cargarReportes() {
-            showLoading(true);
-            try {
-                const { data, error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .select('*')
-                    .order('fecha', { ascending: false });
-                
-                if (error) throw error;
-                
-                reportes = data || [];
-                actualizarUI();
-                showLoading(false);
-                
-            } catch (error) {
-                console.error('Error cargando reportes:', error);
-                showLoading(false);
-                alert('Error al cargar los reportes');
-            }
-        }
-
-        async function guardarReporte(reporte) {
-            showLoading(true);
-            try {
-                // COMBINAR FECHA Y HORA PARA CREAR fecha_reporte EXACTA
-                const fechaReporteCompleta = reporte.fecha + 'T' + reporte.hora_reporte + ':00';
-                
-                // Asignar fecha_reporte para que coincida exactamente con la fecha y hora del reporte
-                reporte.fecha_reporte = fechaReporteCompleta;
-                
-                // Eliminar la propiedad temporal hora_reporte
-                delete reporte.hora_reporte;
-                
-                console.log('Fechas configuradas:', {
-                    fecha: reporte.fecha,
-                    fecha_reporte: reporte.fecha_reporte
-                });
-                
-                // SUBIR IMAGEN (CÓDIGO ORIGINAL - SIN MODIFICAR)
-                if (evidenceImage) {
-                    const imageUrl = await uploadImageToSupabase(evidenceImage);
-                    if (imageUrl) {
-                        reporte.foto_antes = imageUrl;
-                    }
-                }
-                
-                const { data, error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .insert([reporte])
-                    .select()
-                    .single();
-                
-                if (error) throw error;
-                
-                showLoading(false);
-                alert('✅ Reporte guardado exitosamente');
-                await cargarReportes();
-                return data;
-                
-            } catch (error) {
-                console.error('Error guardando reporte:', error);
-                showLoading(false);
-                alert('❌ Error al guardar el reporte');
-                return null;
-            }
-        }
-
-        async function completarReporte(id, imageUrl, notas) {
-            try {
-                const ahora = new Date().toISOString();
-                const updateData = {
-                    estado: 'reparado',
-                    fecha_reparacion: ahora.split('T')[0],
-                    fecha_finalizacion: ahora,
-                    notas_reparacion: notas,
-                    foto_despues: imageUrl,
-                    updated_at: ahora
-                };
-                
-                const { error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .update(updateData)
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                // Calcular y guardar tiempos automáticamente
-                await actualizarTiemposEnBD(id);
-                
-                await cargarReportes();
-                closeCompletionModal();
-                alert('✅ Reporte completado exitosamente');
-                
-            } catch (error) {
-                console.error('Error completando reporte:', error);
-                alert('❌ Error al completar el reporte');
-            }
-        }
-
-        async function cambiarEstado(id, nuevoEstado) {
-            try {
-                const ahora = new Date().toISOString();
-                const updateData = { 
-                    estado: nuevoEstado,
-                    updated_at: ahora 
-                };
-                
-                // Registrar timestamp según el estado
-                if (nuevoEstado === 'en proceso') {
-                    updateData.fecha_inicio_proceso = ahora;
-                } else if (nuevoEstado === 'reparado') {
-                    updateData.fecha_finalizacion = ahora;
-                }
-                
-                const { error } = await supabaseClient
-                    .from('condiciones_inseguras')
-                    .update(updateData)
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                // Calcular y guardar tiempos automáticamente
-                await actualizarTiemposEnBD(id);
-                
-                await cargarReportes();
-                alert('✅ Estado actualizado y tiempos calculados');
-                
-            } catch (error) {
-                console.error('Error actualizando estado:', error);
-                alert('❌ Error al actualizar el estado');
-            }
-        }
-
-        // ==============================================
-        // FUNCIONES DE INTERFAZ
-        // ==============================================
-        function actualizarUI() {
-            actualizarEstadisticas();
-            actualizarTablaReciente();
-            actualizarTablaHistorial();
-            actualizarSelectUbicaciones();
-            actualizarGraficoLinea();
-            actualizarAnalisis();
-            
-            // Actualizar sidebar
-            document.getElementById('total-count-sidebar').textContent = reportes.length;
-            document.getElementById('config-total').textContent = reportes.length;
-            document.getElementById('last-update').textContent = new Date().toLocaleString();
-        }
-
-        function actualizarEstadisticas() {
-            const total = reportes.length;
-            const pendientes = reportes.filter(r => r.estado === 'pendiente').length;
-            const enProceso = reportes.filter(r => r.estado === 'en proceso').length;
-            const reparados = reportes.filter(r => r.estado === 'reparado').length;
-
-            document.getElementById('total-count').textContent = total;
-            document.getElementById('pending-count').textContent = pendientes;
-            document.getElementById('process-count').textContent = enProceso;
-            document.getElementById('repaired-count').textContent = reparados;
-        }
-
-        function actualizarTablaReciente() {
-            const tbody = document.querySelector('#recent-table tbody');
-            const recientes = reportes.slice(0, 8); // Mostrar 8 más recientes
-            
-            tbody.innerHTML = recientes.map(reporte => {
-                let badgeClass = 'badge-pendiente';
-                if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
-                if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
-                
-                const descCorta = reporte.descripcion.length > 60 
-                    ? reporte.descripcion.substring(0, 60) + '...' 
-                    : reporte.descripcion;
-                
-                // Formatear fecha con hora si está disponible
-                let fechaMostrar = formatDate(reporte.fecha);
-                if (reporte.fecha_reporte) {
-                    const fechaHora = new Date(reporte.fecha_reporte);
-                    fechaMostrar = fechaHora.toLocaleDateString('es-ES', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    }) + ' ' + fechaHora.toLocaleTimeString('es-ES', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                }
-                
-                // Generar miniaturas de fotos
-                let fotosHTML = '<div class="photos-container">';
-                if (reporte.foto_antes) {
-                    fotosHTML += `
-                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
-                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
-                            <div class="photo-status">Reporte</div>
-                        </div>
-                    `;
-                }
-                if (reporte.foto_despues) {
-                    fotosHTML += `
-                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
-                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
-                            <div class="photo-status">Reparado</div>
-                        </div>
-                    `;
-                }
-                if (!reporte.foto_antes && !reporte.foto_despues) {
-                    fotosHTML += '<span style="color: #999; font-size: 12px;">Sin fotos</span>';
-                }
-                fotosHTML += '</div>';
-                
-                return `
-                    <tr>
-                        <td>${reporte.id}</td>
-                        <td>${descCorta}</td>
-                        <td>${reporte.ubicacion || 'N/A'}</td>
-                        <td>${reporte.ot || 'N/A'}</td>
-                        <td>${reporte.reportado_por || 'N/A'}</td>
-                        <td>${fechaMostrar}</td>
-                        <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
-                        <td>${fotosHTML}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function actualizarTablaHistorial() {
-            const tbody = document.querySelector('#history-table tbody');
-            let reportesFiltrados = [...reportes];
-            
-            // Aplicar filtro
-            if (currentFilter === 'pendiente') {
-                reportesFiltrados = reportes.filter(r => r.estado === 'pendiente');
-            } else if (currentFilter === 'en proceso') {
-                reportesFiltrados = reportes.filter(r => r.estado === 'en proceso');
-            } else if (currentFilter === 'reparado') {
-                reportesFiltrados = reportes.filter(r => r.estado === 'reparado');
-            }
-            
-            tbody.innerHTML = reportesFiltrados.map(reporte => {
-                let badgeClass = 'badge-pendiente';
-                if (reporte.estado === 'en proceso') badgeClass = 'badge-proceso';
-                if (reporte.estado === 'reparado') badgeClass = 'badge-reparado';
-                
-                // Calcular tiempos para mostrar
-                const tiempos = calcularTiemposReporte(reporte);
-                const tiempoTotal = reporte.tiempo_total_minutos !== null ? 
-                    reporte.tiempo_total_minutos : (tiempos ? tiempos.tiempoTotal : null);
-                
-                const tiempoRespuesta = reporte.tiempo_respuesta_minutos !== null ? 
-                    reporte.tiempo_respuesta_minutos : (tiempos ? tiempos.tiempoRespuesta : null);
-                
-                const tiempoReparacion = reporte.tiempo_reparacion_minutos !== null ? 
-                    reporte.tiempo_reparacion_minutos : (tiempos ? tiempos.tiempoReparacion : null);
-                
-                // Formatear fecha con hora si está disponible
-                let fechaReporteMostrar = formatDate(reporte.fecha);
-                if (reporte.fecha_reporte) {
-                    const fechaHora = new Date(reporte.fecha_reporte);
-                    fechaReporteMostrar = fechaHora.toLocaleDateString('es-ES', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    }) + ' ' + fechaHora.toLocaleTimeString('es-ES', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                }
-                
-                // Generar miniaturas de fotos
-                let fotosHTML = '<div class="photos-container">';
-                if (reporte.foto_antes) {
-                    fotosHTML += `
-                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_antes}')">
-                            <img src="${reporte.foto_antes}" alt="Antes" loading="lazy">
-                            <div class="photo-status">Reporte</div>
-                        </div>
-                    `;
-                }
-                if (reporte.foto_despues) {
-                    fotosHTML += `
-                        <div class="photo-thumbnail" onclick="openImageModal('${reporte.foto_despues}')">
-                            <img src="${reporte.foto_despues}" alt="Después" loading="lazy">
-                            <div class="photo-status">Reparado</div>
-                        </div>
-                    `;
-                }
-                if (!reporte.foto_antes && !reporte.foto_despues) {
-                    fotosHTML += '<span style="color: #999; font-size: 12px;">Sin fotos</span>';
-                }
-                fotosHTML += '</div>';
-                
-                let acciones = '';
-                if (reporte.estado === 'pendiente') {
-                    acciones = `
-                        <button class="btn" onclick="cambiarEstado(${reporte.id}, 'en proceso')" style="padding: 5px 10px; font-size: 12px;">
-                            <i class="fas fa-play"></i> Iniciar
-                        </button>
-                    `;
-                } else if (reporte.estado === 'en proceso') {
-                    acciones = `
-                        <button class="btn btn-success" onclick="openCompletionModal(${reporte.id})" style="padding: 5px 10px; font-size: 12px;">
-                            <i class="fas fa-check"></i> Completar
-                        </button>
-                    `;
-                } else {
-                    acciones = `
-                        <button class="btn btn-warning" onclick="cambiarEstado(${reporte.id}, 'pendiente')" style="padding: 5px 10px; font-size: 12px;">
-                            <i class="fas fa-undo"></i> Reabrir
-                        </button>
-                    `;
-                }
-                
-                return `
-                    <tr>
-                        <td>${reporte.id}</td>
-                        <td>${reporte.descripcion}</td>
-                        <td>${reporte.ubicacion || 'N/A'}</td>
-                        <td>${reporte.ot || 'N/A'}</td>
-                        <td>${reporte.categoria || 'N/A'}</td>
-                        <td>${fechaReporteMostrar}</td>
-                        <td>${reporte.fecha_reparacion ? formatDate(reporte.fecha_reparacion) : 'N/A'}</td>
-                        <td>
-                            <div style="font-size: 11px; line-height: 1.3;">
-                                <div><strong>Total:</strong> ${formatearTiempo(tiempoTotal)}</div>
-                                <div><strong>Respuesta:</strong> ${formatearTiempo(tiempoRespuesta)}</div>
-                                <div><strong>Reparación:</strong> ${formatearTiempo(tiempoReparacion)}</div>
-                            </div>
-                        </td>
-                        <td>${reporte.reportado_por || 'N/A'}</td>
-                        <td>${reporte.prioridad || 'N/A'}</td>
-                        <td><span class="badge ${badgeClass}">${reporte.estado}</span></td>
-                        <td>${fotosHTML}</td>
-                        <td>${acciones}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function actualizarSelectUbicaciones() {
-            const select = document.getElementById('location-select');
-            const ubicaciones = [...new Set(reportes.map(r => r.ubicacion).filter(Boolean))];
-            
-            select.innerHTML = '<option value="">Todas las ubicaciones</option>' +
-                ubicaciones.map(ubicacion => 
-                    `<option value="${ubicacion}">${ubicacion}</option>`
-                ).join('');
-        }
-
-        // ==============================================
-        // GRÁFICO DE LÍNEA (DASHBOARD)
-        // ==============================================
-        function actualizarGraficoLinea() {
-            const ctx = document.getElementById('line-chart');
-            const ubicacion = document.getElementById('location-select').value;
-            const periodo = parseInt(document.getElementById('period-select').value);
-            
-            // Filtrar reportes
-            let reportesFiltrados = reportes;
-            if (ubicacion) {
-                reportesFiltrados = reportes.filter(r => r.ubicacion === ubicacion);
-            }
-            
-            // Obtener últimos N meses
-            const fechaFin = new Date();
-            const fechaInicio = new Date();
-            fechaInicio.setMonth(fechaInicio.getMonth() - periodo);
-            
-            // Agrupar por mes
-            const datosPorMes = {};
-            const labels = [];
-            const valores = [];
-            
-            // Generar meses
-            for (let i = periodo - 1; i >= 0; i--) {
-                const fecha = new Date();
-                fecha.setMonth(fecha.getMonth() - i);
-                const mes = fecha.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
-                const clave = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}`;
-                
-                labels.push(mes);
-                datosPorMes[clave] = 0;
-            }
-            
-            // Contar reportes por mes
-            reportesFiltrados.forEach(reporte => {
-                if (reporte.fecha) {
-                    const fecha = new Date(reporte.fecha);
-                    const clave = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}`;
-                    
-                    if (datosPorMes[clave] !== undefined) {
-                        datosPorMes[clave]++;
-                    }
-                }
-            });
-            
-            // Crear array de valores
-            Object.keys(datosPorMes).forEach(clave => {
-                valores.push(datosPorMes[clave]);
-            });
-            
-            // Crear o actualizar gráfico
-            if (lineChart) {
-                lineChart.data.labels = labels;
-                lineChart.data.datasets[0].data = valores;
-                lineChart.data.datasets[0].label = `Reportes ${ubicacion ? 'en ' + ubicacion : 'totales'}`;
-                lineChart.update();
-            } else {
-                lineChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: `Reportes ${ubicacion ? 'en ' + ubicacion : 'totales'}`,
-                            data: valores,
-                            borderColor: 'rgb(52, 152, 219)',
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Número de Reportes'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Mes'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        // ==============================================
-        // ANÁLISIS DE DATOS
-        // ==============================================
-        function actualizarAnalisis() {
-            if (!analysisChart) {
-                const ctx = document.getElementById('analysis-chart').getContext('2d');
-                analysisChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: [],
-                        datasets: [{
-                            label: '',
-                            data: [],
-                            backgroundColor: [
-                                'rgba(52, 152, 219, 0.7)',
-                                'rgba(46, 204, 113, 0.7)',
-                                'rgba(155, 89, 182, 0.7)',
-                                'rgba(241, 196, 15, 0.7)',
-                                'rgba(230, 126, 34, 0.7)',
-                                'rgba(231, 76, 60, 0.7)'
-                            ],
-                            borderColor: [
-                                'rgb(52, 152, 219)',
-                                'rgb(46, 204, 113)',
-                                'rgb(155, 89, 182)',
-                                'rgb(241, 196, 15)',
-                                'rgb(230, 126, 34)',
-                                'rgb(231, 76, 60)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Cantidad'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Actualizar según la pestaña activa
-            actualizarGraficoAnalisis(currentAnalysisTab);
-            actualizarEstadisticasAnalisis(currentAnalysisTab);
-        }
-
-        function actualizarGraficoAnalisis(tipo) {
-            let labels = [];
-            let datos = [];
-            let titulo = '';
-
-            switch(tipo) {
-                case 'categoria':
-                    // Análisis por categoría
-                    const categorias = {};
-                    reportes.forEach(reporte => {
-                        const cat = reporte.categoria || 'Sin categoría';
-                        categorias[cat] = (categorias[cat] || 0) + 1;
-                    });
-                    
-                    labels = Object.keys(categorias);
-                    datos = Object.values(categorias);
-                    titulo = 'Reportes por Categoría';
-                    break;
-                    
-                case 'riesgo':
-                    // Análisis por nivel de riesgo
-                    const riesgos = {};
-                    reportes.forEach(reporte => {
-                        const riesgo = reporte.prioridad || 'Sin especificar';
-                        riesgos[riesgo] = (riesgos[riesgo] || 0) + 1;
-                    });
-                    
-                    labels = Object.keys(riesgos);
-                    datos = Object.values(riesgos);
-                    titulo = 'Reportes por Nivel de Riesgo';
-                    break;
-                    
-                case 'estado':
-                    // Análisis por estado
-                    const estados = {};
-                    reportes.forEach(reporte => {
-                        const estado = reporte.estado || 'pendiente';
-                        estados[estado] = (estados[estado] || 0) + 1;
-                    });
-                    
-                    labels = Object.keys(estados);
-                    datos = Object.values(estados);
-                    titulo = 'Reportes por Estado';
-                    break;
-                    
-                case 'ubicacion':
-                    // Análisis por ubicación (top 10)
-                    const ubicaciones = {};
-                    reportes.forEach(reporte => {
-                        const ubicacion = reporte.ubicacion || 'Sin ubicación';
-                        ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
-                    });
-                    
-                    // Ordenar y tomar top 10
-                    const sorted = Object.entries(ubicaciones)
-                        .sort((a, b) => b[1] - a[1])
-                        .slice(0, 10);
-                    
-                    labels = sorted.map(item => item[0]);
-                    datos = sorted.map(item => item[1]);
-                    titulo = 'Top 10 Ubicaciones con más Reportes';
-                    break;
-            }
-
-            // Actualizar gráfico
-            analysisChart.data.labels = labels;
-            analysisChart.data.datasets[0].data = datos;
-            analysisChart.data.datasets[0].label = titulo;
-            analysisChart.update();
-        }
-
-        function actualizarEstadisticasAnalisis(tipo) {
-            const statsContainer = document.getElementById('analysis-stats');
-            let statsHTML = '';
-            
-            switch(tipo) {
-                case 'categoria':
-                    const categorias = {};
-                    reportes.forEach(reporte => {
-                        const cat = reporte.categoria || 'Sin categoría';
-                        categorias[cat] = (categorias[cat] || 0) + 1;
-                    });
-                    
-                    Object.entries(categorias).forEach(([categoria, cantidad]) => {
-                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
-                        statsHTML += `
-                            <div class="stat-card">
-                                <div class="stat-title">${categoria}</div>
-                                <div class="stat-value">${cantidad}</div>
-                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
-                            </div>
-                        `;
-                    });
-                    break;
-                    
-                case 'riesgo':
-                    const riesgos = {};
-                    reportes.forEach(reporte => {
-                        const riesgo = reporte.prioridad || 'Sin especificar';
-                        riesgos[riesgo] = (riesgos[riesgo] || 0) + 1;
-                    });
-                    
-                    Object.entries(riesgos).forEach(([riesgo, cantidad]) => {
-                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
-                        let color = '#666';
-                        if (riesgo === 'critico') color = '#e74c3c';
-                        if (riesgo === 'alto') color = '#e67e22';
-                        if (riesgo === 'medio') color = '#f39c12';
-                        if (riesgo === 'bajo') color = '#2ecc71';
-                        
-                        statsHTML += `
-                            <div class="stat-card">
-                                <div class="stat-title">Riesgo ${riesgo}</div>
-                                <div class="stat-value" style="color: ${color};">${cantidad}</div>
-                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
-                            </div>
-                        `;
-                    });
-                    break;
-                    
-                case 'estado':
-                    const estados = {
-                        'pendiente': 0,
-                        'en proceso': 0,
-                        'reparado': 0
-                    };
-                    
-                    reportes.forEach(reporte => {
-                        const estado = reporte.estado || 'pendiente';
-                        if (estados[estado] !== undefined) {
-                            estados[estado]++;
-                        }
-                    });
-                    
-                    Object.entries(estados).forEach(([estado, cantidad]) => {
-                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
-                        let color = '#666';
-                        if (estado === 'pendiente') color = '#f39c12';
-                        if (estado === 'en proceso') color = '#3498db';
-                        if (estado === 'reparado') color = '#2ecc71';
-                        
-                        statsHTML += `
-                            <div class="stat-card">
-                                <div class="stat-title">${estado}</div>
-                                <div class="stat-value" style="color: ${color};">${cantidad}</div>
-                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
-                            </div>
-                        `;
-                    });
-                    break;
-                    
-                case 'ubicacion':
-                    const ubicaciones = {};
-                    reportes.forEach(reporte => {
-                        const ubicacion = reporte.ubicacion || 'Sin ubicación';
-                        ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
-                    });
-                    
-                    // Tomar top 5
-                    const top5 = Object.entries(ubicaciones)
-                        .sort((a, b) => b[1] - a[1])
-                        .slice(0, 5);
-                    
-                    top5.forEach(([ubicacion, cantidad]) => {
-                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
-                        statsHTML += `
-                            <div class="stat-card">
-                                <div class="stat-title">${ubicacion}</div>
-                                <div class="stat-value">${cantidad}</div>
-                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
-                        `;
-                    });
-                    break;
-            }
-            
-            statsContainer.innerHTML = statsHTML;
         }
 
         // ==============================================
         // EVENT HANDLERS
         // ==============================================
+
         async function submitReporte(event) {
             event.preventDefault();
             
@@ -2533,8 +2344,8 @@
                 categoria: document.getElementById('category').value,
                 prioridad: document.getElementById('priority').value,
                 estado: 'pendiente',
-                fecha: new Date().toISOString().split('T')[0], // Solo fecha
-                hora_reporte: horaReporte, // Nueva propiedad
+                fecha: new Date().toISOString().split('T')[0],
+                hora_reporte: horaReporte,
                 foto_antes: null
             };
             
@@ -2585,9 +2396,353 @@
         }
 
         // ==============================================
+        // INICIALIZACIÓN DE SUPABASE
+        // ==============================================
+
+        async function inicializarSupabase() {
+            try {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                
+                const { data, error } = await supabaseClient
+                    .from('condiciones_inseguras')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                console.log('✅ Conectado exitosamente a Supabase');
+                document.getElementById('db-status').textContent = 'Conectado ✓';
+                document.getElementById('config-status').textContent = 'Conectado ✓';
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Error conectando a Supabase:', error);
+                document.getElementById('db-status').textContent = 'Error de conexión';
+                document.getElementById('config-status').textContent = 'Error de conexión';
+                return false;
+            }
+        }
+
+        // ==============================================
+        // FUNCIONES DE GRÁFICOS (se mantienen igual)
+        // ==============================================
+
+        function actualizarSelectUbicaciones() {
+            const select = document.getElementById('location-select');
+            const ubicaciones = [...new Set(reportes.map(r => r.ubicacion).filter(Boolean))];
+            
+            select.innerHTML = '<option value="">Todas las ubicaciones</option>' +
+                ubicaciones.map(ubicacion => 
+                    `<option value="${ubicacion}">${ubicacion}</option>`
+                ).join('');
+        }
+
+        function actualizarGraficoLinea() {
+            const ctx = document.getElementById('line-chart');
+            const ubicacion = document.getElementById('location-select').value;
+            const periodo = parseInt(document.getElementById('period-select').value);
+            
+            let reportesFiltrados = reportes;
+            if (ubicacion) {
+                reportesFiltrados = reportes.filter(r => r.ubicacion === ubicacion);
+            }
+            
+            const fechaFin = new Date();
+            const fechaInicio = new Date();
+            fechaInicio.setMonth(fechaInicio.getMonth() - periodo);
+            
+            const datosPorMes = {};
+            const labels = [];
+            const valores = [];
+            
+            for (let i = periodo - 1; i >= 0; i--) {
+                const fecha = new Date();
+                fecha.setMonth(fecha.getMonth() - i);
+                const mes = fecha.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
+                const clave = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}`;
+                
+                labels.push(mes);
+                datosPorMes[clave] = 0;
+            }
+            
+            reportesFiltrados.forEach(reporte => {
+                if (reporte.fecha) {
+                    const fecha = new Date(reporte.fecha);
+                    const clave = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}`;
+                    
+                    if (datosPorMes[clave] !== undefined) {
+                        datosPorMes[clave]++;
+                    }
+                }
+            });
+            
+            Object.keys(datosPorMes).forEach(clave => {
+                valores.push(datosPorMes[clave]);
+            });
+            
+            if (lineChart) {
+                lineChart.data.labels = labels;
+                lineChart.data.datasets[0].data = valores;
+                lineChart.data.datasets[0].label = `Reportes ${ubicacion ? 'en ' + ubicacion : 'totales'}`;
+                lineChart.update();
+            } else {
+                lineChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `Reportes ${ubicacion ? 'en ' + ubicacion : 'totales'}`,
+                            data: valores,
+                            borderColor: 'rgb(52, 152, 219)',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Número de Reportes'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Mes'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function actualizarAnalisis() {
+            if (!analysisChart) {
+                const ctx = document.getElementById('analysis-chart').getContext('2d');
+                analysisChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: '',
+                            data: [],
+                            backgroundColor: [
+                                'rgba(52, 152, 219, 0.7)',
+                                'rgba(46, 204, 113, 0.7)',
+                                'rgba(155, 89, 182, 0.7)',
+                                'rgba(241, 196, 15, 0.7)',
+                                'rgba(230, 126, 34, 0.7)',
+                                'rgba(231, 76, 60, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgb(52, 152, 219)',
+                                'rgb(46, 204, 113)',
+                                'rgb(155, 89, 182)',
+                                'rgb(241, 196, 15)',
+                                'rgb(230, 126, 34)',
+                                'rgb(231, 76, 60)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Cantidad'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            actualizarGraficoAnalisis(currentAnalysisTab);
+            actualizarEstadisticasAnalisis(currentAnalysisTab);
+        }
+
+        function actualizarGraficoAnalisis(tipo) {
+            let labels = [];
+            let datos = [];
+            let titulo = '';
+
+            switch(tipo) {
+                case 'categoria':
+                    const categorias = {};
+                    reportes.forEach(reporte => {
+                        const cat = reporte.categoria || 'Sin categoría';
+                        categorias[cat] = (categorias[cat] || 0) + 1;
+                    });
+                    labels = Object.keys(categorias);
+                    datos = Object.values(categorias);
+                    titulo = 'Reportes por Categoría';
+                    break;
+                case 'riesgo':
+                    const riesgos = {};
+                    reportes.forEach(reporte => {
+                        const riesgo = reporte.prioridad || 'Sin especificar';
+                        riesgos[riesgo] = (riesgos[riesgo] || 0) + 1;
+                    });
+                    labels = Object.keys(riesgos);
+                    datos = Object.values(riesgos);
+                    titulo = 'Reportes por Nivel de Riesgo';
+                    break;
+                case 'estado':
+                    const estados = {};
+                    reportes.forEach(reporte => {
+                        const estado = reporte.estado || 'pendiente';
+                        estados[estado] = (estados[estado] || 0) + 1;
+                    });
+                    labels = Object.keys(estados);
+                    datos = Object.values(estados);
+                    titulo = 'Reportes por Estado';
+                    break;
+                case 'ubicacion':
+                    const ubicaciones = {};
+                    reportes.forEach(reporte => {
+                        const ubicacion = reporte.ubicacion || 'Sin ubicación';
+                        ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
+                    });
+                    const sorted = Object.entries(ubicaciones)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 10);
+                    labels = sorted.map(item => item[0]);
+                    datos = sorted.map(item => item[1]);
+                    titulo = 'Top 10 Ubicaciones con más Reportes';
+                    break;
+            }
+
+            analysisChart.data.labels = labels;
+            analysisChart.data.datasets[0].data = datos;
+            analysisChart.data.datasets[0].label = titulo;
+            analysisChart.update();
+        }
+
+        function actualizarEstadisticasAnalisis(tipo) {
+            const statsContainer = document.getElementById('analysis-stats');
+            let statsHTML = '';
+            
+            switch(tipo) {
+                case 'categoria':
+                    const categorias = {};
+                    reportes.forEach(reporte => {
+                        const cat = reporte.categoria || 'Sin categoría';
+                        categorias[cat] = (categorias[cat] || 0) + 1;
+                    });
+                    Object.entries(categorias).forEach(([categoria, cantidad]) => {
+                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
+                        statsHTML += `
+                            <div class="stat-card">
+                                <div class="stat-title">${categoria}</div>
+                                <div class="stat-value">${cantidad}</div>
+                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
+                            </div>
+                        `;
+                    });
+                    break;
+                case 'riesgo':
+                    const riesgos = {};
+                    reportes.forEach(reporte => {
+                        const riesgo = reporte.prioridad || 'Sin especificar';
+                        riesgos[riesgo] = (riesgos[riesgo] || 0) + 1;
+                    });
+                    Object.entries(riesgos).forEach(([riesgo, cantidad]) => {
+                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
+                        let color = '#666';
+                        if (riesgo === 'critico') color = '#e74c3c';
+                        if (riesgo === 'alto') color = '#e67e22';
+                        if (riesgo === 'medio') color = '#f39c12';
+                        if (riesgo === 'bajo') color = '#2ecc71';
+                        statsHTML += `
+                            <div class="stat-card">
+                                <div class="stat-title">Riesgo ${riesgo}</div>
+                                <div class="stat-value" style="color: ${color};">${cantidad}</div>
+                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
+                            </div>
+                        `;
+                    });
+                    break;
+                case 'estado':
+                    const estados = {
+                        'pendiente': 0,
+                        'en proceso': 0,
+                        'reparado': 0
+                    };
+                    reportes.forEach(reporte => {
+                        const estado = reporte.estado || 'pendiente';
+                        if (estados[estado] !== undefined) {
+                            estados[estado]++;
+                        }
+                    });
+                    Object.entries(estados).forEach(([estado, cantidad]) => {
+                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
+                        let color = '#666';
+                        if (estado === 'pendiente') color = '#f39c12';
+                        if (estado === 'en proceso') color = '#3498db';
+                        if (estado === 'reparado') color = '#2ecc71';
+                        statsHTML += `
+                            <div class="stat-card">
+                                <div class="stat-title">${estado}</div>
+                                <div class="stat-value" style="color: ${color};">${cantidad}</div>
+                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
+                            </div>
+                        `;
+                    });
+                    break;
+                case 'ubicacion':
+                    const ubicaciones = {};
+                    reportes.forEach(reporte => {
+                        const ubicacion = reporte.ubicacion || 'Sin ubicación';
+                        ubicaciones[ubicacion] = (ubicaciones[ubicacion] || 0) + 1;
+                    });
+                    const top5 = Object.entries(ubicaciones)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    top5.forEach(([ubicacion, cantidad]) => {
+                        const porcentaje = ((cantidad / reportes.length) * 100).toFixed(1);
+                        statsHTML += `
+                            <div class="stat-card">
+                                <div class="stat-title">${ubicacion}</div>
+                                <div class="stat-value">${cantidad}</div>
+                                <div style="font-size: 12px; color: #666;">${porcentaje}% del total</div>
+                        `;
+                    });
+                    break;
+            }
+            
+            statsContainer.innerHTML = statsHTML;
+        }
+
+        // ==============================================
         // INICIALIZACIÓN DE LA APLICACIÓN
         // ==============================================
+
         document.addEventListener('DOMContentLoaded', async function() {
+            // Establecer hora actual por defecto
+            const ahora = new Date();
+            const horaActual = ahora.getHours().toString().padStart(2, '0') + ':' + ahora.getMinutes().toString().padStart(2, '0');
+            document.getElementById('hora-reporte').value = horaActual;
+            
             // Configurar cierre de modales
             document.querySelector('.image-modal-close').addEventListener('click', closeImageModal);
             document.getElementById('imageModal').addEventListener('click', function(e) {
@@ -2606,15 +2761,12 @@
                     e.preventDefault();
                     const page = this.getAttribute('data-page');
                     
-                    // Actualizar navegación activa
                     document.querySelectorAll('.nav-menu a').forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Mostrar página correspondiente
                     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
                     document.getElementById(`${page}-page`).style.display = 'block';
                     
-                    // Si es análisis, actualizar gráfico
                     if (page === 'analisis') {
                         setTimeout(() => {
                             actualizarAnalisis();
@@ -2687,7 +2839,6 @@
 
             // Manejar cambios de orientación en móvil
             window.addEventListener('orientationchange', function() {
-                // Redibujar gráficos cuando cambia la orientación
                 setTimeout(() => {
                     if (lineChart) lineChart.resize();
                     if (analysisChart) analysisChart.resize();
@@ -2695,10 +2846,8 @@
             });
         });
 
-        // Manejar cuando la página se vuelve visible (por ejemplo, al volver de la cámara)
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
-                // La página volvió a ser visible
                 console.log('Página visible de nuevo');
             }
         });
@@ -2718,6 +2867,8 @@
         window.capturePhoto = capturePhoto;
         window.closeCamera = closeCamera;
         window.corregirFechasReportes = corregirFechasReportes;
+        window.diagnosticarProblemasFechas = diagnosticarProblemasFechas;
+        window.corregirTodosLosProblemas = corregirTodosLosProblemas;
     </script>
 </body>
 </html>
